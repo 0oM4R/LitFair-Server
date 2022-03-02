@@ -2,14 +2,16 @@ const sequelize = require('sequelize');
 const Sequelize = new sequelize('sequelizedb','root','',{
     host: '127.0.0.1',
     dialect:'mysql'
-
 });
 
-Sequelize.define('user',{
+const User =Sequelize.define('user',{
     id: {
-        type: sequelize.STRING ,
-        primaryKey: true
-    },
+        type: sequelize.INTEGER,
+        primaryKey: true,
+        allowNull: true,
+        autoIncrement: true
+       
+         },
     username: {
         type: sequelize.STRING,
     },
@@ -20,10 +22,10 @@ Sequelize.define('user',{
 
 let creatTable = ()=>{
     Sequelize.sync().then(res =>{
-        console.log(res)
+        console.log("Connection has been established successfully.")
     }).catch(err =>{
         console.log(err);
     })
 }
 
-module.exports =creatTable
+module.exports ={creatTable, User}
