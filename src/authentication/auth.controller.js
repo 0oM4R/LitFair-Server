@@ -1,11 +1,7 @@
 const User = require('./auth.MySql.js').User;
 const bcrypt = require('bcrypt')
 const salt = 8; //salt for password hashing algorithm
-/**
- * 
- * changing salt will lose 
- * 
- */
+
 const getAllUsers = async (req, res) => {
     let data = await User.findAll({});
     console.log(data);

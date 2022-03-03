@@ -4,6 +4,15 @@ const Sequelize = new sequelize('sequelizedb','root','',{
     dialect:'mysql'
 });
 
+const testConnection = async()=>{
+    try {
+        await Sequelize.authenticate();
+        console.log('Connection has been established successfully.');
+      } catch (error) {
+        console.error('Unable to connect to the database:', error);
+      }
+}
+
 const User =Sequelize.define('user',{
     id: {
         type: sequelize.INTEGER,
@@ -28,4 +37,4 @@ let creatTable = ()=>{
     })
 }
 
-module.exports ={creatTable, User}
+module.exports ={creatTable, User, testConnection}
