@@ -4,9 +4,10 @@ const router= require('./authentication/userRoutes.routes');
 require('dotenv').config();
 const creatTable =require('./authentication/auth.DB').creatTable;
 const testConnection =require('./authentication/auth.DB').testConnection;
-const MongoConnection =require('./authentication/auth.DB').connection
+//const MongoConnection =require('./authentication/auth.DB').connection
 app.use(express.json());
-MongoConnection();
+
+//MongoConnection();
 //creatTable();
 testConnection()
 app.use(router)
