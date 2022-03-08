@@ -4,6 +4,7 @@
   "description": "",
   "main": "app.js",
   "scripts": {
+    "jasmine": "npx jasmine",
     "devServer": "nodemon src/app.js",
     "lint": "eslint . --ext .js",
     "prettier": "prettier --config .prettierrc 'src/**/*.js' --write"
@@ -20,6 +21,7 @@
   },
   "homepage": "https://github.com/0oM4R/LitFair-Server#readme",
   "dependencies": {
+    "@prisma/client": "3.10.0",
     "bcrypt": "5.0.1",
     "dotenv": "16.0.0",
     "express": "4.17.3",
@@ -29,6 +31,9 @@
   },
   "devDependencies": {
     "eslint": "8.10.0",
-    "prettier": "2.5.1"
+    "jasmine": "4.0.2",
+    "jasmine-spec-reporter": "7.0.0",
+    "prettier": "2.5.1",
+    "prisma": "3.10.0"
   }
 }
