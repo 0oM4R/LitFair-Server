@@ -1,43 +1,44 @@
 const sequelize = require('sequelize');
 require('dotenv').config();
-const Sequelize = new sequelize('sequelizedb','root','',{
-    host: '127.0.0.1',
-    dialect:'mysql'
+const Sequelize = new sequelize('sequelizedb', 'root', '', {
+  host: '127.0.0.1',
+  dialect: 'mysql',
+  logging: false,
 });
 
+const testConnection = async () => {
+  try {
+    await Sequelize.authenticate();
+    console.log('Connection has been established successfully.');
+  } catch (error) {
+    console.error('Unable to connect to the database:', error);
+  }
+};
 
-const testConnection = async()=>{
-    try {
-        await Sequelize.authenticate();
-        console.log('Connection has been established successfully.');
-      } catch (error) {
-        console.error('Unable to connect to the database:', error);
-      }
-}
+const User = Sequelize.define('user', {
+  id: {
+    type: sequelize.INTEGER,
+    primaryKey: true,
+    allowNull: true,
+    autoIncrement: true,
+  },
+  username: {
+    type: sequelize.STRING,
+  },
+  password: {
+    type: sequelize.STRING,
+  },
+});
 
-const User =Sequelize.define('user',{
-    id: {
-        type: sequelize.INTEGER,
-        primaryKey: true,
-        allowNull: true,
-        autoIncrement: true
-       
-         },
-    username: {
-        type: sequelize.STRING,
-    },
-    password: {
-        type: sequelize.STRING
-    }
-})
-
-let creatTable = ()=>{
-    Sequelize.sync().then(res =>{
-        console.log("Connection has been established successfully.")
-    }).catch(err =>{
-        console.log(err);
+let creatTable = () => {
+  Sequelize.sync()
+    .then((res) => {
+      console.log('Connection has been established successfully.');
     })
-}
+    .catch((err) => {
+      console.log(err);
+    });
+};
 /*******************************MONGODB************************************* */
 // const mongoose = require('mongoose')
 // const TokenSchema = new mongoose.Schema({
@@ -54,4 +55,8 @@ let creatTable = ()=>{
 
 // const tokenModel = mongoose.model('Token', TokenSchema);
 
-module.exports ={creatTable, User, testConnection/*, connection,tokenModel*/}
+module.exports = {
+  creatTable,
+  User,
+  testConnection /*, connection,tokenModel*/,
+};
