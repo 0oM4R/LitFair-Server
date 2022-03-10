@@ -1,3 +1,4 @@
+
 const router = require('express').Router();
 const auth = require('../middleware/passport').passport;
 const controller = require('./auth.controller');
