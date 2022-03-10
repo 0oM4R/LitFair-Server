@@ -3,7 +3,6 @@ const bcrypt = require('bcrypt');
 const jsonwebtoken = require('jsonwebtoken');
 const fs = require('fs');
 const path = require('path');
-const Token = require('./auth.DB').tokenModel;
 
 /**
  * @param {*} salt - For password hashing algorithm
@@ -34,7 +33,6 @@ function issueJwt(user) {
 
 const getAllUsers = async (req, res) => {
   let data = await User.findAll({});
-  console.log(data);
   res.json(data);
 };
 
@@ -57,8 +55,6 @@ const login = (req, res) => {
         const matches = bcrypt.compare(password, user.password);
         if (matches) {
           const tokenObject = issueJwt(user);
-          newToken = new Token({ _id: user.id, token: tokenObject });
-          newToken.save();
           res.json({ user: user, tokenObject: tokenObject });
         } else {
           res.json({ msg: 'Username or password is incorrect' });
@@ -69,7 +65,5 @@ const login = (req, res) => {
       res.status(500).json({ msg: err.message });
     });
 };
-
-// chck if password is correct
 
 module.exports = { getAllUsers, addUser, login };

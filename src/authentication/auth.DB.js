@@ -3,6 +3,7 @@ require('dotenv').config();
 const Sequelize = new sequelize('sequelizedb', 'root', '', {
   host: '127.0.0.1',
   dialect: 'mysql',
+  logging: false,
 });
 
 const testConnection = async () => {
@@ -39,18 +40,23 @@ let creatTable = () => {
     });
 };
 /*******************************MONGODB************************************* */
-const mongoose = require('mongoose');
-const TokenSchema = new mongoose.Schema({
-  _id: String,
-  token: String,
-});
+// const mongoose = require('mongoose')
+// const TokenSchema = new mongoose.Schema({
+//     _id: String,
+//     token: [String]
+// })
 
-const connection = async () => {
-  return await mongoose
-    .connect(process.env.DB_STRING)
-    .then(() => console.log('DB connection established'));
+// const  connection =async ()=>{
+//     return  await mongoose.connect(process.env.DB_STRING)
+//     .then(
+//          ()=> console.log('DB connection established')
+//      );
+//  };
+
+// const tokenModel = mongoose.model('Token', TokenSchema);
+
+module.exports = {
+  creatTable,
+  User,
+  testConnection /*, connection,tokenModel*/,
 };
-
-const tokenModel = mongoose.model('Token', TokenSchema);
-
-module.exports = { creatTable, User, testConnection, connection, tokenModel };

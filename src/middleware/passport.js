@@ -1,8 +1,10 @@
 const fs = require('fs');
 const path = require('path');
-const User = require('../authentication/auth.DB');
+const User = require('../authentication/auth.DB').User;
+
+const passport = require('passport');
 const JwtStrategy = require('passport-jwt').Strategy;
-const ExtractJwt = require('passport-extract-jwt').ExtractJwt;
+const ExtractJwt = require('passport-jwt').ExtractJwt;
 
 // get public key path
 const pubKeyPath = path.join(__dirname, '..', 'id_rsa_pub.pem');
@@ -15,9 +17,10 @@ const options = {
 };
 
 const strategy = new JwtStrategy(options, (payload, done) => {
-  User.findOne({ where: { id: payload.id } })
+  User.findOne({ where: { id: payload.sub } })
     .then((user) => {
       if (user) {
+        console.log('authonticated');
         return done(null, user);
       } else {
         return done(null, false);
@@ -26,6 +29,8 @@ const strategy = new JwtStrategy(options, (payload, done) => {
     .catch((err) => done(err, null));
 });
 
-module.exports = (passport) => {
-  passport.use(strategy);
-};
+passport.use(strategy);
+
+passport.initialize();
+
+module.exports = { passport: passport.authenticate('jwt', { session: false }) };

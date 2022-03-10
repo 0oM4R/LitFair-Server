@@ -1,17 +1,21 @@
 const express = require('express');
 const app = express();
-const router = require('./authentication/userRoutes.routes');
+// enable CORS for all routes 
+const cors = require('cors')
+app.use(cors())
+
 require('dotenv').config();
-const creatTable = require('./authentication/auth.DB').creatTable;
-const testConnection = require('./authentication/auth.DB').testConnection;
-const MongoConnection = require('./authentication/auth.DB').connection;
 app.use(express.json());
-MongoConnection();
-//creatTable();
+
+const testConnection = require('./authentication/auth.DB').testConnection;
 testConnection();
+
+
+const router = require('./authentication/userRoutes.routes');
 app.use(router);
+
 app.get('/', (req, res) => {
   res.send('Home');
 });
 
-app.listen(process.env.PORT);
+app.listen(process.env.PORT || 3000);
