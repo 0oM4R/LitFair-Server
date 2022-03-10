@@ -5,9 +5,17 @@
   "main": "app.js",
   "scripts": {
     "jasmine": "npx jasmine",
-    "devServer": "nodemon src/app.js",
     "lint": "eslint . --ext .js",
-    "prettier": "prettier --config .prettierrc 'src/**/*.js' --write"
+    "prettier": "prettier --config .prettierrc 'src/**/*.js' --write",
+    "devServer": "nodemon src/app.js",
+    "auth-dev": "nodemon src/authentication",
+    "job-dev": "nodemon src/services/job",
+    "seeker-dev": "nodemon src/services/seeker",
+    "company-dev": "nodemon src/services/company",
+    "auth-jasmine": "npx jasmine",
+    "job-jasmine": "npx jasmine src/services/job/job.spec.js",
+    "seeker-jasmine": "npx jasmine src/services/seeker/seeker.spec.js",
+    "company-jasmine": "npx jasmine src/services/company/company.spec.js"
   },
   "repository": {
     "type": "git",
@@ -25,7 +33,6 @@
     "dotenv": "16.0.0",
     "express": "4.17.3",
     "jsonwebtoken": "8.5.1",
-    "mogoose": "0.0.1-security",
     "mongoose": "6.2.4",
     "mysql2": "2.3.3",
     "nodemon": "2.0.15",
