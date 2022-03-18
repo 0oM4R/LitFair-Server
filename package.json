@@ -6,7 +6,7 @@
   "scripts": {
     "jasmine": "npx jasmine",
     "lint": "eslint . --ext .js",
-    "prettier": "prettier --config .prettierrc 'src/**/*.js' --write",
+    "prettier": "prettier --config .prettierrc 'src/**/**/*.js' --write",
     "devServer": "nodemon src/app.js",
     "auth-dev": "nodemon src/authentication",
     "job-dev": "nodemon src/services/job",

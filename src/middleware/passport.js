@@ -20,7 +20,6 @@ const strategy = new JwtStrategy(options, (payload, done) => {
   User.findOne({ where: { id: payload.sub } })
     .then((user) => {
       if (user) {
-        console.log('authonticated');
         return done(null, user);
       } else {
         return done(null, false);

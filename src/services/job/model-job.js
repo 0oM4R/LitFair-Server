@@ -43,7 +43,6 @@ const jobSchema = new mongoose.Schema({
   ],
 });
 
-
 const applicationSchema = new mongoose.Schema({
   title: {
     type: String,

@@ -1,9 +1,10 @@
-
 const User = require('./auth.DB.js').User;
+const creatTable = require('./auth.DB.js').creatTable;
 const bcrypt = require('bcrypt');
 const jsonwebtoken = require('jsonwebtoken');
 const fs = require('fs');
 const path = require('path');
+const console = require('console');
 
 /**
  * @param {*} salt - For password hashing algorithm
@@ -17,11 +18,12 @@ const Priv_key = fs.readFileSync(privKeyPath, 'utf8');
 //**************************Generate token**************************************** */
 function issueJwt(user) {
   const id = user.id;
-  const expiresIn = '1d';
+  const expiresIn = '30000'; // expires in 30 seconds
 
   const payload = {
     sub: id,
-    iat: Date.now(),
+    iat: Math.floor(Date.now() / 1000),
+    
   };
 
   const signedToken = jsonwebtoken.sign(payload, Priv_key, {
@@ -38,7 +40,9 @@ const getAllUsers = async (req, res) => {
 };
 
 const addUser = async (req, res) => {
+  creatTable();
   const { id, username, password } = req.body;
+  console.log(id, username, password);
   bcrypt.hash(password, salt, async (err, hash) => {
     await User.create({ id, username, password: hash });
   });
@@ -49,17 +53,18 @@ const addUser = async (req, res) => {
 const login = (req, res) => {
   const { username, password } = req.body;
   User.findOne({ where: { username: username } })
-    .then((user) => {
-      if (!user) {
-        res.status(401).json({ msg: 'Invalid username' });
-      } else {
-        const matches = bcrypt.compare(password, user.password);
+    .then(async (user) => {
+      if (user) {
+        const matches = await bcrypt.compare(password, user.password);
+
         if (matches) {
           const tokenObject = issueJwt(user);
           res.json({ user: user, tokenObject: tokenObject });
         } else {
           res.json({ msg: 'Username or password is incorrect' });
         }
+      } else {
+        res.status(401).json({ msg: 'Invalid username' });
       }
     })
     .catch((err) => {

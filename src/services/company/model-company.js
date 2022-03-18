@@ -19,18 +19,18 @@ const company = Sequelize.define('company', {
   verified: {
     type: sequelize.CHAR(20),
   },
-  phone_number:{
-      type: sequelize.CHAR(14)
+  phone_number: {
+    type: sequelize.CHAR(14),
   },
   email: {
-      type: sequelize.CHAR(50)
+    type: sequelize.CHAR(50),
   },
   title: {
-      type: sequelize.CHAR(280)
+    type: sequelize.CHAR(280),
   },
-  username_ref:{
-      type: sequelize.CHAR(9)
-  }
+  username_ref: {
+    type: sequelize.CHAR(9),
+  },
 });
 
 let creatTable = () => {
@@ -43,8 +43,7 @@ let creatTable = () => {
     });
 };
 
-
 module.exports = {
-    creatTable,
-    company
-}
+  creatTable,
+  company,
+};

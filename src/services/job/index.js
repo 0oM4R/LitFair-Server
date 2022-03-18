@@ -1,11 +1,9 @@
 const controller = require('./controller');
 
 module.exports = {
-    job: controller.jobController,
-    application: controller.applicationController
-}
-
-
+  job: controller.jobController,
+  application: controller.applicationController,
+};
 
 /*
 const express = require('express');
