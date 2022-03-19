@@ -18,7 +18,7 @@ const Priv_key = fs.readFileSync(privKeyPath, 'utf8');
 //**************************Generate token**************************************** */
 function issueJwt(user) {
   const id = user.id;
-  const expiresIn = '30000'; // expires in 30 seconds
+  const expiresIn = '1h'; 
 
   const payload = {
     sub: id,
@@ -31,7 +31,8 @@ function issueJwt(user) {
     algorithm: 'RS256',
   });
 
-  return 'Bearer ' + signedToken;
+  return signedToken;
+  // return 'Bearer ' + signedToken;
 }
 
 const getAllUsers = async (req, res) => {
@@ -54,12 +55,16 @@ const login = (req, res) => {
   const { username, password } = req.body;
   User.findOne({ where: { username: username } })
     .then(async (user) => {
+ 
       if (user) {
         const matches = await bcrypt.compare(password, user.password);
-
         if (matches) {
+          res.clearCookie("auth");
           const tokenObject = issueJwt(user);
-          res.json({ user: user, tokenObject: tokenObject });
+          res.cookie("auth",tokenObject,{
+   
+            httpOnly:true,
+          }).json({ user: user, tokenObject: tokenObject });
         } else {
           res.json({ msg: 'Username or password is incorrect' });
         }
@@ -71,5 +76,8 @@ const login = (req, res) => {
       res.status(500).json({ msg: err.message });
     });
 };
-
-module.exports = { getAllUsers, addUser, login };
+const logout =(req, res) => {
+  res.clearCookie("auth");
+  res.send("loged out")
+}
+module.exports = { getAllUsers, addUser, login, logout };
