@@ -1,6 +1,8 @@
 const passport = require('passport');
 const GoogleStrategy = require( 'passport-google-oauth2' ).Strategy;
-const controller = require('../authentication/auth.controller');
+const User = require('../authentication/auth.DB').User;
+const bcrypt = require('bcrypt');
+const salt = 8;
 
 require('dotenv').config();
 
@@ -11,7 +13,21 @@ const strategy = new GoogleStrategy({
     passReqToCallback   : true
     },
     (request, accessToken, refreshToken, profile, done) => { 
-        //TODO : check if there is a user with that email otherwise add a new one
+        User.findOne({
+            where: { email: profile.email }
+        }).then(async (user) => {
+            if(!user){
+                const password = profile.email + profile.id;
+                bcrypt.hash(password, salt, async (err, hash) => {
+                    await User.create({
+                        email:         profile.email,
+                        password:      hash,
+                        external_type: profile.provider,
+                        external_id:   profile.id
+                    });
+                });
+            }
+        });
         done(null, profile);
     }
 );
@@ -28,8 +44,5 @@ passport.deserializeUser((user, done) =>{
 
 module.exports = { 
     googleAuthenticate: passport.authenticate('google', { scope: ['email', 'profile'] }),
-    googleCallback: passport.authenticate('google', { 
-        successRedirect: '/success',
-        failureRedirect: '/fail'
-    })
+    googleCallback: passport.authenticate('google')
 }

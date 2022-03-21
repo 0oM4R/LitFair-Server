@@ -10,6 +10,6 @@ router.post('/login', controller.login);
 router.get('/logout', controller.logout);
 
 router.get('/auth/google', googleAuthenticate);
-router.get('/google/callback', googleCallback);
+router.get('/google/callback', googleCallback, controller.issueJwtGoogle);
 
 module.exports = router;

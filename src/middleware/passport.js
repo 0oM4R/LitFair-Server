@@ -30,8 +30,7 @@ const options = {
 };
 
 const strategy = new JwtStrategy(options, (payload, done) => {
-  console.log(options)
-  User.findOne({ where: { id: payload.sub } })
+  User.findOne({ where: { email: payload.sub } })
     .then((user) => {
       if (user) {
         return done(null, user);

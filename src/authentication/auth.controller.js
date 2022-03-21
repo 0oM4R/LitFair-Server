@@ -17,11 +17,11 @@ const Priv_key = fs.readFileSync(privKeyPath, 'utf8');
 
 //**************************Generate token**************************************** */
 function issueJwt(user) {
-  const id = user.id;
+  const email = user.email;
   const expiresIn = '1h'; 
 
   const payload = {
-    sub: id,
+    sub: email,
     iat: Math.floor(Date.now() / 1000),
     
   };
@@ -35,6 +35,13 @@ function issueJwt(user) {
   // return 'Bearer ' + signedToken;
 }
 
+const issueJwtGoogle = (req, res) => {
+  const tokenObject = issueJwt(req.user);
+  res.cookie("auth",tokenObject,{
+  httpOnly:true,
+  }).json({ user: req.user.email, tokenObject: tokenObject });
+}
+
 const getAllUsers = async (req, res) => {
   let data = await User.findAll({});
   res.json(data);
@@ -42,18 +49,18 @@ const getAllUsers = async (req, res) => {
 
 const addUser = async (req, res) => {
   creatTable();
-  const { id, username, password } = req.body;
-  console.log(id, username, password);
+  const { email, password } = req.body;
+  console.log(email, password);
   bcrypt.hash(password, salt, async (err, hash) => {
-    await User.create({ id, username, password: hash });
+    await User.create({ email, password: hash, external_type: 0, external_id: 0 });
   });
 
-  res.json({ msg: 'User created successfully', username: username });
+  res.json({ msg: 'User created successfully', email: email });
 };
 
 const login = (req, res) => {
-  const { username, password } = req.body;
-  User.findOne({ where: { username: username } })
+  const { email, password } = req.body;
+  User.findOne({ where: { email: email } })
     .then(async (user) => {
  
       if (user) {
@@ -66,10 +73,10 @@ const login = (req, res) => {
             httpOnly:true,
           }).json({ user: user, tokenObject: tokenObject });
         } else {
-          res.json({ msg: 'Username or password is incorrect' });
+          res.json({ msg: 'email or password is incorrect' });
         }
       } else {
-        res.status(401).json({ msg: 'Invalid username' });
+        res.status(401).json({ msg: 'Invalid email' });
       }
     })
     .catch((err) => {
@@ -80,4 +87,4 @@ const logout =(req, res) => {
   res.clearCookie("auth");
   res.send("loged out")
 }
-module.exports = { getAllUsers, addUser, login, logout };
+module.exports = {issueJwtGoogle, getAllUsers, addUser, login, logout };
