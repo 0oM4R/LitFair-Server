@@ -16,12 +16,12 @@ const privKeyPath = path.join(__dirname, '..', 'id_rsa_priv.pem');
 const Priv_key = fs.readFileSync(privKeyPath, 'utf8');
 
 //**************************Generate token**************************************** */
-function issueJwt(user) {
-  const id = user.id;
+function issueJwt(id) {
+
   const expiresIn = '1h'; 
 
   const payload = {
-    sub: id,
+    sub:id,
     iat: Math.floor(Date.now() / 1000),
     
   };
@@ -42,42 +42,67 @@ const getAllUsers = async (req, res) => {
 
 const addUser = async (req, res) => {
   creatTable();
-  const { id, username, password } = req.body;
-  console.log(id, username, password);
+  let email = null;
+  let password = "";
+  let provider = null;
+  let external_id = null;
+
+  if(req.user){
+    provider = req.user.provider;
+    external_id = req.user.id;
+    email = req.user.email;
+    password = provider + external_id;
+  } else {
+    email = req.body.email;
+    password = req.body.password;
+  }
   bcrypt.hash(password, salt, async (err, hash) => {
-    await User.create({ id, username, password: hash });
+    await User.create({ email, password: hash, external_type: provider, external_id});
   });
 
-  res.json({ msg: 'User created successfully', username: username });
+  res.json({ msg: 'User created successfully', email: email });
 };
 
 const login = (req, res) => {
-  const { username, password } = req.body;
-  User.findOne({ where: { username: username } })
+
+  let email =null;
+  let password ="";
+  let provider=null;
+
+  if(req.user){
+    provider = req.user.provider;
+    email = req.user.email;
+    console.log(email,provider);
+  }else {
+    email = req.body.email;
+    password =req.body.password;
+  }
+  User.findOne({ where: { email: email } })
     .then(async (user) => {
- 
       if (user) {
         const matches = await bcrypt.compare(password, user.password);
-        if (matches) {
-          res.clearCookie("auth");
-          const tokenObject = issueJwt(user);
-          res.cookie("auth",tokenObject,{
-   
-            httpOnly:true,
-          }).json({ user: user, tokenObject: tokenObject });
+            if (matches || user.external_type === provider) {
+              res.clearCookie("auth");
+              const tokenObject = issueJwt(user.id);
+              res.cookie("auth",tokenObject,{
+                httpOnly:true,
+              })
+              .json({ user: user, tokenObject: tokenObject });
         } else {
-          res.json({ msg: 'Username or password is incorrect' });
+          res.json({ msg: 'email or password is incorrect' });
         }
       } else {
-        res.status(401).json({ msg: 'Invalid username' });
+        res.status(401).json({ msg: 'Invalid email' });
       }
     })
     .catch((err) => {
       res.status(500).json({ msg: err.message });
     });
-};
+}
+
 const logout =(req, res) => {
   res.clearCookie("auth");
   res.send("loged out")
 }
+
 module.exports = { getAllUsers, addUser, login, logout };

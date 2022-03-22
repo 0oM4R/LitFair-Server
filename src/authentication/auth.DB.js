@@ -22,12 +22,20 @@ const User = Sequelize.define('user', {
     allowNull: true,
     autoIncrement: true,
   },
-  username: {
+  email: {
     type: sequelize.STRING,
   },
   password: {
     type: sequelize.STRING,
   },
+  external_type: {
+    type: sequelize.STRING,
+    defult : null,
+  },
+  external_id: {
+    type: sequelize.STRING,
+    defult : null,
+  }
 });
 
 let creatTable = () => {
