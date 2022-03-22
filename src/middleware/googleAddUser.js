@@ -18,7 +18,7 @@ const strategy = new GoogleStrategy({
         done(null,profile)
       }
       else{
-        done(new Error("Couldn't find please sign up first"),null);
+        done(new Error("The user already exists"),null);
       }
     })
   }
