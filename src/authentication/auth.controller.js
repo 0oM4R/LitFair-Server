@@ -16,12 +16,12 @@ const privKeyPath = path.join(__dirname, '..', 'id_rsa_priv.pem');
 const Priv_key = fs.readFileSync(privKeyPath, 'utf8');
 
 //**************************Generate token**************************************** */
-function issueJwt(user) {
-  const email = user.email;
+function issueJwt(id) {
+
   const expiresIn = '1h'; 
 
   const payload = {
-    sub: email,
+    sub:id,
     iat: Math.floor(Date.now() / 1000),
     
   };
@@ -35,13 +35,6 @@ function issueJwt(user) {
   // return 'Bearer ' + signedToken;
 }
 
-const issueJwtGoogle = (req, res) => {
-  const tokenObject = issueJwt(req.user);
-  res.cookie("auth",tokenObject,{
-  httpOnly:true,
-  }).json({ user: req.user.email, tokenObject: tokenObject });
-}
-
 const getAllUsers = async (req, res) => {
   let data = await User.findAll({});
   res.json(data);
@@ -49,29 +42,52 @@ const getAllUsers = async (req, res) => {
 
 const addUser = async (req, res) => {
   creatTable();
-  const { email, password } = req.body;
-  console.log(email, password);
+  let email = null;
+  let password = "";
+  let provider = null;
+  let external_id = null;
+
+  if(req.user){
+    provider = req.user.provider;
+    external_id = req.user.id;
+    email = req.user.email;
+    password = provider + external_id;
+  } else {
+    email = req.body.email;
+    password = req.body.password;
+  }
   bcrypt.hash(password, salt, async (err, hash) => {
-    await User.create({ email, password: hash, external_type: 0, external_id: 0 });
+    await User.create({ email, password: hash, external_type: provider, external_id});
   });
 
   res.json({ msg: 'User created successfully', email: email });
 };
 
 const login = (req, res) => {
-  const { email, password } = req.body;
+
+  let email =null;
+  let password ="";
+  let provider=null;
+
+  if(req.user){
+    provider = req.user.provider;
+    email = req.user.email;
+    console.log(email,provider);
+  }else {
+    email = req.body.email;
+    password =req.body.password;
+  }
   User.findOne({ where: { email: email } })
     .then(async (user) => {
- 
       if (user) {
         const matches = await bcrypt.compare(password, user.password);
-        if (matches) {
-          res.clearCookie("auth");
-          const tokenObject = issueJwt(user);
-          res.cookie("auth",tokenObject,{
-   
-            httpOnly:true,
-          }).json({ user: user, tokenObject: tokenObject });
+            if (matches || user.external_type === provider) {
+              res.clearCookie("auth");
+              const tokenObject = issueJwt(user.id);
+              res.cookie("auth",tokenObject,{
+                httpOnly:true,
+              })
+              .json({ user: user, tokenObject: tokenObject });
         } else {
           res.json({ msg: 'email or password is incorrect' });
         }
@@ -82,9 +98,11 @@ const login = (req, res) => {
     .catch((err) => {
       res.status(500).json({ msg: err.message });
     });
-};
+}
+
 const logout =(req, res) => {
   res.clearCookie("auth");
   res.send("loged out")
 }
-module.exports = {issueJwtGoogle, getAllUsers, addUser, login, logout };
+
+module.exports = { getAllUsers, addUser, login, logout };
