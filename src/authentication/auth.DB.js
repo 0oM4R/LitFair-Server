@@ -30,9 +30,11 @@ const User = Sequelize.define('user', {
   },
   external_type: {
     type: sequelize.STRING,
+    defult : null,
   },
   external_id: {
     type: sequelize.STRING,
+    defult : null,
   }
 });
 
