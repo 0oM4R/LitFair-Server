@@ -7,6 +7,11 @@ const console = require('console');
 const JwtStrategy = require('passport-jwt').Strategy;
 const ExtractJwt = require('passport-jwt').ExtractJwt;
 
+const GoogleStrategy = require( 'passport-google-oauth2' ).Strategy;
+
+require('dotenv').config();
+
+
 // get public key path
 const pubKeyPath = path.join(__dirname, '..', 'id_rsa_pub.pem');
 const Pub_key = fs.readFileSync(pubKeyPath, 'utf8');
@@ -15,8 +20,7 @@ var cookieExtractor = function(req) {
   var token = null;
   if (req && req.cookies)
   {
-      token = req.cookies['auth'];
-     
+    token = req.cookies['auth'];
   }
   return token;
 };
@@ -29,7 +33,7 @@ const options = {
   algorithm: ['RS256'],
 };
 
-const strategy = new JwtStrategy(options, (payload, done) => {
+const jwtStrategy = new JwtStrategy(options, (payload, done) => {
   User.findOne({ where: { email: payload.sub } })
     .then((user) => {
       if (user) {
@@ -41,8 +45,65 @@ const strategy = new JwtStrategy(options, (payload, done) => {
     .catch((err) => done(err, null));
 });
 
-passport.use(strategy)
+const googleAddUserStrategy = new GoogleStrategy({
+  clientID:     process.env.GOOGLE_CLIENT_ID_ADD_USER,
+  clientSecret: process.env.GOOGLE_CLIENT_SECRET_ADD_USER,
+  callbackURL: "http://127.0.0.1:3000/google/callback/adduser",
+  passReqToCallback   : true
+  },
+  (request, accessToken, refreshToken, profile, done) => { 
+    const user = User.findOne({
+      where: { email: profile.email }
+    }).then(async (user) => {
+      if (!user){
+        done(null,profile)
+      }
+      else{
+        done(new Error("The user already exists"),null);
+      }
+    })
+  }
+);
+
+const googleOAuthStrategy = new GoogleStrategy({
+  clientID:     process.env.GOOGLE_CLIENT_ID,
+  clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+  callbackURL: "http://127.0.0.1:3000/google/callback",
+  passReqToCallback   : true
+  },
+  (request, accessToken, refreshToken, profile, done) => { 
+    const user = User.findOne({
+      where: { email: profile.email }
+    }).then(async (user) => {
+      if (!user){
+        done(new Error("Couldn't find please sign up first"),null);
+      }
+      else{
+        done(null,profile);
+      }
+    })
+  }
+);
+
+
+passport.use('jwt', jwtStrategy);
+passport.use('googleOAuth', googleOAuthStrategy);
+passport.use('googleAddUser', googleAddUserStrategy);
+
+passport.serializeUser((user, done) => {
+  done(null, user);
+});
+
+passport.deserializeUser((user, done) =>{
+  done(null, user);
+});
 
 passport.initialize();
 
-module.exports = { passport: passport.authenticate('jwt', { session: false }) };
+module.exports = {
+  jwtStrategy: passport.authenticate('jwt', { session: false }),
+  googleAuthenticate: passport.authenticate('googleOAuth', { scope: ['email', 'profile'] }),
+  googleCallback: passport.authenticate('googleOAuth'),
+  googleAuthenticateAddUser: passport.authenticate('googleAddUser', { scope: ['email', 'profile'] }),
+  googleCallbackAddUser: passport.authenticate('googleAddUser'),
+};
