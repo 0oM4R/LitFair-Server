@@ -1,19 +1,17 @@
 
 const router = require('express').Router();
-const auth = require('../middleware/passport').passport;
+const auth = require('../middleware/passport');
 const controller = require('./auth.controller');
-const { googleCallback, googleAuthenticate } = require('../middleware/googleOAuth');
-const { googleCallbackAddUser, googleAuthenticateAddUser } = require('../middleware/googleAddUser.js');
 
-router.get('/getAll', auth, controller.getAllUsers);
+router.get('/getAll', auth.jwtStrategy, controller.getAllUsers);
 router.post('/addUser', controller.addUser);
 router.post('/login', controller.login);
 router.get('/logout', controller.logout);
 
-router.get('/auth/google', googleAuthenticate);
-router.get('/google/callback', googleCallback,  controller.login);
+router.get('/auth/google', auth.googleAuthenticate);
+router.get('/google/callback', auth.googleCallback, controller.login);
 
-router.get('/adduser/google', googleAuthenticateAddUser);
-router.get('/google/callback/adduser', googleCallbackAddUser,  controller.addUser);
+router.get('/adduser/google', auth.googleAuthenticateAddUser);
+router.get('/google/callback/adduser', auth.googleCallbackAddUser, controller.addUser);
 
 module.exports = router;
