@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const User = require('../authentication/auth.DB').User;
+const User_model = require('../services/User/model-User').User_model;
 
 const passport = require('passport');
 const console = require('console');
@@ -34,7 +34,7 @@ const options = {
 };
 
 const jwtStrategy = new JwtStrategy(options, (payload, done) => {
-  User.findOne({ where: { email: payload.sub } })
+  User_model.findOne({ where: { email: payload.sub } })
     .then((user) => {
       if (user) {
         return done(null, user);
@@ -52,7 +52,7 @@ const googleAddUserStrategy = new GoogleStrategy({
   passReqToCallback   : true
   },
   (request, accessToken, refreshToken, profile, done) => { 
-    const user = User.findOne({
+    const user = User_model.findOne({
       where: { email: profile.email }
     }).then(async (user) => {
       if (!user){
@@ -72,7 +72,7 @@ const googleOAuthStrategy = new GoogleStrategy({
   passReqToCallback   : true
   },
   (request, accessToken, refreshToken, profile, done) => { 
-    const user = User.findOne({
+    const user = User_model.findOne({
       where: { email: profile.email }
     }).then(async (user) => {
       if (!user){

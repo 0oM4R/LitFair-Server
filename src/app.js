@@ -10,10 +10,10 @@ app.use(cookies())
 require('dotenv').config();
 app.use(express.json());
 
-const testConnection = require('./authentication/auth.DB').testConnection;
+const testConnection = require('./DB/SQL.config').testConnection;
 testConnection();
 
-const router = require('./authentication/userRoutes.routes');
+const router = require('./services/User/userRoutes.routes');
 app.use(router);
 
 app.get('/', (req, res) => {
