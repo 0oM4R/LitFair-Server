@@ -1,5 +1,4 @@
 const User_model = require('./model-User.js').User_model;
-
 const bcrypt = require('bcrypt');
 const jsonwebtoken = require('jsonwebtoken');
 const fs = require('fs');
@@ -57,10 +56,17 @@ const addUser = async (req, res) => {
     password = req.body.password;
   }
   bcrypt.hash(password, salt, async (err, hash) => {
-    await User_model.create({ email, password: hash, external_type: provider, external_id});
+     try{ 
+         await User_model.create({ email, password: hash, external_type: provider, external_id})
+         
+      }
+     catch(err){
+       console.log(err.message)
+       res.json({ msg: err.message });
+     };
   });
 
-  res.json({ msg: 'User created successfully', email: email });
+  
 };
 
 const login = (req, res) => {

@@ -1,10 +1,11 @@
-const sequelize = require('sequelize');
+const Sequelize = require('sequelize');
+
 require('dotenv').config();
 
 /**
  * @description SQL_DB instance of connected database.
  */
-const SQL_DB = new sequelize('sequelizedb', 'root', '', {
+const SQL_DB = new Sequelize('sequelizedb', 'root', '', {
   host: '127.0.0.1',
   dialect: 'mysql',
   logging: false,
@@ -32,4 +33,4 @@ let createTable = (model) => {
   };
 
 
-module.exports ={ testConnection ,SQL_DB ,createTable,sequelize}
+module.exports ={ testConnection ,SQL_DB ,createTable,Sequelize}

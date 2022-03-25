@@ -1,24 +1,28 @@
-const  {SQL_DB, createTable, sequelize} = require("../../DB/SQL.config");
+const  {SQL_DB, createTable, Sequelize} = require("../../DB/SQL.config");
 
 const User_model = SQL_DB.define('User', {
   id: {
-    type: sequelize.INTEGER,
+    type: Sequelize.INTEGER,
     primaryKey: true,
     allowNull: true,
     autoIncrement: true,
   },
   email: {
-    type: sequelize.STRING,
+    type: Sequelize.STRING,
+    validate: {
+      isEmail:{
+      msg: 'Please enter a valid email address'}
+    }
   },
   password: {
-    type: sequelize.STRING,
+    type: Sequelize.STRING,
   },
   external_type: {
-    type: sequelize.STRING,
+    type: Sequelize.STRING,
     defult : null,
   },
   external_id: {
-    type: sequelize.STRING,
+    type: Sequelize.STRING,
     defult : null,
   }
 });
