@@ -6,7 +6,7 @@ const phoneValidationRegex = /^[+]\d{9,13}/
 
 const Seeker =SQL_DB.define('Seeker',{
       
-      dat_of_birth :{
+      date_of_birth :{
         type: Sequelize.DATE,
         isDate: true,
         isAfter: "1960-01-01",
