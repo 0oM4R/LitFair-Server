@@ -8,11 +8,15 @@ const User_model = SQL_DB.define('User', {
     autoIncrement: true,
   },
   email: {
-    type: Sequelize.STRING,
+    type: Sequelize.STRING(),
+    unique: true,
     validate: {
       isEmail:{
       msg: 'Please enter a valid email address'}
     }
+  },
+  role: {
+    type: Sequelize.STRING(9)
   },
   password: {
     type: Sequelize.STRING,

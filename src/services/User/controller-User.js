@@ -1,4 +1,5 @@
 const User_model = require('./model-User.js').User_model;
+
 const bcrypt = require('bcrypt');
 const jsonwebtoken = require('jsonwebtoken');
 const fs = require('fs');
@@ -20,7 +21,7 @@ function issueJwt(id) {
   const expiresIn = '1h'; 
 
   const payload = {
-    sub:id,
+    id: id,
     iat: Math.floor(Date.now() / 1000),
     
   };
@@ -35,6 +36,7 @@ function issueJwt(id) {
 }
 
 const getAllUsers = async (req, res) => {
+  console.log(req.user.id)
   let data = await User_model.findAll({});
   res.json(data);
 };
@@ -54,11 +56,13 @@ const addUser = async (req, res) => {
   } else {
     email = req.body.email;
     password = req.body.password;
+    fname = req.body.fname;
   }
   bcrypt.hash(password, salt, async (err, hash) => {
      try{ 
-         await User_model.create({ email, password: hash, external_type: provider, external_id})
-         
+        const user= await User_model.create({ email, password: hash, external_type: provider, external_id})
+   
+        res.send({msg:"success"}) 
       }
      catch(err){
        console.log(err.message)
@@ -110,5 +114,5 @@ const logout =(req, res) => {
   res.clearCookie("auth");
   res.send("loged out")
 }
-
+require('..//seeker/model-seeker')
 module.exports = { getAllUsers, addUser, login, logout };

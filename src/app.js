@@ -13,9 +13,11 @@ app.use(express.json());
 const testConnection = require('./DB/SQL.config').testConnection;
 testConnection();
 
-const router = require('./services/User/userRoutes.routes');
-app.use(router);
+const {UserRoutes} = require('./services/User/userRoutes.routes');
+const {SeekerRoutes} = require('./services/Seeker/seeker.routes')
 
+app.use(UserRoutes);
+app.use(SeekerRoutes);
 app.get('/', (req, res) => {
   res.send('Home');
 });
