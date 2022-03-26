@@ -33,15 +33,11 @@ const options = {
   algorithm: ['RS256'],
 };
 
-const Seeker = new JwtStrategy(options, (payload, done) => {
+const jwtStrategy = new JwtStrategy(options, (payload, done) => {
   User_model.findOne({ where: { id: payload.id } })
-    .then( (user) => {
-      if (user.role=="Seeker") {
-        let User={
-          id: payload.id,
-          role:user.role
-        }
-        return done(null,User);
+    .then((user) => {
+      if (user) {
+        return done(null,{id:user.id, rules: user.role,email:user.email});
       } else {
         return done(null, false);
       }
@@ -90,9 +86,9 @@ const googleOAuthStrategy = new GoogleStrategy({
 );
 
 
-passport.use('jwt', Seeker);
-// passport.use('googleOAuth', googleOAuthStrategy);
-// passport.use('googleAddUser', googleAddUserStrategy);
+passport.use('jwt', jwtStrategy);
+ passport.use('googleOAuth', googleOAuthStrategy);
+ passport.use('googleAddUser', googleAddUserStrategy);
 
 passport.serializeUser((user, done) => {
   done(null, user);
@@ -105,7 +101,7 @@ passport.deserializeUser((user, done) =>{
 passport.initialize();
 
 module.exports = {
-  Seeker: passport.authenticate('jwt', { session: false }),
+  jwtStrategy: passport.authenticate('jwt', { session: false }),
   googleAuthenticate: passport.authenticate('googleOAuth', { scope: ['email', 'profile'] }),
   googleCallback: passport.authenticate('googleOAuth'),
   googleAuthenticateAddUser: passport.authenticate('googleAddUser', { scope: ['email', 'profile'] }),
