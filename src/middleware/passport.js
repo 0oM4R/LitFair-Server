@@ -34,10 +34,10 @@ const options = {
 };
 
 const jwtStrategy = new JwtStrategy(options, (payload, done) => {
-  User_model.findOne({ where: { email: payload.sub } })
+  User_model.findOne({ where: { id: payload.id } })
     .then((user) => {
       if (user) {
-        return done(null, user);
+        return done(null,{id:user.id, rules: user.role,email:user.email});
       } else {
         return done(null, false);
       }
@@ -87,8 +87,8 @@ const googleOAuthStrategy = new GoogleStrategy({
 
 
 passport.use('jwt', jwtStrategy);
-passport.use('googleOAuth', googleOAuthStrategy);
-passport.use('googleAddUser', googleAddUserStrategy);
+ passport.use('googleOAuth', googleOAuthStrategy);
+ passport.use('googleAddUser', googleAddUserStrategy);
 
 passport.serializeUser((user, done) => {
   done(null, user);
