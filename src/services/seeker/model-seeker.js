@@ -70,6 +70,6 @@ Seeker.belongsTo(User_model,{
   onUpdate: "CASCADE",
   onDelete: "RESTRICT"
 })
-createTable(Seeker);
+Seeker.sync();
 
 module.exports = {Seeker}
