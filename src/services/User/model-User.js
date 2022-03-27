@@ -32,7 +32,7 @@ const User_model = SQL_DB.define('User', {
 });
 
 //create user table
-giUser_model.sync();
+User_model.sync();
 
 module.exports = {
   User_model
