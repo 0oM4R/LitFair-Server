@@ -15,7 +15,7 @@ const testConnection = require('./DB/SQL.config').testConnection;
 testConnection();
 
 const {UserRoutes} = require('./services/User/userRoutes.routes');
-const {SeekerRoutes} = require('./services/Seeker/seeker.routes')
+const {SeekerRoutes} = require('./services/seeker/seeker.routes')
 app.use((req,res,next)=>{
  
  const os =(req)=>{
