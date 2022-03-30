@@ -3,7 +3,7 @@ const router = require('express').Router();
 const auth = require('../../middleware/passport');
 const controller = require('../User/controller-User');
 
-//router.get('/getAll', auth.jwtStrategy, controller.getAllUsers);
+router.get('/getAll', auth.jwtStrategy, controller.getAllUsers);
 router.post('/addUser', controller.addUser);
 router.post('/login', controller.login);
 router.get('/logout', controller.logout);

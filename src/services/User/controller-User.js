@@ -1,5 +1,5 @@
 const User_model = require('./model-User.js').User_model;
-
+const Seeker= require('../seeker/model-seeker').Seeker;
 const bcrypt = require('bcrypt');
 const jsonwebtoken = require('jsonwebtoken');
 const fs = require('fs');
@@ -95,6 +95,14 @@ const login = (req, res) => {
             if (matches || user.external_type === provider) {
               res.clearCookie("auth");
               const tokenObject = issueJwt(user.id);
+              
+              Seeker.findOne({where: { id:user.id}}).then((seeker)=>{
+                if(!seeker){
+                  Seeker.create({id:user.id ,email:user.email})
+                }
+              })
+
+              
               res.cookie("auth",tokenObject,{
                 httpOnly:true,
               })
