@@ -79,6 +79,7 @@ const googleOAuthStrategy = new GoogleStrategy({
         done(new Error("Couldn't find please sign up first"),null);
       }
       else{
+        
         done(null,profile);
       }
     })
@@ -95,6 +96,7 @@ passport.serializeUser((user, done) => {
 });
 
 passport.deserializeUser((user, done) =>{
+  
   done(null, user);
 });
 

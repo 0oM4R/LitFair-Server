@@ -56,11 +56,12 @@ const addUser = async (req, res) => {
   } else {
     email = req.body.email;
     password = req.body.password;
-    fname = req.body.fname;
+    role = req.body.role;
+    
   }
   bcrypt.hash(password, salt, async (err, hash) => {
      try{ 
-        const user= await User_model.create({ email, password: hash, external_type: provider, external_id})
+        const user= await User_model.create({ email, password: hash,role, external_type: provider, external_id})
    
         res.send({msg:"success"}) 
       }
