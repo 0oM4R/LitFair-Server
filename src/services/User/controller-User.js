@@ -47,23 +47,50 @@ const addUser = async (req, res) => {
   let password = "";
   let provider = null;
   let external_id = null;
+  let role= null;
+  let fname =null;
+  let lname = null;
 
   if(req.user){
     provider = req.user.provider;
     external_id = req.user.id;
     email = req.user.email;
     password = provider + external_id;
+    role=="Seeker"
   } else {
     email = req.body.email;
     password = req.body.password;
     role = req.body.role;
-    
+
   }
   bcrypt.hash(password, salt, async (err, hash) => {
      try{ 
-        const user= await User_model.create({ email, password: hash,role, external_type: provider, external_id})
-   
-        res.send({msg:"success"}) 
+        const user= await User_model.
+        create({
+          email,
+          password: hash,
+          role,
+          external_type: provider,
+          external_id
+        })
+        //create new seeker
+        if(role==="Seeker"){
+          fname = req.body.fname;
+          lname = req.body.lname;
+          try{Seeker.create(
+            {
+              id:user.id,
+              email:user.email,
+              fname:fname,
+              lname:lname
+            })}
+            catch(err){
+              res.send({ msg:"success, but no seeker added !"})
+            }
+        }
+        
+
+        res.send({msg:" all success"}) 
       }
      catch(err){
        console.log(err.message)
@@ -98,7 +125,7 @@ const login = (req, res) => {
               
               Seeker.findOne({where: { id:user.id}}).then((seeker)=>{
                 if(!seeker){
-                  Seeker.create({id:user.id ,email:user.email})
+                  
                 }
               })
 
