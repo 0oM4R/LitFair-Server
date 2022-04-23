@@ -45,7 +45,7 @@
 
 | **Service** |
 | --- |
-| [User](##User) |
+| [User](#User) |
 
 ## User 
 ### This service is for add new users "either by google or normal sign up", provide authentication, and set JWT 
