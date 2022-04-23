@@ -7,7 +7,7 @@
 - [Prerequisite](#prerequisite)
 - [Table of contents](#table-of-contents)
 - [Installation](#installation)
-- [Usage](#Usage)
+- [Services documentation](#Services-documentation)
 # prerequisite
 
   
@@ -38,4 +38,31 @@
 
 ### Finally to run the server 
 	npm run devServer 
+	
+	
+	
+# Services documentation
+
+| **Service** |
+| --- |
+| [User](##User) |
+
+## User 
+### This service is for add new users "either by google or normal sign up", provide authentication, and set JWT 
+
+## Routes :
+| **URL** | **Type** |
+| --- | --- |
+| [/adduser](###/adduser) | post |
+
+### /adduser
+For add new user as a seeker the request body should contain the next values
+
+| **Field** | **Description** |
+| --- | --- |
+| email | required and unique |
+| password | required |
+| role | either "Seeker" or "Company" |
+| fname | required for seekers |
+| lname | required for seek
 
