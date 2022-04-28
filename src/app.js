@@ -14,8 +14,11 @@ app.use(express.json());
 const testConnection = require('./DB/SQL.config').testConnection;
 testConnection();
 
+
+const {SkillsRoutes}= require('./services/skills/skills.routes')
 const {UserRoutes} = require('./services/User/userRoutes.routes');
 const {SeekerRoutes} = require('./services/seeker/seeker.routes')
+
 app.use((req,res,next)=>{
  
  const os =(req)=>{
@@ -42,6 +45,7 @@ app.use((req,res,next)=>{
   next()})
 app.use(UserRoutes);
 app.use(SeekerRoutes);
+app.use(SkillsRoutes)
 
 app.get('*', (req, res) => {
 
