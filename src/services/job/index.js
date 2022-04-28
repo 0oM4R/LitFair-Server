@@ -1,4 +1,4 @@
-const controller = require('./controller');
+    const controller = require('./controller');
 
 module.exports = {
     job: controller.jobController,
