@@ -11,7 +11,7 @@ const sampleData = {
   description: 'this is th desc',
   requirements: ['req1', 'req2'],
   skills_tools: ['skils1', 'ssk2'],
-  applications: [],
+  applications: []
 };
 describe('B suite', () => {
   it('contains spec with an expectation', () => {
@@ -31,7 +31,7 @@ describe('Sample data suite', () => {
       categories,
       description,
       requirements,
-      skills_tools,
+      skills_tools
     } = await jobA.addJob(sampleData);
 
     expect(

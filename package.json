@@ -7,7 +7,7 @@
     "start":"node src/app.js",
     "jasmine": "npx jasmine",
     "lint": "eslint . --ext .js",
-    "prettier": "prettier --config .prettierrc --write",
+    "prettier": "prettier --config .prettierrc 'src' --write",
     "devServer": "nodemon src/app.js",
     "auth-dev": "nodemon src/authentication",
     "job-dev": "nodemon src/services/job",

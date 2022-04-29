@@ -1,19 +1,17 @@
-const {companyProfile, companyInfo} = require('./model');
+const { companyProfile, companyInfo } = require('./model');
 const { upload_image } = require('../../config/cloudinary');
 const { successfulRes, failedRes } = require('../../utils/response');
 
 exports.getCompaniesFull = async (req, res) => {
-  let email = req.query;
   let response = [];
   try {
-
     const profiles = await companyProfile.findAll();
     const infos = await companyInfo.find().exec();
-    for(const profx in profiles){
-      for(const infox in infos){
-        if(profiles[profx] == infos[infox]._id.toString()){
-          response.push({profile: profiles[profx], info: infos[infox]});
-          delete infos[infox]
+    for (const profx in profiles) {
+      for (const infox in infos) {
+        if (profiles[profx] == infos[infox]._id.toString()) {
+          response.push({ profile: profiles[profx], info: infos[infox] });
+          delete infos[infox];
         }
       }
     }
@@ -26,13 +24,12 @@ exports.getCompaniesFull = async (req, res) => {
 
 exports.getCompanyProfile = async (req, res) => {
   const username = req.params.username;
-  let response = {profile: 'null', info: 'null'}
+  let response = { profile: 'null', info: 'null' };
   try {
-    const profile = await companyProfile.find({where:{username}});
-    if(profile){
-      const info = await companyInfo.findOne({username}).exec();
-      response.profile = profile;
-      response.info = info;
+    const profile = await companyProfile.find({ where: { username } });
+    if (profile) {
+      const info = await companyInfo.findOne({ username }).exec();
+      response = { profile, info };
     }
     return successfulRes(res, 200, response);
   } catch (e) {
@@ -40,105 +37,146 @@ exports.getCompanyProfile = async (req, res) => {
   }
 };
 
-exports.addCompany = async (req, res) => {
+exports.addCompanyProfile = async (req, res) => {
   const username = res.locals.username;
-  const { name, nationality, company_size, verified, phone_number, email, title,
-    description, social_links, CRN_num, CRN_exp
+  const {
+    name,
+    nationality,
+    company_size,
+    verified,
+    phone_number,
+    email,
+    title,
+    description,
+    social_links,
+    CRN_num,
+    CRN_exp
   } = req.body;
+  let response = { profile: 'null', info: 'null' };
+
   const files = req.files;
   try {
-
-    const profile = await companyProfile.create({
-      name, 
-      nationality, 
-      company_size, 
+    const profile = await companyProfile.build({
+      username,
+      name,
+      nationality,
+      company_size,
       verified,
       phone_number,
-      email, 
+      email,
       title
-    }) 
+    });
+
+    await profile.save();
+
+    let info = new companyInfo({
+      username,
+      logo: 'NULL',
+      description,
+      social_links,
+      CRN: { number: CRN_num, thumbnail: 'NULL', expDate: CRN_exp }
+    });
 
     if (files) {
-      let photos = [];
-      for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        const url = await upload_image(file.path, `${saved._id}_${i}`, 'Companys_thumbs');
-        photos.push(url);
-      }
-      saved.icon = photos[0];
-      saved.img = photos[1];
+      info.logo = files[0]
+        ? await upload_image(files[0], `${info._id}_logo`, 'Companies_logos')
+        : undefined;
+      info.CRN.thumbnail = files[1]
+        ? await upload_image(files[1], `${info._id}_CRN`, 'Companies_CRN')
+        : undefined;
     }
-    await saved.save();
+    await info.save();
 
-    return successfulRes(res, 201, saved);
+    response = { profile, info };
+    return successfulRes(res, 201, response);
   } catch (e) {
     return failedRes(res, 500, e);
   }
 };
 
-exports.updateCompany = async (req, res) => {
+exports.updateCompanyProfile = async (req, res) => {
+  const username = res.locals.username;
+  const {
+    name,
+    nationality,
+    company_size,
+    verified,
+    phone_number,
+    email,
+    title,
+    description,
+    social_links,
+    CRN_num,
+    CRN_exp
+  } = req.body;
+  const files = req.files;
+  let response = { profile: 'null', info: 'null' };
   try {
-    const role = res.locals.user.role;
+    if (
+      name ||
+      nationality ||
+      company_size ||
+      verified ||
+      phone_number ||
+      email ||
+      title
+    ) {
+      const profile = await companyProfile.find({ where: { username } });
+      profile.name = name ? name : profile.name;
+      profile.nationality = nationality ? nationality : profile.nationality;
+      profile.company_size = company_size ? company_size : profile.company_size;
+      profile.verified = verified ? verified : profile.verified;
+      profile.phone_number = phone_number ? phone_number : profile.phone_number;
+      profile.email = email ? email : profile.email;
+      profile.title = title ? title : profile.title;
 
-    const _id = req.params.id;
-    const { name, writer, cat, type, paragraphs } = req.body;
-    const files = req.files;
-
-    let doc = await Company.findById(_id).exec();
-    if (files) {
-      let photos = [];
-      for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        const url = await upload_image(file.path, `${doc._id}_${i}`, 'Companys_thumbs');
-        photos.push(url);
-      }
-      doc.icon = photos[0] ? photos[0] : doc.icon;
-      doc.img = photos[1] ? photos[1] : doc.img;
+      await profile.save();
     }
 
-    doc.name = name ? name : doc.name;
-    doc.author = writer ? writer : doc.author;
-    doc.cat = cat ? cat : doc.cat;
-    doc.type = type ? type : doc.type;
-    doc.paragraphs = paragraphs ? paragraphs?.map((e) => ({ title: e.split(',')[0], Company: e.split(',')[1] })) : doc.paragraphs;
+    if (description || social_links || CRN_num || CRN_exp) {
+      const info = await companyInfo.findOne({ username }).exec();
 
-    await doc.save();
+      info.description = description ? description : info.description;
+      info.social_links = social_links ? social_links : info.social_links;
 
-    return successfulRes(res, 200, doc);
-  } catch (e) {
-    return failedRes(res, 500, e);
-  }
-};
+      let dummy_CRN = {
+        number: info.CRN?.number,
+        thumbnail: info.CRN?.thumbnail,
+        expDate: info.CRN?.expDate
+      };
 
-exports.deleteCompany = async (req, res) => {
-  try {
-    const _id = req.params.id;
+      if (files) {
+        info.logo = files[0]
+          ? await upload_image(files[0], `${info._id}_logo`, 'Companies_logos')
+          : info.logo;
+        dummy_CRN.thumbnail = files[0]
+          ? await upload_image(files[1], `${info._id}_CRN`, 'Companies_CRN')
+          : dummy_CRN.thumbnail;
+      }
 
-    const response = await Company.findByIdAndDelete(_id).exec();
+      dummy_CRN.number = CRN_num ? CRN_num : dummy_CRN.number;
+      dummy_CRN.thumbnail = CRN_num ? CRN_num : dummy_CRN.number;
+      info.CRN = dummy_CRN ? dummy_CRN : info.CRN;
 
+      info.save();
+    }
+
+    response = { profile, info };
     return successfulRes(res, 200, response);
   } catch (e) {
     return failedRes(res, 500, e);
   }
 };
 
-exports.shareCompany = async (req, res) => {
+exports.deleteCompanyProfile = async (req, res) => {
+  const username = res.locals.username;
+
   try {
-    const _id = req.params.id;
-    let response = await Company.findById(_id).exec();
-    const guestCookie = res.locals.guestCookie;
-
-    if (guestCookie.shareCompanys.indexOf(_id) < 0) {
-      guestCookie.shareCompanys.push(_id);
-      res.cookie('__GuestId', JSON.stringify(guestCookie), {
-        maxAge: 1000 * 60 * 60 * 24 * 365 * 5,
-        sameSite: 'none',
-        secure: true,
-      });
-      response.numberOfShare += 1;
+    const profile = await companyProfile.find({ where: { username } });
+    if (profile) {
+      const info = await companyInfo.findOne({ username }).exec();
+      response = { profile, info };
     }
-
-    await response.save();
 
     return successfulRes(res, 200, response);
   } catch (e) {

@@ -3,5 +3,5 @@ src/DB
 src/middleware
 src/services/seeker
 src/services/user
-src/services/*.js
-src/services/*.pem
+src/*.js
+src/*.pem

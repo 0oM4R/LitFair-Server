@@ -2,64 +2,64 @@ const mongoose = require('mongoose');
 
 const jobSchema = new mongoose.Schema({
   title: {
-    type: String,
+    type: String
   },
   owner_id: {
-    type: Number,
+    type: Number
   },
   date_posted: {
     type: Date,
-    default: Date.now(),
+    default: Date.now()
   },
   job_type: {
-    type: String,
+    type: String
   },
   location: {
-    type: String,
+    type: String
   },
   categories: [
     {
-      type: String,
-    },
+      type: String
+    }
   ],
   description: {
-    type: String,
+    type: String
   },
   requirements: [
     {
-      type: String,
-    },
+      type: String
+    }
   ],
   skills_tools: [
     {
-      type: String,
-    },
+      type: String
+    }
   ],
   applications: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Application',
-    },
-  ],
+      ref: 'Application'
+    }
+  ]
 });
 
 const applicationSchema = new mongoose.Schema({
   title: {
-    type: String,
+    type: String
   },
   job_id: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Job',
+    ref: 'Job'
   },
   date_submitted: {
-    type: Date,
+    type: Date
   },
   questions: {
-    type: Map,
-  },
+    type: Map
+  }
 });
 
 module.exports = {
   jobModel: mongoose.model('Job', jobSchema),
-  appModel: mongoose.model('Application', applicationSchema),
+  appModel: mongoose.model('Application', applicationSchema)
 };
