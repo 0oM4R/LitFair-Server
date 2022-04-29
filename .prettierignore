@@ -1,0 +1,7 @@
+# Ignore artifacts:
+src/DB
+src/middleware
+src/services/seeker
+src/services/user
+src/*.js
+src/*.pem

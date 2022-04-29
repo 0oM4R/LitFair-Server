@@ -1,75 +1,126 @@
-const mongoose = require('mongoose');
-const jobModel = require('./model-job').jobModel;
-const applicationModel = require('./model-job').appModel;
+const { jobModel, appModel } = require('./model');
 
 class jobController {
-  constructor(dbURI) {
-    this.dbURI = dbURI;
-    mongoose
-      .connect(dbURI)
-      .then(() => console.log('Job database connected successfully'))
-      .catch((e) => {
-        console.log(e);
-      });
-  }
-
-  async addJob(post) {
-    let data = post;
-    const toDate = new Date(data.date_posted + 'UTC');
-    data.date_posted = toDate == 'Invalid Date' ? new Date() : toDate;
-
-    const newJob = new jobModel(data);
-
-    try {
-      const response = await newJob.save();
-      return response;
-    } catch (e) {
-      throw new Error(`Can't Add new job e:${e}`);
-    }
-  }
+  // constructor(dbURI) {
+  //   this.dbURI = dbURI;
+  //   mongoose
+  //     .connect(dbURI)
+  //     .then(() => console.log('Job database connected successfully'))
+  //     .catch((e) => {
+  //       console.log(e);
+  //     });
+  // }
 
   async getJobs() {
     try {
-      const response = await jobModel.find({}).exec();
-      return response;
-    } catch (e) {
-      throw new Error(`Can't get jobs e:${e}`);
+      const doc = await jobModel.find({}).exec();
+      return doc;
+    } catch (err) {
+      throw new Error(`Can't get jobs::ERROR:${err}`);
     }
   }
 
   async getJob(id) {
     try {
-      const response = await jobModel.findById(id).exec();
-      return response;
-    } catch (e) {
-      throw new Error(`Can't get job with ID:${id}-e:${e}`);
+      const doc = await jobModel.findById(id).exec();
+      return doc;
+    } catch (err) {
+      throw new Error(`Can't get job::ERROR:${err}`);
     }
   }
 
-  async editJob(id) {
+  async addJob(schema) {
     try {
-      const response = await jobModel.findOneAndUpdate({ _id: id }, req.body, {
-        new: true,
+      const saved = new jobModel(schema);
+
+      const doc = await saved.save();
+      return doc;
+    } catch (err) {
+      throw new Error(`Can't Add new job::ERROR:${err}`);
+    }
+  }
+
+  async editJob(id, schema) {
+    try {
+      const doc = await jobModel.findByIdAndUpdate(id, schema, {
+        new: true
       });
-      return response;
-    } catch (e) {
-      throw new Error(`Can't edit job with ID:${id}-e:${e}`);
+      return doc;
+    } catch (err) {
+      throw new Error(`Can't edit job::ERROR:${err}`);
     }
   }
 
-  async deletJob(id) {
+  async deleteJob(id) {
     try {
-      const response = await jobModel.findByIdAndDelete({ _id: job_id });
-      return response;
-    } catch (e) {
-      throw new Error(`Can't delete job with ID:${id}-e:${e}`);
+      const doc = await jobModel.findByIdAndDelete(id);
+      return doc;
+    } catch (err) {
+      throw new Error(`Can't delete job::ERROR:${err}`);
     }
   }
 }
 
-class applicationController {}
+class applicationController {
+  async getApps() {
+    try {
+      const doc = await appModel.find({}).exec();
+      return doc;
+    } catch (err) {
+      throw new Error(`Can't get application::ERROR:${err}`);
+    }
+  }
+
+  async getApp(id) {
+    try {
+      const doc = await appModel.findById(id).exec();
+      return doc;
+    } catch (err) {
+      throw new Error(`Can't get application::ERROR:${err}`);
+    }
+  }
+
+  async addApp(schema) {
+    try {
+      const saved = new appModel(schema);
+
+      const doc = await saved.save();
+      return doc;
+    } catch (err) {
+      throw new Error(`Can't Add new application::ERROR:${err}`);
+    }
+  }
+
+  async editApp(id, schema) {
+    try {
+      const doc = await appModel.findByIdAndUpdate(id, schema, {
+        new: true
+      });
+
+      if (schema.questions) {
+        for (const [objK, objV] of Object.entries(doc.questions)) {
+          schema.questions.forEach((mapV, mapK) => {
+            if (objK == mapK) doc.questions.set(mapK, mapV);
+          });
+        }
+      }
+      return doc;
+    } catch (err) {
+      throw new Error(`Can't edit application::ERROR:${err}`);
+    }
+  }
+
+  async deleteApp(id) {
+    try {
+      const doc = await jobModel.findByIdAndDelete(id);
+      return doc;
+    } catch (err) {
+      throw new Error(`Can't delete application::ERROR:${err}`);
+    }
+  }
+}
 
 module.exports = {
   jobController,
-  applicationController,
+  applicationController
 };
