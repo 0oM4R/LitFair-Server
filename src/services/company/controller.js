@@ -3,28 +3,20 @@ const { upload_image } = require('../../config/cloudinary');
 const { successfulRes, failedRes } = require('../../utils/response');
 
 exports.getCompaniesFull = async (req, res) => {
-  let username = req.query;
+  let email = req.query;
   let response = [];
   try {
 
-    const profile = await companyProfile.findAll(where:{});
-    const info = await companyInfo.find().exec();
-    for(let i=0; i<profile.length && i<info.length; i++){
-      
+    const profiles = await companyProfile.findAll();
+    const infos = await companyInfo.find().exec();
+    for(const profx in profiles){
+      for(const infox in infos){
+        if(profiles[profx] == infos[infox]._id.toString()){
+          response.push({profile: profiles[profx], info: infos[infox]});
+          delete infos[infox]
+        }
+      }
     }
-
-    return successfulRes(res, 200, );
-  } catch (e) {
-    return failedRes(res, 500, e);
-  }
-};
-
-exports.getCompanyProfile = async (req, res) => {
-  try {
-    const username = req.params.username;
-    let profile = companyProfile 
-
-    await response.save();
 
     return successfulRes(res, 200, response);
   } catch (e) {
@@ -32,23 +24,39 @@ exports.getCompanyProfile = async (req, res) => {
   }
 };
 
-exports.addCompany = async (req, res) => {
+exports.getCompanyProfile = async (req, res) => {
+  const username = req.params.username;
+  let response = {profile: 'null', info: 'null'}
   try {
-    // const user_id = res.locals.user.id;
-    const { name, about, writer, cat, type, paragraphs } = req.body;
-    const files = req.files;
+    const profile = await companyProfile.find({where:{username}});
+    if(profile){
+      const info = await companyInfo.findOne({username}).exec();
+      response.profile = profile;
+      response.info = info;
+    }
+    return successfulRes(res, 200, response);
+  } catch (e) {
+    return failedRes(res, 500, e);
+  }
+};
 
-    const saved = new Company({
-      name,
-      about,
-      author: writer,
-      cat,
-      type,
-      icon: 'NULL',
-      img: 'NULL',
-      paragraphs: paragraphs?.map((e) => ({ title: e.split(',')[0], Company: e.split(',')[1] })),
-    });
-    await saved.save();
+exports.addCompany = async (req, res) => {
+  const username = res.locals.username;
+  const { name, nationality, company_size, verified, phone_number, email, title,
+    description, social_links, CRN_num, CRN_exp
+  } = req.body;
+  const files = req.files;
+  try {
+
+    const profile = await companyProfile.create({
+      name, 
+      nationality, 
+      company_size, 
+      verified,
+      phone_number,
+      email, 
+      title
+    }) 
 
     if (files) {
       let photos = [];

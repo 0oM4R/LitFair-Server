@@ -9,7 +9,12 @@ const companyProfile = Sequelize.define('companyProfile', {
     autoIncrement: true,
   },
   username:{
-    type: sequelize.STRING
+    type: sequelize.STRING,
+    allowNull: false,
+    set(v){
+      const storedValue = this.getDataValue('username');
+      this.setDataValue('username', storedValue.split('@')[0])
+    }
   },
   name: {
     type: sequelize.CHAR(20),
@@ -36,7 +41,7 @@ const companyProfile = Sequelize.define('companyProfile', {
 
 
 const companySchema = new mongoose.Schema({
-  username: {type: String},
+  username: {type: String, required: true, set: v=> v.split('@')[0]},
   logo: {type: String},
   CRN: {
     number: { type: String },
