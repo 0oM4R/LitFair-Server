@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const validator = require('validator');
 
 const jobType = {
   fullTime: 'Full Time',
@@ -8,18 +9,26 @@ const jobType = {
   formHome: 'Work From Home'
 };
 
+const experienceType = {
+  freshGrad: 'Fresh Graduate',
+  lessYear: 'Less Than 1 Year',
+  year13: '1-3 Years',
+  more3Year: 'More Than +3 Years'
+};
+
 const jobSchema = new mongoose.Schema(
   {
     title: {
       type: String
     },
-    owner_id: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Company'
+    username: {
+      type: String,
+      required: true,
+      validate: [!validator.isEmail, 'Invalid Email']
     },
-    date_posted: {
-      type: Date,
-      default: Date.now()
+    experience: {
+      type: String,
+      enum: [Object.values(experienceType), 'Invalid exprience']
     },
     job_type: {
       type: String,
@@ -43,14 +52,14 @@ const jobSchema = new mongoose.Schema(
         type: String
       }
     ],
-    applications: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Application'
-      }
-    ],
     description: {
       type: String
+    },
+    application: {
+      title: {
+        type: String
+      },
+      questions: [{ type: String }]
     }
   },
   {
@@ -67,7 +76,7 @@ const jobSchema = new mongoose.Schema(
   }
 );
 
-jobSchema.virtual('applications', {
+jobSchema.virtual('submissions', {
   ref: 'Application',
   localField: '_id',
   foreignField: 'job_post'
@@ -78,18 +87,16 @@ const applicationSchema = new mongoose.Schema(
     title: {
       type: String
     },
-    owner_id: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Seeker'
+    username: {
+      type: String,
+      required: true,
+      validate: [!validator.isEmail, 'Invalid Email']
     },
     job_post: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Job'
     },
-    questions: {
-      type: Map,
-      of: String
-    }
+    answers: [{ type: String }]
   },
   {
     timestamps: {

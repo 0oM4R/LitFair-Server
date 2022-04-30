@@ -2,6 +2,7 @@
 src/DB
 src/middleware
 src/services/seeker
-src/services/user
+src/services/User
+src/services/skills
 src/*.js
 src/*.pem
