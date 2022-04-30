@@ -14,13 +14,10 @@ const getall =async(req,res)=>{
 }
 const search =async(req, res)=>{
     const skill =req.query.skill? req.query.skill.toLowerCase() : ""
-    
     const result =  await skillsModel.find({"Skills Keys" :{$regex : "(^)( *)(^)" + skill}}).limit(20)
     result.forEach(async (e,i)=>{
         result[i]["Skills Keys"]=e["Skills Keys"].toLowerCase();
-        await result[i].save()
-        
-        
+        await result[i].save();
     })   
     res.json(result)
 }
