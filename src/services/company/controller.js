@@ -3,15 +3,16 @@ const { companyProfile, companyInfo } = require('./model');
 const { successfulRes, failedRes } = require('../../utils/response');
 
 exports.getCompaniesFull = async (req, res) => {
-  let response = [];
+  let response =  [];
   try {
     const profiles = await companyProfile.findAll();
     const infos = await companyInfo.find().exec();
     for (const profx in profiles) {
       for (const infox in infos) {
-        if (profiles[profx] == infos[infox]._id.toString()) {
+        if (profiles[profx].username == infos[infox].username) {
           response.push({ profile: profiles[profx], info: infos[infox] });
-          delete infos[infox];
+          infos.splice(infox, 1);
+          break;
         }
       }
     }
@@ -26,7 +27,7 @@ exports.getCompanyFull = async (req, res) => {
   const username = req.params.username;
   let response = { profile: 'null', info: 'null' };
   try {
-    const profile = await companyProfile.find({ where: { username } });
+    const profile = await companyProfile.findOne({ where: { username } });
     if (profile) {
       const info = await companyInfo.findOne({ username }).exec();
       response = { profile, info };
@@ -38,7 +39,8 @@ exports.getCompanyFull = async (req, res) => {
 };
 
 exports.addCompanyFull = async (req, res) => {
-  const username = res.locals.username;
+  // const username = res.locals.username;
+  const username = res.params.username;
   const {
     name,
     nationality,
@@ -95,7 +97,9 @@ exports.addCompanyFull = async (req, res) => {
 };
 
 exports.updateCompanyFull = async (req, res) => {
-  const username = res.locals.username;
+  // const username = res.locals.username;
+  const username = res.params.username;
+  
   const {
     name,
     nationality,
@@ -112,16 +116,10 @@ exports.updateCompanyFull = async (req, res) => {
   const files = req.files;
   let response = { profile: 'null', info: 'null' };
   try {
-    if (
-      name ||
-      nationality ||
-      company_size ||
-      verified ||
-      phone_number ||
-      email ||
-      title
-    ) {
-      const profile = await companyProfile.find({ where: { username } });
+    // prettier-ignore
+    if (name ||nationality ||company_size ||
+      verified ||phone_number || email ||title) {
+      const profile = await companyProfile.findOne({ where: { username } });
       profile.name = name ? name : profile.name;
       profile.nationality = nationality ? nationality : profile.nationality;
       profile.company_size = company_size ? company_size : profile.company_size;
@@ -131,6 +129,7 @@ exports.updateCompanyFull = async (req, res) => {
       profile.title = title ? title : profile.title;
 
       await profile.save();
+      response.profile = profile;
     }
 
     if (description || social_links || CRN_num || CRN_exp) {
@@ -159,9 +158,9 @@ exports.updateCompanyFull = async (req, res) => {
       info.CRN = dummy_CRN ? dummy_CRN : info.CRN;
 
       info.save();
+      response.info = info;
     }
 
-    response = { profile, info };
     return successfulRes(res, 200, response);
   } catch (e) {
     return failedRes(res, 500, e);
@@ -169,7 +168,8 @@ exports.updateCompanyFull = async (req, res) => {
 };
 
 exports.deleteCompanyFull = async (req, res) => {
-  const username = res.locals.username;
+  // const username = res.locals.username;
+  const username = res.params.username;
   let response = { profile: 'null', info: 'null' };
   try {
     const profile = await companyProfile.destroy({ where: { username } });

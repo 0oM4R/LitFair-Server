@@ -23,16 +23,15 @@ const jobSchema = new mongoose.Schema(
     },
     username: {
       type: String,
-      required: true,
-      validate: [!validator.isEmail, 'Invalid Email']
+      required: true
     },
     experience: {
       type: String,
-      enum: [Object.values(experienceType), 'Invalid exprience']
+      enum: [...Object.values(experienceType), 'Invalid exprience']
     },
     job_type: {
       type: String,
-      enum: [Object.values(jobType), 'Invalid Job type name']
+      enum: [...Object.values(jobType), 'Invalid Job type name']
     },
     location: {
       type: String
@@ -63,10 +62,7 @@ const jobSchema = new mongoose.Schema(
     }
   },
   {
-    timestamps: {
-      createdAt,
-      updatedAt
-    },
+    timestamps: true,
     toJSON: {
       virtuals: true
     },
@@ -89,8 +85,7 @@ const applicationSchema = new mongoose.Schema(
     },
     username: {
       type: String,
-      required: true,
-      validate: [!validator.isEmail, 'Invalid Email']
+      required: true
     },
     job_post: {
       type: mongoose.Schema.Types.ObjectId,
@@ -99,10 +94,7 @@ const applicationSchema = new mongoose.Schema(
     answers: [{ type: String }]
   },
   {
-    timestamps: {
-      createdAt,
-      updatedAt
-    }
+    timestamps: true
   }
 );
 
