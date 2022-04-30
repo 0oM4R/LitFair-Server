@@ -1,7 +1,7 @@
 const { jobModel } = require('./model');
 const { successfulRes, failedRes } = require('../../utils/response');
 
-exports.getJobs = (req, res) => {
+exports.getJobs = async (req, res) => {
   const username = res.locals.username;
   const q = req.query;
   try {
@@ -11,7 +11,7 @@ exports.getJobs = (req, res) => {
         if (username == doc[i].username)
           doc[i] = await doc[i].populate('submissions');
       }
-    } else {
+    } else{
       if (username == doc.username) doc = await doc.populate('submissions');
     }
 
@@ -21,7 +21,7 @@ exports.getJobs = (req, res) => {
   }
 };
 
-exports.getJob = (req, res) => {
+exports.getJob = async (req, res) => {
   const _id = req.params.id;
   const username = res.locals.username;
   try {
@@ -33,7 +33,7 @@ exports.getJob = (req, res) => {
   }
 };
 
-exports.addJob = (req, res) => {
+exports.addJob = async (req, res) => {
   const username = res.locals.username;
   const {
     title,
@@ -69,7 +69,7 @@ exports.addJob = (req, res) => {
   }
 };
 
-exports.updateJob = (req, res) => {
+exports.updateJob = async (req, res) => {
   const _id = req.params.id;
   const username = res.locals.username;
   const {
@@ -117,6 +117,11 @@ exports.updateJob = (req, res) => {
 exports.deleteJob = async (req, res) => {
   const _id = req.params.id;
   try {
+    const app = await jobModel.findById(_id).exec();
+
+    if (!app.username == username) {
+      throw new Error('You are NOT authorized to delete this job');
+    }
     const doc = await jobModel.findByIdAndDelete(_id).exec();
 
     return successfulRes(res, 200, doc);

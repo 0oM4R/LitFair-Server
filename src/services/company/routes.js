@@ -11,9 +11,9 @@ const {
 } = require('./controller');
 
 router.get('/companies', getCompaniesFull);
-router.get('/company/:username', getCompanyFull);
-router.post('/company', isCompany, addCompanyFull);
-router.put('/profile', isCompany, updateCompanyFull);
-router.delete('/profile', isCompany, deleteCompanyFull);
+router.get('/company/:username', getCompanyFull);   //company/:username
+router.post('/company/:username', isCompany, addCompanyFull);
+router.put('/company/:username', isCompany, updateCompanyFull);
+router.delete('/company/:username', isCompany, deleteCompanyFull);
 
 module.exports = router;
