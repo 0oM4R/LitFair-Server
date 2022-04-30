@@ -6,8 +6,9 @@ require('dotenv').config();
  * @description SQL_DB instance of connected database.
  */
 const SQL_DB = new Sequelize('sequelizedb', 'Dev', 'LitFair2022#', {
-  host: 'SG-upbeat-soda-3007-5949-mysql-master.servers.mongodirector.com',
+  host: 'sequelizedb.cbbhykvzmbuz.us-east-1.rds.amazonaws.com',
   dialect: 'mysql',
+  port:3306,
   logging: false,
 });
 
