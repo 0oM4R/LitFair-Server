@@ -1,14 +1,33 @@
-const sequelize = require('sequelize');
+const { Sequelize, DataTypes } = require('sequelize');
 const mongoose = require('mongoose');
 
-const companyProfile = Sequelize.define('companyProfile', {
+const validator = require('validator');
+const { company_SQLDB, company_MongoDB } = require('../../config/env');
+
+//Connect Sequelize to database
+const sequelize = new Sequelize(company_SQLDB, {
+  define: {
+    freezeTableName: true
+  }
+});
+//Create All models in database
+sequelize
+  .sync({ alter: true })
+  .then((res) => {
+    console.log(`Company SQLDB has been connected successfully`);
+  })
+  .catch((err) => {
+    console.log('Can NOT connect to Company SQLDB', err);
+  });
+
+const companyProfile = sequelize.define('companyProfile', {
   id: {
-    type: sequelize.INTEGER,
+    type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true
   },
   username: {
-    type: sequelize.STRING,
+    type: DataTypes.STRING,
     allowNull: false,
     set(v) {
       const storedValue = this.getDataValue('username');
@@ -16,34 +35,43 @@ const companyProfile = Sequelize.define('companyProfile', {
     }
   },
   name: {
-    type: sequelize.CHAR(20)
+    type: DataTypes.STRING(20)
   },
   nationality: {
-    type: sequelize.CHAR(10)
+    type: DataTypes.STRING(10)
   },
   company_size: {
-    type: sequelize.INTEGER
+    type: DataTypes.INTEGER
   },
   verified: {
-    type: sequelize.CHAR(20)
+    type: DataTypes.STRING(20)
   },
   phone_number: {
-    type: sequelize.CHAR(14)
+    type: DataTypes.STRING(14)
   },
   email: {
-    type: sequelize.CHAR(50)
+    type: DataTypes.STRING(50)
   },
   title: {
-    type: sequelize.CHAR(280)
+    type: DataTypes.STRING(280)
   }
+});
+
+//Connect mongoose to database
+mongoose
+.connect(company_MongoDB)
+.then(() => {
+  console.log(`Company MongoDB has been connected successfully`);
+})
+.catch((err) => {
+  console.log('Can NOT connect to Company MongoDB', err);
 });
 
 const companySchema = new mongoose.Schema(
   {
     username: {
       type: String,
-      required: true,
-      set: (v) => v.split('@')[0]
+      required: true
     },
     logo: { type: String },
     CRN: {
@@ -55,10 +83,7 @@ const companySchema = new mongoose.Schema(
     social_links: { type: Map, of: String }
   },
   {
-    timestamps: {
-      createdAt,
-      updatedAt
-    }
+    timestamps: true
   }
 );
 

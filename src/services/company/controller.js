@@ -1,5 +1,5 @@
 const { companyProfile, companyInfo } = require('./model');
-const { upload_image } = require('../../config/cloudinary');
+// const { upload_image } = require('../../config/cloudinary');
 const { successfulRes, failedRes } = require('../../utils/response');
 
 exports.getCompaniesFull = async (req, res) => {
@@ -22,7 +22,7 @@ exports.getCompaniesFull = async (req, res) => {
   }
 };
 
-exports.getCompanyProfile = async (req, res) => {
+exports.getCompanyFull = async (req, res) => {
   const username = req.params.username;
   let response = { profile: 'null', info: 'null' };
   try {
@@ -37,7 +37,7 @@ exports.getCompanyProfile = async (req, res) => {
   }
 };
 
-exports.addCompanyProfile = async (req, res) => {
+exports.addCompanyFull = async (req, res) => {
   const username = res.locals.username;
   const {
     name,
@@ -94,7 +94,7 @@ exports.addCompanyProfile = async (req, res) => {
   }
 };
 
-exports.updateCompanyProfile = async (req, res) => {
+exports.updateCompanyFull = async (req, res) => {
   const username = res.locals.username;
   const {
     name,
@@ -168,13 +168,13 @@ exports.updateCompanyProfile = async (req, res) => {
   }
 };
 
-exports.deleteCompanyProfile = async (req, res) => {
+exports.deleteCompanyFull = async (req, res) => {
   const username = res.locals.username;
-
+  let response = { profile: 'null', info: 'null' };
   try {
-    const profile = await companyProfile.find({ where: { username } });
+    const profile = await companyProfile.destroy({ where: { username } });
     if (profile) {
-      const info = await companyInfo.findOne({ username }).exec();
+      const info = await companyInfo.findOneAndDelete({ username }).exec();
       response = { profile, info };
     }
 

@@ -1,44 +1,32 @@
-const { Admin, Vice, Manager, Assistant } = require('../config/titles');
 const { failedRes } = require('../utils/response');
 
-exports.isAdmin = (req, res, next) => {
+exports.isSeeker = (req, res, next) => {
   try {
-    const title = res.locals.user.title;
-    if (title && title == Admin) return next();
-    else throw new Error('You are NOT authorized to Admins Only Routes');
+    res.locals.role = 'Seeker'
+    next()
   } catch (e) {
     if (e instanceof ReferenceError) return failedRes(res, 500, e);
     else return failedRes(res, 401, e);
   }
 };
 
-exports.isVice = (req, res, next) => {
+exports.isCompany = (req, res, next) => {
   try {
-    const title = res.locals.user.title;
-    if (title && title == Vice) return next();
-    else throw new Error('You are NOT authorized to Vices Routes');
+    res.locals.username = '5amisi'
+    res.locals.role = 'Company'
+    next()
   } catch (e) {
     if (e instanceof ReferenceError) return failedRes(res, 500, e);
     else return failedRes(res, 401, e);
   }
 };
+
 
 exports.isManager = (req, res, next) => {
   try {
     const title = res.locals.user.title;
     if (title && title == Manager) return next();
     else throw new Error('You are NOT authorized to Managers Routes');
-  } catch (e) {
-    if (e instanceof ReferenceError) return failedRes(res, 500, e);
-    else return failedRes(res, 401, e);
-  }
-};
-
-exports.isAssistant = (req, res, next) => {
-  try {
-    const title = res.locals.user.title;
-    if (title && title == Assistant) return next();
-    else throw new Error('You are NOT authorized to Assistant Routes');
   } catch (e) {
     if (e instanceof ReferenceError) return failedRes(res, 500, e);
     else return failedRes(res, 401, e);

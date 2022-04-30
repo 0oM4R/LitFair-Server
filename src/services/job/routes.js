@@ -1,16 +1,23 @@
-const express = require('express');
-const job = require('./controller-job');
-require('dotenv').config();
+const router = require('express').Router();
+const {isCompany} = require('../../middleware/authZ');
 
-const route = express.Router();
-const newJob = new job(process.env.MONGODB_URI);
+const {
+  getJobs,
+  getJob,
+  addJob,
+  updateJob,
+  deleteJob
+} = require('./job.controller');
+const { getApps, submitApp, deleteApp } = require('./application.controller');
 
-route.use(express.json());
+route.get('/jobs', getJobs);
+route.get('/job/:id', getJob);
+route.post('/job', addJob);
+route.put('/job/:id', updateJob);
+route.delete('/job/:id', deleteJob);
 
-route.get('/', (req, res) => res.send('hi ser'));
-route.get('/jobs', newJob.getJobs);
-route.get('/job/:id', newJob.getJob);
-route.post('/jobs', newJob.addJob);
-route.delete('/jobs/:id', newJob.deletJob);
+router.get('/applications', getApps);
+router.post('/application/:job_id', submitApp);
+router.delete('/application/:app_id', deleteApp);
 
 module.exports = route;

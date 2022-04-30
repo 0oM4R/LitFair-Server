@@ -4,7 +4,7 @@ const {
   cloudinary_api_key,
   cloudinary_api_secret
 } = require('./env');
-const cloudinary = require('cloudinary').v2;
+// const cloudinary = require('cloudinary').v2;
 const fs = require('fs');
 
 cloudinary.config({

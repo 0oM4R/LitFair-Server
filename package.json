@@ -4,7 +4,7 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "start":"node src/app.js",
+    "start": "node src/app.js",
     "jasmine": "npx jasmine",
     "lint": "eslint . --ext .js",
     "prettier": "prettier --config .prettierrc 'src' --write",
@@ -43,7 +43,9 @@
     "passport": "0.5.2",
     "passport-google-oauth2": "0.2.0",
     "passport-jwt": "4.0.0",
-    "sequelize": "6.17.0"
+    "pg": "8.7.3",
+    "sequelize": "6.17.0",
+    "validator": "13.7.0"
   },
   "devDependencies": {
     "eslint": "8.10.0",
