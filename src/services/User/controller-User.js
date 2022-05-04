@@ -35,6 +35,14 @@ function issueJwt(id) {
   // return 'Bearer ' + signedToken;
 }
 
+function setToken(res,user){
+  res.clearCookie("auth");
+  const tokenObject = issueJwt(user.id);
+  res.cookie("auth",tokenObject,{
+    httpOnly:true,
+  })
+  .json({ user:user, tokenObject: tokenObject });
+}
 const getAllUsers = async (req, res) => {
   console.log(req.user.id)
   let data = await User_model.findAll({});
@@ -61,7 +69,6 @@ const addUser = async (req, res) => {
     email = req.body.email;
     password = req.body.password;
     role = req.body.role;
-
   }
   bcrypt.hash(password, salt, async (err, hash) => {
      try{ 
@@ -88,8 +95,6 @@ const addUser = async (req, res) => {
               res.send({ msg:"success, but no seeker added !"})
             }
         }
-        
-
         res.send({msg:" all success"}) 
       }
      catch(err){
@@ -102,53 +107,39 @@ const addUser = async (req, res) => {
 };
 
 const login = (req, res) => {
-
-  let email =null;
-  let password ="";
-  let provider=null;
-
-  if(req.user){
-    provider = req.user.provider;
-    email = req.user.email;
-    console.log(email,provider);
-  }else {
-    email = req.body.email;
-    password =req.body.password;
-  }
+ 
+  const email = req.body.email;
+  const password =req.body.password;
+  
   User_model.findOne({ where: { email: email } })
     .then(async (user) => {
       if (user) {
         const matches = await bcrypt.compare(password, user.password);
-            if (matches || user.external_type === provider) {
-              res.clearCookie("auth");
-              const tokenObject = issueJwt(user.id);
-              
-              Seeker.findOne({where: { id:user.id}}).then((seeker)=>{
-                if(!seeker){
-                  
-                }
-              })
-
-              
-              res.cookie("auth",tokenObject,{
-                httpOnly:true,
-              })
-              .json({ user: user, tokenObject: tokenObject });
+        if (matches) {
+             setToken(res,user)
         } else {
-          res.json({ msg: 'email or password is incorrect' });
+          res.status(401).json({ msg: 'Invalid email or password' });
         }
       } else {
-        res.status(401).json({ msg: 'Invalid email' });
+        res.status(401).json({ msg: 'Invalid email or password' });
       }
     })
     .catch((err) => {
-      res.status(500).json({ msg: err.message });
+      res.status(500).json({ msg: err.message});
     });
-}
+  }
 
+const googleLogin = (req, res) => {
+    try{
+     setToken(res,req.user)
+    }
+    catch(err){
+      res.status(500).send({ msg: err.message})
+    }
+}
 const logout =(req, res) => {
   res.clearCookie("auth");
-  res.send("loged out")
+  res.sendStatus(200)
 }
-require('..//seeker/model-seeker')
-module.exports = { getAllUsers, addUser, login, logout };
+
+module.exports = { getAllUsers, addUser, login,googleLogin, logout };

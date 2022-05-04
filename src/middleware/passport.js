@@ -79,8 +79,8 @@ const googleOAuthStrategy = new GoogleStrategy({
         done(new Error("Couldn't find please sign up first"),null);
       }
       else{
-        
-        done(null,profile);
+
+        done(null,user);
       }
     })
   }
@@ -88,15 +88,14 @@ const googleOAuthStrategy = new GoogleStrategy({
 
 
 passport.use('jwt', jwtStrategy);
- passport.use('googleOAuth', googleOAuthStrategy);
- passport.use('googleAddUser', googleAddUserStrategy);
+passport.use('googleOAuth', googleOAuthStrategy);
+passport.use('googleAddUser', googleAddUserStrategy);
 
 passport.serializeUser((user, done) => {
   done(null, user);
 });
 
 passport.deserializeUser((user, done) =>{
-  
   done(null, user);
 });
 
