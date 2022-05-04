@@ -29,16 +29,16 @@ const companyProfile = sequelize.define('companyProfile', {
   username: {
     type: DataTypes.STRING,
     allowNull: false,
+    unique: true,
     set(v) {
-      const storedValue = this.getDataValue('username');
-      this.setDataValue('username', storedValue.split('@')[0]);
+      this.setDataValue('username', v.split('@')[0]);
     }
   },
   name: {
     type: DataTypes.STRING(20)
   },
   nationality: {
-    type: DataTypes.STRING(10)
+    type: DataTypes.STRING(20)
   },
   company_size: {
     type: DataTypes.INTEGER
@@ -71,7 +71,8 @@ const companySchema = new mongoose.Schema(
   {
     username: {
       type: String,
-      required: true
+      required: true,
+      unique: true
     },
     logo: { type: String },
     CRN: {
