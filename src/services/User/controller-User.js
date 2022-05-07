@@ -40,6 +40,8 @@ function setToken(res,user){
   const tokenObject = issueJwt(user.id);
   res.cookie("auth",tokenObject,{
     httpOnly:true,
+    sameSite: "none",
+    secure: true
   })
   .json({ user:user, tokenObject: tokenObject });
 }
