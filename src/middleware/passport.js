@@ -48,7 +48,7 @@ const jwtStrategy = new JwtStrategy(options, (payload, done) => {
 const googleAddUserStrategy = new GoogleStrategy({
   clientID:     process.env.GOOGLE_CLIENT_ID_ADD_USER,
   clientSecret: process.env.GOOGLE_CLIENT_SECRET_ADD_USER,
-  callbackURL: "http://127.0.0.1:3000/google/callback/adduser",
+  callbackURL: "https://litfair.herokuapp.com/google/callback/adduser",
   passReqToCallback   : true
   },
   (request, accessToken, refreshToken, profile, done) => { 
@@ -68,7 +68,7 @@ const googleAddUserStrategy = new GoogleStrategy({
 const googleOAuthStrategy = new GoogleStrategy({
   clientID:     process.env.GOOGLE_CLIENT_ID,
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-  callbackURL: "http://127.0.0.1:3000/google/callback",
+  callbackURL: "https://litfair.herokuapp.com/google/callback",
   passReqToCallback   : true
   },
   (request, accessToken, refreshToken, profile, done) => { 

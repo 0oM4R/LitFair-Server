@@ -7,7 +7,7 @@ const path = require('path');
 const console = require('console');
 
 /**
- * @param {*} salt - For password hashing algorithm
+ * @param {*}salt  - For password hashing algorithm
  * @param {*} privKeyPath - Private lic key path
  * @param {*} Priv_key - private key to creat signature of JWT
  **/
