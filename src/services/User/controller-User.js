@@ -16,14 +16,14 @@ const privKeyPath = path.join(__dirname, '../..', 'id_rsa_priv.pem');
 const Priv_key = fs.readFileSync(privKeyPath, 'utf8');
 
 //**************************Generate token**************************************** */
-function issueJwt(id) {
+function issueJwt(user) {
 
   const expiresIn = '1h'; 
 
   const payload = {
-    id: id,
+    id: user.id,
     iat: Math.floor(Date.now() / 1000),
-    
+    role: user.role
   };
 
   const signedToken = jsonwebtoken.sign(payload, Priv_key, {
@@ -37,7 +37,7 @@ function issueJwt(id) {
 
 function setToken(res,user){
   res.clearCookie("auth");
-  const tokenObject = issueJwt(user.id);
+  const tokenObject = issueJwt(user);
   res.cookie("auth",tokenObject,{
     httpOnly:true,
     sameSite: "none",
