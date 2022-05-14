@@ -2,17 +2,16 @@ const { jobModel } = require('./model');
 const { successfulRes, failedRes } = require('../../utils/response');
 
 exports.getJobs = async (req, res) => {
-  const username = res.locals.username;
+  const user = res.locals.user;
   const q = req.query;
   try {
     const doc = await jobModel.find(q).sort('-createdAt');
     if (doc && doc.length && doc.length > 0) {
       for (let i = 0; i < doc.length; i++) {
-        if (username == doc[i].username)
-          doc[i] = await doc[i].populate('submissions');
+        if (user == doc[i].user) doc[i] = await doc[i].populate('submissions');
       }
-    } else{
-      if (username == doc.username) doc = await doc.populate('submissions');
+    } else {
+      if (user == doc.user) doc = await doc.populate('submissions');
     }
 
     return successfulRes(res, 200, doc);
@@ -23,10 +22,10 @@ exports.getJobs = async (req, res) => {
 
 exports.getJob = async (req, res) => {
   const _id = req.params.id;
-  const username = res.locals.username;
+  const user = res.locals.user;
   try {
-    const doc = await jobModel.findById(_id).exec();
-    if (username == doc.username) doc = await doc.populate('submissions');
+    let doc = await jobModel.findById(_id).exec();
+    if (user.id == doc.company_id) doc = await doc.populate('submissions');
     return successfulRes(res, 200, doc);
   } catch (err) {
     return failedRes(res, 500, err);
@@ -34,7 +33,7 @@ exports.getJob = async (req, res) => {
 };
 
 exports.addJob = async (req, res) => {
-  const username = res.locals.username;
+  const user = res.locals.user;
   const {
     title,
     experience,
@@ -45,13 +44,14 @@ exports.addJob = async (req, res) => {
     skills_tools,
     description,
     app_title,
+    app_des,
     app_ques
   } = req.body;
 
   try {
     const doc = new jobModel({
+      company_id: user.id,
       title,
-      username,
       experience,
       job_type,
       location,
@@ -60,6 +60,7 @@ exports.addJob = async (req, res) => {
       skills_tools,
       description,
       app_title,
+      app_des,
       app_ques
     });
     await doc.save();
@@ -71,7 +72,7 @@ exports.addJob = async (req, res) => {
 
 exports.updateJob = async (req, res) => {
   const _id = req.params.id;
-  const username = res.locals.username;
+  const user = res.locals.user;
   const {
     title,
     experience,
@@ -82,11 +83,12 @@ exports.updateJob = async (req, res) => {
     skills_tools,
     description,
     app_title,
+    app_des,
     app_ques
   } = req.body;
   try {
     const doc = await jobModel.findById(_id).exec();
-    if (doc.username != username) {
+    if (doc.company_id != user.id) {
       throw new Error('You are NOT authorized to update this job');
     }
 
@@ -98,17 +100,14 @@ exports.updateJob = async (req, res) => {
     doc.requirements = requirements ? requirements : doc.requirements;
     doc.skills_tools = skills_tools ? skills_tools : doc.skills_tools;
     doc.description = description ? description : doc.description;
-
-    if (!doc.application) {
-      doc.application = { title: null, questions: [] };
-    }
-    doc.application.title = app_title ? app_title : doc.application.title;
-    doc.application.questions = app_ques ? app_ques : doc.application.questions;
+    doc.app_title = app_title ? app_title : doc.app_title;
+    doc.app_des = app_des ? app_des : doc.app_des;
+    doc.app_ques = app_ques ? app_ques : doc.app_ques;
 
     const valid = doc.validateSync();
     if (valid) throw valid;
     await doc.save();
-    return successfulRes(res, 201, doc);
+    return successfulRes(res, 200, doc);
   } catch (err) {
     return failedRes(res, 500, err);
   }
@@ -116,10 +115,11 @@ exports.updateJob = async (req, res) => {
 
 exports.deleteJob = async (req, res) => {
   const _id = req.params.id;
+  const user = res.locals.user;
   try {
-    const app = await jobModel.findById(_id).exec();
+    const job = await jobModel.findById(_id).exec();
 
-    if (!app.username == username) {
+    if (!job.company_id == user.id) {
       throw new Error('You are NOT authorized to delete this job');
     }
     const doc = await jobModel.findByIdAndDelete(_id).exec();

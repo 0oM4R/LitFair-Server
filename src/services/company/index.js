@@ -19,13 +19,4 @@ const companyService = (app) => {
   app.use(routes);
 };
 
-//Create Application
-const app = express();
-companyService(app);
-
-const port = 5052;
-app.listen(port, () => {
-  console.log(`Job Service connected successfully ON port-${port}`);
-});
-
 module.exports = companyService;

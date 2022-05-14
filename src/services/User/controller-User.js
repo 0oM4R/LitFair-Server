@@ -5,6 +5,7 @@ const jsonwebtoken = require('jsonwebtoken');
 const fs = require('fs');
 const path = require('path');
 const console = require('console');
+const { ENV } = require('../../config/env.js');
 
 /**
  * @param {*}salt  - For password hashing algorithm
@@ -41,7 +42,7 @@ function setToken(res,user){
   res.cookie("auth",tokenObject,{
     httpOnly:true,
     sameSite: "none",
-    secure: true
+    secure: ENV == 'dev' ? false : true,
   })
   .json({ user:user, tokenObject: tokenObject });
 }

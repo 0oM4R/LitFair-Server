@@ -37,7 +37,7 @@ const jwtStrategy = new JwtStrategy(options, (payload, done) => {
   User_model.findOne({ where: { id: payload.id } })
     .then((user) => {
       if (user) {
-        return done(null,{id:user.id, rules: user.role,email:user.email});
+        return done(null,{id:user.id, role: user.role, email:user.email});
       } else {
         return done(null, false);
       }

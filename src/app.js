@@ -49,9 +49,17 @@ const {SkillsRoutes}= require('./services/skills/skills.routes')
 const {UserRoutes} = require('./services/User/userRoutes.routes');
 const {SeekerRoutes} = require('./services/seeker/seeker.routes')
 
+//
+const jobService= require('./services/job');
+const companyService = require('./services/company');
+
 app.use(UserRoutes);
 app.use(SeekerRoutes);
 app.use(SkillsRoutes);
+
+//
+jobService(app);
+companyService(app);
 
 app.get('*', (req, res) => {
   res.send({msg:"hi anyone"});
