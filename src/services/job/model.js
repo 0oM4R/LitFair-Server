@@ -20,7 +20,7 @@ const experienceType = {
 //prettier-ignore
 const jobSchema = new mongoose.Schema(
   {
-    company_id: { type: Number, required: [true, '_id field MUST be added manually'] },
+    company_id: { type: Number, required: [true, '_id field MUST be added manually'], ref: 'CompanyInfo' },
     title: { type: String },
     experience: { type: String, enum: [...Object.values(experienceType), 'Invalid exprience'] },
     job_type: { type: String, enum: [...Object.values(jobType), 'Invalid Job type name'] },
@@ -60,20 +60,20 @@ const applicationSchema = new mongoose.Schema(
   }
 );
 
-const jobConnection = () => {
-  return async () => {
-    mongoose
-      .createConnection(job_DB)
-      .asPromise()
-      .then((conn) => {
-        console.log(`Job database has been connected`);
-        return conn;
-      })
-      .catch((err) => {
-        console.log(`Can NOT connect to JOB database`);
-      });
-  };
-};
+// const jobConnection = async () => {
+  
+  
+//   conn
+//   .then((conn) => {
+//     console.log(`Job database has been connected`);
+//     return conn;
+//     })
+//     .catch((err) => {
+//       console.log(`Can NOT connect to JOB database`);
+//       return err;
+//     });
+//   };
+  const jobConnection =  mongoose.createConnection(job_DB);
 
 module.exports = {
   jobType,

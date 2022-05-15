@@ -1,25 +1,26 @@
 const express = require('express');
 const app = express();
-// enable CORS for all routes
 const cors = require('cors');
-app.use(cors(
-  { 
-    origin: true,
-    credentials: true}
-));
-
 const morgan = require('morgan');
-//cookies parse
 const cookies = require('cookie-parser');
-app.use(cookies())
-require('dotenv').config();
-app.use(express.json());
-//app.use(morgan("dev"));
 
+require('dotenv').config();
+
+
+const {SkillsRoutes}= require('./services/skills/skills.routes')
+const {UserRoutes} = require('./services/User/userRoutes.routes');
+const {SeekerRoutes} = require('./services/seeker/seeker.routes')
+
+const jobService= require('./services/job');
+const companyService = require('./services/company');
+
+const port = process.env.PORT || 8000;
+
+/*
 app.use((req,res,next)=>{
- 
+  
   const os =(req)=>{
-   const agent=req.get("user-agent")
+    const agent=req.get("user-agent")
     if(agent.search("Win64")!= -1){
       return "Windows";
     }else if(agent.search("Android")!=-1){
@@ -27,7 +28,7 @@ app.use((req,res,next)=>{
     }else if(agent.search("iPhone OS")){
       return "iOS";
     }
- 
+    
   }
   
    time = new Date(); 
@@ -40,24 +41,27 @@ app.use((req,res,next)=>{
    console.log(req.get("user-agent"))
    console.log("#################################")
    next()})
- 
+   
+*/
+
+
+app.use(cors(
+  { 
+    origin: true,
+    credentials: true}
+));  
+app.use(cookies())
+app.use(express.json());
+app.use(morgan("dev"));
+
+
 const testConnection = require('./DB/SQL.config').testConnection;
 testConnection();
-
-
-const {SkillsRoutes}= require('./services/skills/skills.routes')
-const {UserRoutes} = require('./services/User/userRoutes.routes');
-const {SeekerRoutes} = require('./services/seeker/seeker.routes')
-
-//
-const jobService= require('./services/job');
-const companyService = require('./services/company');
 
 app.use(UserRoutes);
 app.use(SeekerRoutes);
 app.use(SkillsRoutes);
 
-//
 jobService(app);
 companyService(app);
 
@@ -65,4 +69,4 @@ app.get('*', (req, res) => {
   res.send({msg:"hi anyone"});
 });
 
-app.listen(process.env.PORT || 3000);
+app.listen(port, ()=>{console.log(`Server Listing on PORT-${port}`)});

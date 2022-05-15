@@ -29,7 +29,8 @@ exports.getCompanyFull = async (req, res) => {
   try {
     const profile = await companyProfile.findOne({ where: { id: user.id } });
     if (profile) {
-      const info = await companyInfo.findById(profile.id).exec();
+      let info = await companyInfo.findById(profile.id).exec();
+      info = await info.populate('posted_job');
       response = { profile, info };
     }
     return successfulRes(res, 200, response);
@@ -51,7 +52,7 @@ exports.addCompanyFull = async (req, res) => {
     CRN_num,
     CRN_exp,
     description,
-    social_links
+    social
   } = req.body;
   let response = { profile: 'null', info: 'null' };
 
@@ -75,7 +76,7 @@ exports.addCompanyFull = async (req, res) => {
       CRN: { number: CRN_num, thumbnail: 'NULL', exp_date: CRN_exp },
       logo: 'NULL',
       description,
-      social_links
+      social
     });
 
     if (files) {
@@ -109,7 +110,7 @@ exports.updateCompanyFull = async (req, res) => {
     CRN_num,
     CRN_exp,
     description,
-    social_links
+    social
   } = req.body;
   const files = req.files;
   let response = { profile: 'null', info: 'null' };
@@ -130,11 +131,11 @@ exports.updateCompanyFull = async (req, res) => {
       response.profile = profile;
     }
 
-    if (description || social_links || CRN_num || CRN_exp) {
+    if (description || social || CRN_num || CRN_exp) {
       const info = await companyInfo.findById(user.id).exec();
 
       info.description = description ? description : info.description;
-      info.social_links = social_links ? social_links : info.social_links;
+      info.social = social ? social : info.social;
 
       if (files) {
         info.logo = files[0]
