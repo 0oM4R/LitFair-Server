@@ -16,7 +16,7 @@ const companyService = require('./services/company');
 
 const port = process.env.PORT || 8000;
 
-/*
+
 app.use((req,res,next)=>{
   
   const os =(req)=>{
@@ -42,7 +42,6 @@ app.use((req,res,next)=>{
    console.log("#################################")
    next()})
    
-*/
 
 
 app.use(cors(
