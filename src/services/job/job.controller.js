@@ -1,3 +1,4 @@
+
 const { jobModel } = require('./model');
 const { successfulRes, failedRes } = require('../../utils/response');
 
@@ -129,3 +130,4 @@ exports.deleteJob = async (req, res) => {
     return failedRes(res, 500, err);
   }
 };
+

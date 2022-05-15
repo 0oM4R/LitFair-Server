@@ -1,12 +1,11 @@
 /*******************************MONGODB************************************* */
 const mongoose = require('mongoose')
-// const TokenSchema = new mongoose.Schema({
-//     _id: String,
-//     token: [String]
-// })
-
-const  connection =async ()=>{
-    return  await mongoose.connect(process.env.DB_STRING)
+/**
+ * @param {string} DB_name - database name
+ */
+const  connection =async (DB_name)=>{
+   let DB_STRING= process.env.DB_STRING.replace(/DBname/g,DB_name)
+    return  await mongoose.connect(DB_STRING)
     .then(
          ()=> console.log('DB connection established')
      );

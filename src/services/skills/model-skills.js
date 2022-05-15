@@ -1,7 +1,7 @@
 const connection= require('../../DB/MongDB.config')
 const mongoose = require('mongoose');
 
-const schema = new mongoose.Schema({ 'Skills Keys': String },{ versionKey: false });
+const schema = new mongoose.Schema({ 'skills': String },{ versionKey: false });
 const skillsModel = mongoose.model('skills', schema);
 
 // const getall =async()=>{
