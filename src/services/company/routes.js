@@ -1,6 +1,5 @@
 const router = require('express').Router();
-const {isCompany} = require('../../middleware/authZ');
-
+const { isCompany } = require('../../middleware/authZ');
 
 const {
   getCompaniesFull,
@@ -11,9 +10,9 @@ const {
 } = require('./controller');
 
 router.get('/companies', getCompaniesFull);
-router.get('/company/:username', getCompanyFull);   //company/:username
-router.post('/company/:username', isCompany, addCompanyFull);
-router.put('/company/:username', isCompany, updateCompanyFull);
-router.delete('/company/:username', isCompany, deleteCompanyFull);
+router.get('/company/:id', getCompanyFull);
+router.post('/company', isCompany, addCompanyFull);
+router.put('/company/:id', isCompany, updateCompanyFull);
+router.delete('/company/:id', isCompany, deleteCompanyFull);
 
 module.exports = router;

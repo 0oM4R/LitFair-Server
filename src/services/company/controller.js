@@ -3,13 +3,13 @@ const { companyProfile, companyInfo } = require('./model');
 const { successfulRes, failedRes } = require('../../utils/response');
 
 exports.getCompaniesFull = async (req, res) => {
-  let response =  [];
+  let response = [];
   try {
     const profiles = await companyProfile.findAll();
     const infos = await companyInfo.find().exec();
     for (const profx in profiles) {
       for (const infox in infos) {
-        if (profiles[profx].username == infos[infox].username) {
+        if (profiles[profx].id == infos[infox]._id) {
           response.push({ profile: profiles[profx], info: infos[infox] });
           infos.splice(infox, 1);
           break;
@@ -24,12 +24,13 @@ exports.getCompaniesFull = async (req, res) => {
 };
 
 exports.getCompanyFull = async (req, res) => {
-  const username = req.params.username;
+  const user = req.params.user;
   let response = { profile: 'null', info: 'null' };
   try {
-    const profile = await companyProfile.findOne({ where: { username } });
+    const profile = await companyProfile.findOne({ where: { id: user.id } });
     if (profile) {
-      const info = await companyInfo.findOne({ username }).exec();
+      let info = await companyInfo.findById(profile.id).exec();
+      info = await info.populate('posted_job');
       response = { profile, info };
     }
     return successfulRes(res, 200, response);
@@ -39,8 +40,7 @@ exports.getCompanyFull = async (req, res) => {
 };
 
 exports.addCompanyFull = async (req, res) => {
-  // const username = res.locals.username;
-  const username = res.params.username;
+  const user = res.params.user;
   const {
     name,
     nationality,
@@ -49,17 +49,17 @@ exports.addCompanyFull = async (req, res) => {
     phone_number,
     email,
     title,
-    description,
-    social_links,
     CRN_num,
-    CRN_exp
+    CRN_exp,
+    description,
+    social
   } = req.body;
   let response = { profile: 'null', info: 'null' };
 
   const files = req.files;
   try {
     const profile = await companyProfile.build({
-      username,
+      id: user.id,
       name,
       nationality,
       company_size,
@@ -72,20 +72,20 @@ exports.addCompanyFull = async (req, res) => {
     await profile.save();
 
     let info = new companyInfo({
-      username,
+      _id: user.id,
+      CRN: { number: CRN_num, thumbnail: 'NULL', exp_date: CRN_exp },
       logo: 'NULL',
       description,
-      social_links,
-      CRN: { number: CRN_num, thumbnail: 'NULL', expDate: CRN_exp }
+      social
     });
 
     if (files) {
       info.logo = files[0]
         ? await upload_image(files[0], `${info._id}_logo`, 'Companies_logos')
-        : undefined;
+        : 'null';
       info.CRN.thumbnail = files[1]
         ? await upload_image(files[1], `${info._id}_CRN`, 'Companies_CRN')
-        : undefined;
+        : 'null';
     }
     await info.save();
 
@@ -97,9 +97,8 @@ exports.addCompanyFull = async (req, res) => {
 };
 
 exports.updateCompanyFull = async (req, res) => {
-  // const username = res.locals.username;
-  const username = res.params.username;
-  
+  const user = res.locals.user;
+
   const {
     name,
     nationality,
@@ -108,10 +107,10 @@ exports.updateCompanyFull = async (req, res) => {
     phone_number,
     email,
     title,
-    description,
-    social_links,
     CRN_num,
-    CRN_exp
+    CRN_exp,
+    description,
+    social
   } = req.body;
   const files = req.files;
   let response = { profile: 'null', info: 'null' };
@@ -119,7 +118,7 @@ exports.updateCompanyFull = async (req, res) => {
     // prettier-ignore
     if (name ||nationality ||company_size ||
       verified ||phone_number || email ||title) {
-      const profile = await companyProfile.findOne({ where: { username } });
+      const profile = await companyProfile.findOne({ where: { id: user.id } });
       profile.name = name ? name : profile.name;
       profile.nationality = nationality ? nationality : profile.nationality;
       profile.company_size = company_size ? company_size : profile.company_size;
@@ -132,30 +131,23 @@ exports.updateCompanyFull = async (req, res) => {
       response.profile = profile;
     }
 
-    if (description || social_links || CRN_num || CRN_exp) {
-      const info = await companyInfo.findOne({ username }).exec();
+    if (description || social || CRN_num || CRN_exp) {
+      const info = await companyInfo.findById(user.id).exec();
 
       info.description = description ? description : info.description;
-      info.social_links = social_links ? social_links : info.social_links;
-
-      let dummy_CRN = {
-        number: info.CRN?.number,
-        thumbnail: info.CRN?.thumbnail,
-        expDate: info.CRN?.expDate
-      };
+      info.social = social ? social : info.social;
 
       if (files) {
         info.logo = files[0]
           ? await upload_image(files[0], `${info._id}_logo`, 'Companies_logos')
           : info.logo;
-        dummy_CRN.thumbnail = files[0]
+        info.CRN.thumbnail = files[0]
           ? await upload_image(files[1], `${info._id}_CRN`, 'Companies_CRN')
-          : dummy_CRN.thumbnail;
+          : info.CRN.thumbnail;
       }
 
-      dummy_CRN.number = CRN_num ? CRN_num : dummy_CRN.number;
-      dummy_CRN.thumbnail = CRN_num ? CRN_num : dummy_CRN.number;
-      info.CRN = dummy_CRN ? dummy_CRN : info.CRN;
+      info.CRN.number = CRN_num ? CRN_num : info.CRN.number;
+      info.CRN.exp_date = CRN_num ? CRN_num : info.CRN.exp_date;
 
       info.save();
       response.info = info;
@@ -168,13 +160,12 @@ exports.updateCompanyFull = async (req, res) => {
 };
 
 exports.deleteCompanyFull = async (req, res) => {
-  // const username = res.locals.username;
-  const username = res.params.username;
+  const user = res.params.user;
   let response = { profile: 'null', info: 'null' };
   try {
-    const profile = await companyProfile.destroy({ where: { username } });
+    const profile = await companyProfile.destroy({ where: { id: user.id } });
     if (profile) {
-      const info = await companyInfo.findOneAndDelete({ username }).exec();
+      const info = await companyInfo.findByIdAndDelete(user.id).exec();
       response = { profile, info };
     }
 
