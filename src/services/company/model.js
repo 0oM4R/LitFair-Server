@@ -20,75 +20,45 @@ sequelize
     console.log('Can NOT connect to Company SQLDB', err);
   });
 
+//prettier-ignore
 const companyProfile = sequelize.define('companyProfile', {
-  id: {
-    type: DataTypes.INTEGER,
-    primaryKey: true,
-    autoIncrement: true
-  },
-  username: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    unique: true,
-    set(v) {
-      this.setDataValue('username', v.split('@')[0]);
-    }
-  },
-  name: {
-    type: DataTypes.STRING(20)
-  },
-  nationality: {
-    type: DataTypes.STRING(20)
-  },
-  company_size: {
-    type: DataTypes.INTEGER
-  },
-  verified: {
-    type: DataTypes.STRING(20)
-  },
-  phone_number: {
-    type: DataTypes.STRING(14)
-  },
-  email: {
-    type: DataTypes.STRING(50)
-  },
-  title: {
-    type: DataTypes.STRING(280)
-  }
+  id: { type: DataTypes.INTEGER, primaryKey: true },
+  name: { type: DataTypes.STRING(20) },
+  nationality: { type: DataTypes.STRING(20) },
+  company_size: { type: DataTypes.INTEGER },
+  verified: { type: DataTypes.STRING(20) },
+  phone_number: { type: DataTypes.STRING(14) },
+  email: { type: DataTypes.STRING(50) },
+  title: { type: DataTypes.STRING(280) }
 });
 
-//Connect mongoose to database
-mongoose
-.connect(company_MongoDB)
-.then(() => {
-  console.log(`Company MongoDB has been connected successfully`);
-})
-.catch((err) => {
-  console.log('Can NOT connect to Company MongoDB', err);
-});
-
+//prettier-ignore
 const companySchema = new mongoose.Schema(
   {
-    username: {
-      type: String,
-      required: true,
-      unique: true
-    },
+    _id: { type: Number, required: true,},
     logo: { type: String },
+    social: { type: Map, of: String },
     CRN: {
       number: { type: String },
       thumbnail: { type: String },
-      expDate: { type: Date }
+      exp_date: { type: Date }
     },
     description: { type: String },
-    social_links: { type: Map, of: String }
   },
   {
     timestamps: true
   }
 );
 
+companySchema.virtual('posted_job', {
+  ref: 'Job',
+  localField: '_id',
+  foreignField: 'company_id'
+});
+
+const companyConnection = mongoose.createConnection(company_MongoDB);
+
 module.exports = {
   companyProfile,
-  companyInfo: mongoose.model('CompanyInfo', companySchema)
+  companyInfo: companyConnection.model('CompanyInfo', companySchema)
 };

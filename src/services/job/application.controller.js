@@ -2,10 +2,10 @@ const { appModel } = require('./model');
 const { successfulRes, failedRes } = require('../../utils/response');
 
 exports.getApps = async (req, res) => {
-  const username = res.locals.username;
+  const user = res.locals.user;
 
   try {
-    const doc = await appModel.find({ username }).exec();
+    const doc = await appModel.find({ applicant_id: user.id }).exec();
 
     return successfulRes(res, 200, doc);
   } catch (err) {
@@ -14,12 +14,12 @@ exports.getApps = async (req, res) => {
 };
 
 exports.submitApp = async (req, res) => {
-  const username = res.locals.username;
+  const user = res.locals.user;
   const job_id = req.params.job_id;
   const { answers } = req.body;
   try {
     const doc = new appModel({
-      username,
+      applicant_id: user.id,
       job_post: job_id,
       answers
     });
@@ -32,15 +32,15 @@ exports.submitApp = async (req, res) => {
 
 exports.deleteApp = async (req, res) => {
   const app_id = req.params.app_id;
-  const username = res.locals.username;
+  const user = res.locals.user;
 
   try {
     const app = await appModel.findById(app_id).exec();
 
-    if (!app.username == username) {
+    if (!app.applicant_id == user.id) {
       throw new Error('You are NOT authorized to delete this application');
     }
-    const doc = await appModel.findByIdAndDelete(_id).exec();
+    const doc = await appModel.findByIdAndDelete(app_id).exec();
     return successfulRes(res, 200, doc);
   } catch (err) {
     return failedRes(res, 500, err);
