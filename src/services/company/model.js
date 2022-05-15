@@ -35,20 +35,26 @@ const companyProfile = sequelize.define('companyProfile', {
 //prettier-ignore
 const companySchema = new mongoose.Schema(
   {
-    _id: { type: Number, required: true, unique: true },
+    _id: { type: Number, required: true,},
     logo: { type: String },
+    social: { type: Map, of: String },
     CRN: {
       number: { type: String },
       thumbnail: { type: String },
       exp_date: { type: Date }
     },
     description: { type: String },
-    social_links: { type: Map, of: String }
   },
   {
     timestamps: true
   }
 );
+
+companySchema.virtual('posted_job', {
+  ref: 'Job',
+  localField: '_id',
+  foreignField: 'company_id'
+});
 
 const companyConnection = mongoose.createConnection(company_MongoDB);
 

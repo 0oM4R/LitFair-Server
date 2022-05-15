@@ -10,7 +10,7 @@ const {
 } = require('./controller');
 
 router.get('/companies', getCompaniesFull);
-router.get('/company/:id', getCompanyFull); //company/:username
+router.get('/company/:id', getCompanyFull);
 router.post('/company', isCompany, addCompanyFull);
 router.put('/company/:id', isCompany, updateCompanyFull);
 router.delete('/company/:id', isCompany, deleteCompanyFull);
