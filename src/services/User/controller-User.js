@@ -43,8 +43,7 @@ function setToken(res,user){
     httpOnly:true,
     sameSite: "none",
     secure: ENV == 'dev' ? false : true,
-  })
-  .json({ user:user, tokenObject: tokenObject });
+  }).redirect("http://localhost/3000/");
 }
 const getAllUsers = async (req, res) => {
   console.log(req.user.id)
@@ -133,14 +132,7 @@ const login = (req, res) => {
 
 const googleLogin = (req, res) => {
     try{
-      console.log(req.user)
-    res.clearCookie("auth");
-  const tokenObject = issueJwt(req.user);
-  res.cookie("auth",tokenObject,{
-    httpOnly:true,
-    sameSite: "none",
-    secure: ENV == 'dev' ? false : true,
-  })
+     setToken(res,req.user)
     }
     catch(err){
       res.status(500).send({ msg: err.message})
