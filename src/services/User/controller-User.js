@@ -37,7 +37,7 @@ function issueJwt(user) {
 }
 
 function setToken(res,user){
-  res.redirect("http://localhost:3000/").clearCookie("auth");
+  res.redirect("https://litfair.herokuapp.com/hi").clearCookie("auth");
   const tokenObject = issueJwt(user);
   res.cookie("auth",tokenObject,{
     //httpOnly:true,

@@ -10,7 +10,9 @@ router.delete('/logout', controller.logout);
 
 router.get('/google/login', auth.googleAuthenticate);
 router.get('/google/callback', auth.googleCallback, controller.googleLogin);
-
+router.all('/hi',(req, res)=>{
+    res.send({"msg":req.user})
+});
 router.get('/google/addUser', auth.googleAuthenticateAddUser);
 router.get('/google/callback/addUser', auth.googleCallbackAddUser, controller.addUser);
 
