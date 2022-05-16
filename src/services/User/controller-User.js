@@ -134,7 +134,7 @@ const login = (req, res) => {
 const googleLogin = (req, res) => {
     try{
       res.clearCookie("auth");
-      const tokenObject = issueJwt(user);
+      const tokenObject = "test";
       res.cookie("auth",tokenObject,{
         httpOnly:true,
         sameSite: "none",
