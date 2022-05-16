@@ -37,14 +37,14 @@ function issueJwt(user) {
 }
 
 function setToken(res,user){
-  res.clearCookie("auth");
+  res.redirect("http://localhost:3000/").clearCookie("auth");
   const tokenObject = issueJwt(user);
   res.cookie("auth",tokenObject,{
     httpOnly:true,
     sameSite: "none",
     //secure: ENV == 'dev' ? false : true,
   })
-  .redirect("http://localhost:3000/").status(302);
+  ;
 }
 const getAllUsers = async (req, res) => {
   console.log(req.user.id)
