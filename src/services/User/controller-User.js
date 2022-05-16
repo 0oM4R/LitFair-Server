@@ -133,6 +133,7 @@ const login = (req, res) => {
 
 const googleLogin = (req, res) => {
     try{
+      console.log(req.user)
     res.clearCookie("auth");
   const tokenObject = issueJwt(req.user);
   res.cookie("auth",tokenObject,{
