@@ -133,13 +133,13 @@ const login = (req, res) => {
 
 const googleLogin = (req, res) => {
     try{
-      res.clearCookie("auth");
-      const tokenObject = "test";
-      res.cookie("auth",tokenObject,{
-        httpOnly:true,
-        sameSite: "none",
-        secure: ENV == 'dev' ? false : true,
-      }).redirect("http://localhost:3000/")
+    res.clearCookie("auth");
+  const tokenObject = issueJwt(req.user);
+  res.cookie("auth",tokenObject,{
+    httpOnly:true,
+    sameSite: "none",
+    secure: ENV == 'dev' ? false : true,
+  })
     }
     catch(err){
       res.status(500).send({ msg: err.message})
