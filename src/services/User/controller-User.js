@@ -37,7 +37,7 @@ function issueJwt(user) {
 }
 
 function setToken(res,user){
-  clearCookie("auth");
+  res.clearCookie("auth");
   const tokenObject = issueJwt(user);
   res.cookie("auth",tokenObject,{
     //httpOnly:true,
