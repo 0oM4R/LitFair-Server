@@ -133,7 +133,7 @@ const login = (req, res) => {
 
 const googleLogin = (req, res) => {
     try{
-     res.redirect("http://localhost:5000/")
+     res.redirect("http://localhost:3000/")
     }
     catch(err){
       res.status(500).send({ msg: err.message})
