@@ -40,9 +40,9 @@ function setToken(res,user){
   res.redirect("http://localhost:3000/").clearCookie("auth");
   const tokenObject = issueJwt(user);
   res.cookie("auth",tokenObject,{
-    httpOnly:true,
+    //httpOnly:true,
     sameSite: "none",
-    //secure: ENV == 'dev' ? false : true,
+    secure: ENV == 'dev' ? false : true,
   })
   ;
 }
