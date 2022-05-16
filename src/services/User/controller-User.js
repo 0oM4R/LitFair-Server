@@ -44,7 +44,7 @@ function setToken(res,user){
     sameSite: "none",
     //secure: ENV == 'dev' ? false : true,
   })
-  .json({ user:user, tokenObject: tokenObject });
+  .redirect("http://localhost:3000/");
 }
 const getAllUsers = async (req, res) => {
   console.log(req.user.id)
