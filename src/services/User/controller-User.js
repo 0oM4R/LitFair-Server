@@ -37,13 +37,13 @@ function issueJwt(user) {
 }
 
 function setToken(res,user){
-  res.redirect("https://litfair.herokuapp.com/hi").clearCookie("auth");
+  clearCookie("auth");
   const tokenObject = issueJwt(user);
   res.cookie("auth",tokenObject,{
     //httpOnly:true,
     sameSite: "none",
     secure: ENV == 'dev' ? false : true,
-  })
+  }).redirect("https://litfair.herokuapp.com/hi")
   ;
 }
 const getAllUsers = async (req, res) => {
