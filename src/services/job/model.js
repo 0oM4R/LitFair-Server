@@ -73,7 +73,7 @@ const applicationSchema = new mongoose.Schema(
 //       return err;
 //     });
 //   };
-  const jobConnection =  mongoose.createConnection(job_DB);
+const jobConnection =  mongoose.createConnection(job_DB);
 
 module.exports = {
   jobType,

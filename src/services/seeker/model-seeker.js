@@ -1,10 +1,10 @@
 const {SQL_DB, createTable,Sequelize} =require("../../DB/SQL.config")
 const User_model = require('../User/model-User').User_model
-
+ 
 const phoneValidationRegex = /^[+]\d{9,13}/
 
 
-const Seeker =SQL_DB.define('Seeker',{
+const SeekerBase =SQL_DB.define('Seeker',{
       
       date_of_birth :{
         type: Sequelize.DATE,
@@ -58,18 +58,34 @@ const Seeker =SQL_DB.define('Seeker',{
   timestamps: false
 })
 
-Seeker.belongsTo(User_model,{
+SeekerBase.belongsTo(User_model,{
   foreignKey:"id",
   primaryKey:true,
   onUpdate:"CASCADE",
   onDelete:"CASCADE"
 });
-Seeker.belongsTo(User_model,{
+SeekerBase.belongsTo(User_model,{
   foreignKey: "email",
   targetKey: "email",
   onUpdate: "CASCADE",
   onDelete: "RESTRICT"
 })
-Seeker.sync();
 
-module.exports = {Seeker}
+SeekerBase.sync();
+
+
+//mongoose schema
+const mongoose = require('mongoose')
+const schema = mongoose.Schema(
+  {
+    _id:{
+      type: Number, 
+      required: [true, '_id field MUST be added manually']
+    }
+    
+
+  }
+)
+
+
+module.exports = {SeekerBase}

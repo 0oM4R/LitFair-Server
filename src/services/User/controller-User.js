@@ -55,7 +55,7 @@ const getAllUsers = async (req, res) => {
 const addUser = async (req, res) => {
 
   let email = null;
-  let password = "";
+  let password = null;
   let provider = null;
   let external_id = null;
   let role= null;
@@ -101,8 +101,7 @@ const addUser = async (req, res) => {
         res.send({msg:" all success"}) 
       }
      catch(err){
-       console.log(err.message)
-       res.json({ msg: err.message });
+       res.json({ msg: err.message }).status(400);
      };
   });
 
@@ -134,7 +133,7 @@ const login = (req, res) => {
 
 const googleLogin = (req, res) => {
     try{
-     setToken(res,req.user)
+     res.redirect("http://localhost:5000/")
     }
     catch(err){
       res.status(500).send({ msg: err.message})
