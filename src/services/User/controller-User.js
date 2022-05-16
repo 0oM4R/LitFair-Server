@@ -42,8 +42,9 @@ function setToken(res,user){
   res.cookie("auth",tokenObject,{
     httpOnly:true,
     sameSite: "none",
-    secure: ENV == 'dev' ? false : true,
-  }).redirect("http://localhost:3000/");
+    //secure: ENV == 'dev' ? false : true,
+  })
+  .json({ user:user, tokenObject: tokenObject });
 }
 const getAllUsers = async (req, res) => {
   console.log(req.user.id)
