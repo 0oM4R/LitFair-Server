@@ -84,7 +84,22 @@ const addUser = async (req, res) => {
           role,
           external_type: provider,
           external_id
-        })
+        }).then(
+          () => { if(role==="Seeker"){
+          fname = req.body.fname;
+          lname = req.body.lname;
+          try{Seeker.create(
+            {
+              id:user.id,
+              email:user.email,
+              fname:fname,
+              lname:lname
+            })}
+            catch(err){
+              res.send({ msg:"success, but no seeker added !"})
+            }
+        }
+        res.send({msg:" all success"}) })
         //create new seeker
         if(role==="Seeker"){
           fname = req.body.fname;
