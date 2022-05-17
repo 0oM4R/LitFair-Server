@@ -44,7 +44,7 @@ function setToken(res,user){
     //httpOnly:true,
     sameSite: "none",
     secure: ENV == 'dev' ? false : true,
-  }).send("success")
+  }).send(tokenObject)
   //.redirect("https://litfair.herokuapp.com/hi")
   ;
 }
