@@ -7,7 +7,7 @@ const cookies = require('cookie-parser');
 require('dotenv').config();
 
 
-const {SkillsRoutes}= require('./services/skills/skills.routes')
+const {SkillsRoutes}= require('./services/search/skills/skills.routes')
 const {UserRoutes} = require('./services/User/userRoutes.routes');
 const {SeekerRoutes} = require('./services/seeker/seeker.routes')
 

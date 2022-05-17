@@ -6,6 +6,7 @@ const fs = require('fs');
 const path = require('path');
 const console = require('console');
 const { ENV } = require('../../config/env.js');
+const { send } = require('process');
 
 /**
  * @param {*}salt  - For password hashing algorithm
@@ -43,7 +44,8 @@ function setToken(res,user){
     //httpOnly:true,
     sameSite: "none",
     secure: ENV == 'dev' ? false : true,
-  }).redirect("https://litfair.herokuapp.com/hi")
+  }).send("success")
+  //.redirect("https://litfair.herokuapp.com/hi")
   ;
 }
 const getAllUsers = async (req, res) => {

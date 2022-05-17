@@ -10,6 +10,7 @@ const  connection =async (DB_name)=>{
          ()=> console.log('DB connection established')
      );
  };
+ 
 
 // const tokenModel = mongoose.model('Token', TokenSchema);
 module.exports = connection
