@@ -1,9 +1,9 @@
 
 const mongoose = require('mongoose');
-const schema = new mongoose.Schema({ 'skills': String },{ versionKey: false });
-let DB_STRING= process.env.DB_STRING.replace(/DBname/g,"skills")
+const schema = new mongoose.Schema({ 'jobCategories': String },{ versionKey: false });
+let DB_STRING= process.env.DB_STRING.replace(/DBname/g,"jobCategories")
 const conn = mongoose.createConnection(DB_STRING)
-const skillsModel=conn.model("skills",schema)
+const jobCategoriesModel=conn.model("jobCategories",schema)
 
 const disconnect = ()=>{
     console.log(mongoose.connection.readyState);
@@ -21,4 +21,4 @@ const disconnect = ()=>{
 //     const result =  await skills.find({"Skills Keys" :{$regex : "^" + req.params.skills}})
 // }
 
-module.exports = {skillsModel, disconnect };
+module.exports = {jobCategoriesModel, disconnect };

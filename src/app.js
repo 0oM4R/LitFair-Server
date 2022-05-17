@@ -8,6 +8,8 @@ require('dotenv').config();
 
 
 const {SkillsRoutes}= require('./services/search/skills/skills.routes')
+const {JobTitleRoutes}= require('./services/search/jobTitle/jobtitle.routes')
+const {JobCategoriesRoutes}= require('./services/search/jobCategory/jobCategories.routes')
 const {UserRoutes} = require('./services/User/userRoutes.routes');
 const {SeekerRoutes} = require('./services/seeker/seeker.routes')
 
@@ -60,7 +62,8 @@ testConnection();
 app.use(UserRoutes);
 app.use(SeekerRoutes);
 app.use(SkillsRoutes);
-
+app.use(JobTitleRoutes);
+app.use(JobCategoriesRoutes)
 //jobService(app);
 //companyService(app);
 
