@@ -118,7 +118,7 @@ const addUser = async (req, res) => {
         res.send({msg:" all success"}) 
       }
      catch(err){
-       res.json({ msg: err.message }).status(400);
+       res.status(400).json({ msg: err.message });
      };
   });
 
