@@ -8,7 +8,7 @@ const getAll =async(req,res)=>{
 const search =async(req, res)=>{
     const skill =req.query.skill? req.query.skill : ""
     const regSkill= new RegExp(`^${skill}|. ${skill}`,"i")
-    const result =  await skillsModel.find({"skills" :{$regex : regSkill}}).limit(50).sort()
+    const result =  await skillsModel.find({"skill" :{$regex : regSkill}}).limit(50).sort()
   //  disconnect()
     res.json(result)
 }
