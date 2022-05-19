@@ -7,7 +7,7 @@ router.get('/getAll', auth.jwtStrategy, controller.getAllUsers);
 router.post('/addUser', controller.addUser,controllerSeeker);
 router.post('/login', controller.login);
 router.delete('/logout', controller.logout);
-
+router.get("/jwtValidate",auth.jwtStrategy, controller.refreshJWT)
 router.get('/google/login', auth.googleAuthenticate);
 router.get('/google/callback', auth.googleCallback, controller.googleLogin);
 router.all('/hi',(req, res)=>{

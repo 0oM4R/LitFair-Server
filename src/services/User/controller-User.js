@@ -20,7 +20,7 @@ const Priv_key = fs.readFileSync(privKeyPath, 'utf8');
 //**************************Generate token**************************************** */
 function issueJwt(user) {
 
-  const expiresIn = '1h'; 
+  const expiresIn = '24h'; 
 
   const payload = {
     id: user.id,
@@ -47,6 +47,9 @@ function setToken(res,user){
   }).send({"tokenObject":tokenObject}).status(200)
   //.redirect("https://litfair.herokuapp.com/hi")
   ;
+}
+const refreshJWT =async (req, res)=>{
+    setToken(res,req.user)
 }
 const getAllUsers = async (req, res) => {
   console.log(req.user.id)
@@ -135,4 +138,4 @@ const logout =(req, res) => {
   res.sendStatus(200)
 }
 
-module.exports = { getAllUsers, addUser, login,googleLogin, logout };
+module.exports = { getAllUsers,refreshJWT, addUser, login,googleLogin, logout };
