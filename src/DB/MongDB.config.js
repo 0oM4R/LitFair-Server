@@ -3,19 +3,23 @@ const mongoose = require('mongoose')
 /**
  * @param {string} DB_name - database name
  */
-const  connection =async (DB_name)=>{
-   let DB_STRING= process.env.DB_STRING.replace(/DBname/g,DB_name)
-    return  await mongoose.connect(DB_STRING)
-    .then(
-         ()=> console.log('DB connection established')
-     );
- };
+ function  createConnection (DB_name){
+   try{
+      let DB_STRING= process.env.DB_STRING.replace(/DBname/g,DB_name)
+       const conn =   mongoose.createConnection(DB_STRING);
+   return conn
+   }
+   catch(err){
+       console.log("skills failed")
+   }
+}
  
- const createConnection =  (DB_name)=>{
-    let DB_STRING= process.env.DB_STRING.replace(/DBname/g,DB_name)
-    return  createConnection(DB_STRING);
+//  const createConnection =  (DB_name)=>{
+//     let DB_STRING= process.env.DB_STRING.replace(/DBname/g,DB_name)
+//     return  mongoose.createConnection(DB_STRING)
     
- }
+    
+//  }
 
 // const tokenModel = mongoose.model('Token', TokenSchema);
-module.exports = {connection,createConnection}
+module.exports = {createConnection}

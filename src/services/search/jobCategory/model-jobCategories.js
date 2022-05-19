@@ -1,8 +1,8 @@
 
 const mongoose = require('mongoose');
 const schema = new mongoose.Schema({ 'jobCategories': String },{ versionKey: false });
-let DB_STRING= process.env.DB_STRING.replace(/DBname/g,"jobCategories")
-const conn = mongoose.createConnection(DB_STRING)
+const {createConnection} =require('./../../../DB/MongDB.config')
+const conn = createConnection("jobCategories")
 const jobCategoriesModel=conn.model("jobCategories",schema)
 
 const disconnect = ()=>{
