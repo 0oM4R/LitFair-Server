@@ -1,13 +1,12 @@
-const {SQL_DB, createTable,Sequelize} =require("../../DB/SQL.config")
+const {SQL_DB,Sequelize} =require("../../DB/SQL.config")
 const User_model = require('../User/model-User').User_model
- 
 const phoneValidationRegex = /^[+]\d{9,13}/
 
 
-const SeekerBase =SQL_DB.define('Seeker',{
+const SeekerBaseInfo=SQL_DB.define('Seeker',{
       date_of_birth :{
         type: Sequelize.DATE,
-        isDate: true,
+        isDate: {msg: "must be 1960-01-01"},
         isAfter: "1960-01-01",
         isBefore: "2010-01-01",
         allowNull: true
@@ -19,7 +18,6 @@ const SeekerBase =SQL_DB.define('Seeker',{
       lname :{
         type: Sequelize.STRING(50),
         isAlpha: {msg: "must be alpha"},
-    
         allowNull: true
       },
       nationality: {
@@ -32,6 +30,11 @@ const SeekerBase =SQL_DB.define('Seeker',{
         isAlpha: {msg: "must be alpha"},
         allowNull: true
       },
+      city:{
+        type: Sequelize.STRING(50),
+        isAlpha: {msg: "must be alpha"},
+        allowNull: true
+      },
       gender: {
         type: Sequelize.STRING(6),
         isAlpha: {msg: "must be alpha"},
@@ -39,12 +42,12 @@ const SeekerBase =SQL_DB.define('Seeker',{
       },
       phone_number:{
         type: Sequelize.INTEGER(15),
-        validate:{
-          validator : (v)=>{
-            return phoneValidationRegex.test(v)
-          },
-          msg: "must be a valid phone number" 
-        },
+        // validate:{
+        //   validator : (v)=>{
+        //     return phoneValidationRegex.test(v)
+        //   },
+        //   msg: "must be a valid phone number" 
+        // },
         
         allowNull: true
     },
@@ -57,20 +60,20 @@ const SeekerBase =SQL_DB.define('Seeker',{
   timestamps: false
 })
 
-SeekerBase.belongsTo(User_model,{
+SeekerBaseInfo.belongsTo(User_model,{
   foreignKey:"id",
   primaryKey:true,
   onUpdate:"CASCADE",
   onDelete:"CASCADE"
 });
-SeekerBase.belongsTo(User_model,{
+SeekerBaseInfo.belongsTo(User_model,{
   foreignKey: "email",
   targetKey: "email",
   onUpdate: "CASCADE",
   onDelete: "RESTRICT"
 })
 
-SeekerBase.sync();
+SeekerBaseInfo.sync();
 
 
 //mongoose schema
@@ -80,11 +83,36 @@ const schema = mongoose.Schema(
     _id:{
       type: Number, 
       required: [true, '_id field MUST be added manually']
-    }
-    
-
+    },
+    profile_picture: { 
+      type: String
+    },
+    career_lvl :{ 
+      type : String
+    },
+    jobType: [
+      {type: String}
+    ],
+    jobTitle: [
+      {type: String}
+    ],
+    jobCategory: [
+      {type: String}
+    ],
+    currentState: {
+      type: String
+    },
+    social_links: [
+      {
+        type: String
+      }
+    ],
   }
 )
 
+let DB_STRING= process.env.DB_STRING.replace(/DBname/g,"seekerInfo")
+const conn = mongoose.createConnection(DB_STRING)
+const SeekerDetails=conn.model("seeker",schema)
 
-module.exports = {SeekerBase}
+
+module.exports = {SeekerBaseInfo, SeekerDetails}

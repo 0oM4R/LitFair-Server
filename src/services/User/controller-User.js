@@ -1,5 +1,5 @@
 const User_model = require('./model-User.js').User_model;
-const Seeker= require('../seeker/model-seeker').Seeker;
+const SeekerBaseInfo= require('../seeker/model-seeker').SeekerBaseInfo;
 const bcrypt = require('bcrypt');
 const jsonwebtoken = require('jsonwebtoken');
 const fs = require('fs');
@@ -54,7 +54,7 @@ const getAllUsers = async (req, res) => {
   res.json(data);
 };
 
-const addUser = async (req, res) => {
+const addUser = async (req, res,next) => {
 
   let email = null;
   let password = null;
@@ -85,40 +85,14 @@ const addUser = async (req, res) => {
           external_type: provider,
           external_id
         }).then(
-          () => { if(role==="Seeker"){
-          fname = req.body.fname;
-          lname = req.body.lname;
-          try{Seeker.create(
-            {
-              id:user.id,
-              email:user.email,
-              fname:fname,
-              lname:lname
-            })}
-            catch(err){
-              res.send({ msg:"success, but no seeker added !"})
-            }
-        }
-        res.send({msg:" all success"}) })
+          (user) => { 
+        req.body.id=user.id;
+        next();
         //create new seeker
-        if(role==="Seeker"){
-          fname = req.body.fname;
-          lname = req.body.lname;
-          try{Seeker.create(
-            {
-              id:user.id,
-              email:user.email,
-              fname:fname,
-              lname:lname
-            })}
-            catch(err){
-              res.send({ msg:"success, but no seeker added !"})
-            }
-        }
-        res.send({msg:" all success"}) 
-      }
+      })
+    }
      catch(err){
-       res.status(400).json({ msg: err.message });
+      res.status(400).send({ msg: err.message });
      };
   });
 

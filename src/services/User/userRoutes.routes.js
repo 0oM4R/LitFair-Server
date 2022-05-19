@@ -2,9 +2,9 @@
 const router = require('express').Router();
 const auth = require('../../middleware/passport');
 const controller = require('../User/controller-User');
-
+const controllerSeeker =require('../seeker/controller-seeker').createSeekerProfile
 router.get('/getAll', auth.jwtStrategy, controller.getAllUsers);
-router.post('/addUser', controller.addUser);
+router.post('/addUser', controller.addUser,controllerSeeker);
 router.post('/login', controller.login);
 router.delete('/logout', controller.logout);
 
