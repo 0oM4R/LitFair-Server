@@ -4,7 +4,6 @@ const mongoose = require('mongoose')
 const connection = require('../../../DB/MongDB.config');
 
 const getAll =async(req,res)=>{
-    console.log('get all')
     const result = await jobCategoriesModel.find({}) 
     res.json(result)
 }
@@ -12,7 +11,6 @@ const search =async(req, res)=>{
     const jobCategory =req.query.jobCategory? req.query.jobCategory : ""
     const regSkill= new RegExp(`^${jobCategory}|. ${jobCategory}`,"i")
     const result =  await jobCategoriesModel.find({"jobCategories" :{$regex : regSkill}}).limit(50).sort()
-  //  disconnect()
     res.json(result)
 }
 const newJobCategory = async (req, res)=>{
