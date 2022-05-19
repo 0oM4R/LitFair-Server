@@ -26,14 +26,15 @@ var cookieExtractor = function(req) {
 };
 
 const options = {
-  //jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+  jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
   //uncomment the following line if the token is in cookies
-  jwtFromRequest: cookieExtractor,
+ // jwtFromRequest: cookieExtractor,
   secretOrKey: Pub_key,
   algorithm: ['RS256'],
 };
 
 const jwtStrategy = new JwtStrategy(options, (payload, done) => {
+  
   User_model.findOne({ where: { id: payload.id } })
     .then((user) => {
       if (user) {
