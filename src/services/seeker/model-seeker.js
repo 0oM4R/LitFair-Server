@@ -1,7 +1,9 @@
 const {SQL_DB,Sequelize} =require("../../DB/SQL.config")
 const User_model = require('../User/model-User').User_model
 const phoneValidationRegex = /^[+]\d{9,13}/
-
+const skills = require('../search/skills/model-skills').skillsModel
+const jobTitle = require('../search/jobTitle/model-jobTitle').jobTitleModel;
+const jobCategory = require('../search//jobCategory/model-jobCategories').jobCategoriesModel;
 
 const SeekerBaseInfo=SQL_DB.define('Seeker',{
       date_of_birth :{
@@ -80,35 +82,41 @@ SeekerBaseInfo.sync();
 const mongoose = require('mongoose')
 const schema = mongoose.Schema(
   {
+    //career interests
     _id:{
       type: Number, 
       required: [true, '_id field MUST be added manually']
     },
-    profile_picture: { 
-      type: String
+    profile_picture: {type: String},
+    career_lvl :{type : String},
+    jobType: [{type:String}],
+    jobTitle: [{type: mongoose.Types.ObjectId, ref :jobTitle}],
+    jobCategory: [{type: mongoose.Types.ObjectId, ref:jobCategory}],
+    currentState: {type: String},
+    social_links: {
+      github:{type: String},
+      linkedin:{type: String},
+      website:{type: String},
+   },
+    // professional info
+    experience_lvl : { type : String },
+    education : { 
+      degree :{ type: String},
+      fields : [{ type: String}],
+      university: { type: String},
+      date: { type: Date},
+      grade: { type: String},
     },
-    career_lvl :{ 
-      type : String
-    },
-    jobType: [
-      {type: String}
-    ],
-    jobTitle: [
-      {type: String}
-    ],
-    jobCategory: [
-      {type: String}
-    ],
-    currentState: {
-      type: String
-    },
-    social_links: [
-      {
-        type: String
-      }
-    ],
-  }
+    skills :[{
+      type : mongoose.Types.ObjectId,
+      ref : skills
+    }],
+    CV : {type: String},
+    description: {type: String},
+    appliedJobs: [{ type: String }]
+  },{versionKey: false}
 )
+
 
 let DB_STRING= process.env.DB_STRING.replace(/DBname/g,"seekerInfo")
 const conn = mongoose.createConnection(DB_STRING)

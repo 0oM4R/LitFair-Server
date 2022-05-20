@@ -1,5 +1,10 @@
+
+
 const Seeker_model = require('../seeker/model-seeker').SeekerBaseInfo;
 const SeekerDetails = require('../seeker/model-seeker').SeekerDetails;
+const skills = require('../search/skills/model-skills').skillsModel;
+const jobTitle = require('../search/jobTitle/model-jobTitle').jobTitleModel;
+const jobCategory = require('../search//jobCategory/model-jobCategories').jobCategoriesModel;
 
 const createSeekerProfile =async (req, res) => {
     const {id,email,fname,lname} = req.body;
@@ -26,7 +31,6 @@ const userProfile=async(req, res) => {
 
 const updateUserProfile = async(req, res) => {
     const newValue = req.body;
-   
    try{ const seeker =await Seeker_model.update(
         {
             date_of_birth:newValue?.date_of_birth,
@@ -42,15 +46,16 @@ const updateUserProfile = async(req, res) => {
         {where: {id:req.user.id}})
         res.status(201).send({msg:"success"})
     }catch(e) {
-        res.status(400).send({msg:e.message})
+        res.status(400).send({msg:{
+            err: e.name,
+            details: e.message
+        }})
     }
-   
 }
 
-const createSeekerDetails = async (req, res) => {
-    const id = req.params._id;
+const updateSeekerDetails = async (req, res) => {
+    const id = req.user.id;
     await Seeker_model.findOne({where: {id:id}}).then((seeker) => {
-        
         if(!seeker){
             res.status(400).json({msg: 'Seeker not found'})
         } 
@@ -58,30 +63,58 @@ const createSeekerDetails = async (req, res) => {
     const {
         profile_picture,
         career_lvl,
-        jopType,
+        jobType,
         jobTitle,
         jobCategory,
         currentState,
         social_links,
-    } = req.body;
-
+        experience_lvl,
+        education,
+        skills,
+        description,
+        appliedJobs
+        } = req.body;
     SeekerDetails.findOneAndUpdate(id,
         {   _id: id,
             profile_picture,
             career_lvl,
-            jopType,
+            jobType,
             jobTitle,
             jobCategory,
             currentState,
             social_links,
+            experience_lvl,
+            education,
+            skills,
+            description,
+            appliedJobs
         },
         {upsert:true},
         (err)=>{
             if(!err){
                 res.status(201).json({ msg: "success"})
             }else{
-                res.status(500).json({ msg: "failed to update profile"})
+                res.status(500).json({ msg: err})
             }
         });
 }
-module.exports = {createSeekerProfile,userProfile,updateUserProfile,createSeekerDetails}
+const getSeekerDetails =async (req, res) => {
+    const id = req.user.id;
+    await SeekerDetails.findById(id)
+    .populate({ path: 'skills', model: skills,select:"-_id" })
+    .populate({path: 'jobTitle', model: jobTitle,select:"-_id"})
+    .populate({path: 'jobCategory', model: jobCategory,select:"-_id"})
+    .then(seeker => {
+        res.status(200).send(seeker)
+    }).catch(err=>{
+        res.status(500).json({ msg: err})
+    }) 
+}
+
+
+const upload_CV = async (req, res) => {
+    console.log(req.file)
+    res.send("success")
+}
+
+module.exports = {createSeekerProfile,userProfile,updateUserProfile,updateSeekerDetails,getSeekerDetails,upload_CV}
