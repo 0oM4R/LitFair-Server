@@ -12,7 +12,7 @@ const {JobTitleRoutes}= require('./services/search/jobTitle/jobtitle.routes')
 const {JobCategoriesRoutes}= require('./services/search/jobCategory/jobCategories.routes')
 const {UserRoutes} = require('./services/User/userRoutes.routes');
 const {SeekerRoutes} = require('./services/seeker/seeker.routes')
-const server = require('./middleware/googleOauth')
+
 //const jobService= require('./services/job');
 //const companyService = require('./services/company');
 
@@ -64,7 +64,7 @@ app.use(SeekerRoutes);
 app.use(SkillsRoutes);
 app.use(JobTitleRoutes);
 app.use(JobCategoriesRoutes)
-app.use(server);
+
 //jobService(app);
 //companyService(app);
 

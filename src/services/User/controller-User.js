@@ -6,7 +6,8 @@ const fs = require('fs');
 const path = require('path');
 const console = require('console');
 const { ENV } = require('../../config/env.js');
-const { send } = require('process');
+const { OAuth2Client } = require('google-auth-library')
+const client = new OAuth2Client(process.env.CLIENT_ID)
 
 /**
  * @param {*}salt  - For password hashing algorithm
@@ -90,8 +91,8 @@ const addUser = async (req, res,next) => {
         }).then(
           (user) => { 
         req.body.id=user.id;
-        next();
         //create new seeker
+        next();
       })
     }
      catch(err){
