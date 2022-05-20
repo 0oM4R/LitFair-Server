@@ -60,19 +60,7 @@ const applicationSchema = new mongoose.Schema(
   }
 );
 
-// const jobConnection = async () => {
-  
-  
-//   conn
-//   .then((conn) => {
-//     console.log(`Job database has been connected`);
-//     return conn;
-//     })
-//     .catch((err) => {
-//       console.log(`Can NOT connect to JOB database`);
-//       return err;
-//     });
-//   };
+
 const jobConnection =  mongoose.createConnection(job_DB);
 
 module.exports = {

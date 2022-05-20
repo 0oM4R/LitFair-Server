@@ -11,7 +11,7 @@ exports.getJobs = async (req, res) => {
       for (let i = 0; i < doc.length; i++) {
         if (user == doc[i].user) doc[i] = await doc[i].populate('submissions');
       }
-    } else {
+    } else if(doc) {
       if (user == doc.user) doc = await doc.populate('submissions');
     }
 

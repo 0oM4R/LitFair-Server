@@ -13,8 +13,9 @@ const {JobCategoriesRoutes}= require('./services/search/jobCategory/jobCategorie
 const {UserRoutes} = require('./services/User/userRoutes.routes');
 const {SeekerRoutes} = require('./services/seeker/seeker.routes')
 
-//const jobService= require('./services/job');
-//const companyService = require('./services/company');
+// const jobService= require('./services/job');
+// const companyService = require('./services/company');
+const jobConfig = require('./services/public_config/job.routes');
 
 const port = process.env.PORT || 8000;
 
@@ -65,8 +66,9 @@ app.use(SkillsRoutes);
 app.use(JobTitleRoutes);
 app.use(JobCategoriesRoutes)
 
-//jobService(app);
-//companyService(app);
+app.use(jobConfig)
+// jobService(app);
+// companyService(app);
 
 app.get('*', (req, res) => {
   res.send({msg:"hi anyone"});
