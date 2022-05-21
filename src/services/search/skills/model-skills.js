@@ -9,9 +9,9 @@ const conn = createConnection("skills")
 const skillsModel=conn.model("skills",schema)
 
 const disconnect = ()=>{
-    console.log(mongoose.connection.readyState);
-    mongoose.connection.close();
-    console.log(mongoose.connection.readyState);
+    const connections =mongoose.connections
+    console.log(connections[connections.indexOf("skills")])
+
 }
 //const skillsModel = conn.model('skills', schema);
 

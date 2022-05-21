@@ -3,6 +3,8 @@ const app = express();
 const cors = require('cors');
 const morgan = require('morgan');
 const cookies = require('cookie-parser');
+const fs = require('fs')
+const path = require('path');
 
 require('dotenv').config();
 
@@ -12,7 +14,8 @@ const {JobTitleRoutes}= require('./services/search/jobTitle/jobtitle.routes')
 const {JobCategoriesRoutes}= require('./services/search/jobCategory/jobCategories.routes')
 const {UserRoutes} = require('./services/User/userRoutes.routes');
 const {SeekerRoutes} = require('./services/seeker/seeker.routes')
-
+const {deleteFolder} = require('./config/multer')
+deleteFolder(path.join('..','tmp'))
 //const jobService= require('./services/job');
 //const companyService = require('./services/company');
 const jobConfig = require('./services/public_config/job.routes');
