@@ -61,11 +61,25 @@ const applicationSchema = new mongoose.Schema(
 );
 
 
-const jobConnection =  mongoose.createConnection(job_DB);
+const {jobModel, appModel} = (()=>{
+  const states = {
+    '0': 'disconnected',
+    '1': 'connected',
+    '2': 'connecting',
+    '3': 'disconnecting',
+    '99': 'uninitialized',
+  }
+  const conn = mongoose.createConnection(job_DB);
+  console.log(`JOB_Mongodb has been ${states[conn.readyState]}`);
+  const jobModel =   conn.model('Job', jobSchema);
+  const appModel =  conn.model('Application', applicationSchema);
+  return {jobModel, appModel}
+})();
+
 
 module.exports = {
   jobType,
   experienceType,
-  jobModel: jobConnection.model('Job', jobSchema),
-  appModel: jobConnection.model('Application', applicationSchema)
+  jobModel,
+  appModel 
 };

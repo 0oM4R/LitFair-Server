@@ -9,7 +9,7 @@ const {
   deleteJob
 } = require('./job.controller');
 const { getApps, submitApp, deleteApp } = require('./application.controller');
-const { isCompany, isSeeker } = require('../../middleware/Role');
+const { isCompany } = require('../../middleware/Role');
 
 
 router.get('/jobs', getJobs);

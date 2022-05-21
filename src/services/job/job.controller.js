@@ -6,14 +6,28 @@ exports.getJobs = async (req, res) => {
   const user = res.locals.user;
   const q = req.query;
   try {
-    const doc = await jobModel.find(q).sort('-createdAt');
-    if (doc && doc.length && doc.length > 0) {
-      for (let i = 0; i < doc.length; i++) {
-        if (user == doc[i].user) doc[i] = await doc[i].populate('submissions');
+    const doc = await jobModel.aggregate([
+      {
+        $match: q
+      },
+      {
+        $sort: { createdAt: -1 },
+      },
+      {
+        $project: {title: 1, 
+          experience: 1, 
+          job_type: 1, 
+          location:1 
+        }
       }
-    } else if(doc) {
-      if (user == doc.user) doc = await doc.populate('submissions');
-    }
+    ])
+    // if (doc && doc.length && doc.length > 0) {
+    //   for (let i = 0; i < doc.length; i++) {
+    //     if (user == doc[i].user) doc[i] = await doc[i].populate('submissions');
+    //   }
+    // } else if(doc) {
+    //   if (user == doc.user) doc = await doc.populate('submissions');
+    // }
 
     return successfulRes(res, 200, doc);
   } catch (err) {
