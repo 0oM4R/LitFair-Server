@@ -3,7 +3,7 @@ const { successfulRes, failedRes } = require('../../utils/response');
 
 exports.getApps = async (req, res) => {
   const user = res.locals.user;
-
+  console.log(user)
   try {
     const doc = await appModel.find({ applicant_id: user.id }).exec();
 

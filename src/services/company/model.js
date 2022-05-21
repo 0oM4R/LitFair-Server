@@ -5,19 +5,27 @@ const validator = require('validator');
 const { company_SQLDB, company_MongoDB } = require('../../config/env');
 
 //Connect Sequelize to database
-const sequelize = new Sequelize(company_SQLDB, {
-  define: {
-    freezeTableName: true
-  }
+// const sequelize = new Sequelize(company_SQLDB, {
+//   define: {
+//     freezeTableName: true
+//   }
+// });
+
+const sequelize = new Sequelize('sequelizedb', 'Dev', 'LitFair2022#', {
+  host: 'sequelizedb.cbbhykvzmbuz.us-east-1.rds.amazonaws.com',
+  dialect: 'mysql',
+  port:3306,
+  logging: false,
 });
+
 //Create All models in database
 sequelize
   .sync({ alter: true })
   .then((res) => {
-    console.log(`Company SQLDB has been connected successfully`);
+    console.log(`Company_Sqldb has been connected`);
   })
   .catch((err) => {
-    console.log('Can NOT connect to Company SQLDB', err);
+    console.log('Can NOT connect to Company SQL_DB', err);
   });
 
 //prettier-ignore
@@ -56,7 +64,18 @@ companySchema.virtual('posted_job', {
   foreignField: 'company_id'
 });
 
-const companyConnection = mongoose.createConnection(company_MongoDB);
+const companyConnection = (()=>{
+  const states = {
+    '0': 'disconnected',
+    '1': 'connected',
+    '2': 'connecting',
+    '3': 'disconnecting',
+    '99': 'uninitialized',
+  }
+  const conn = mongoose.createConnection(company_MongoDB);
+  console.log(`Company_Mongodb has been ${states[conn.readyState]}`);
+  return conn;
+})();
 
 module.exports = {
   companyProfile,

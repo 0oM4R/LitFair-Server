@@ -10,16 +10,8 @@ const mongoose = require('mongoose')
    return conn
    }
    catch(err){
-       console.log("skills failed")
+       console.log(`Connecting to ${DB_name} has been failed`)
    }
 }
  
-//  const createConnection =  (DB_name)=>{
-//     let DB_STRING= process.env.DB_STRING.replace(/DBname/g,DB_name)
-//     return  mongoose.createConnection(DB_STRING)
-    
-    
-//  }
-
-// const tokenModel = mongoose.model('Token', TokenSchema);
 module.exports = {createConnection}
