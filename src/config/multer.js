@@ -1,5 +1,9 @@
-const multer  = require('multer')
-
+const multer  = require('multer');
+// create folders with path and check if it is exists in each storage method or create if it doesn't exists tmp then nested file\
+//path join for all paths 
+// delete when its uploaded to DB
+// 
+const path = require('path');
 const CV_storage = multer.diskStorage({
     destination: function (req, file, cb) {
       cb(null, '/tmp/CV_uploads')
