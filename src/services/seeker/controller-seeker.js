@@ -16,7 +16,7 @@ const createSeekerProfile =async (req, res) => {
           fname:fname,
           lname:lname
         })
-        res.status(200).send("success");
+        res.status(200).json({ msg: "success" })
     }
     catch(err){
         res.status(500).json({ msg: err.message });
