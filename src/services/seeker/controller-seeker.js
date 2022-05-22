@@ -74,7 +74,8 @@ const updateSeekerDetails = async (req, res) => {
         description,
         appliedJobs
         } = req.body;
-    SeekerDetails.findOneAndUpdate(id,
+   
+    SeekerDetails.findOneAndUpdate({_id:id},
         {   _id: id,
             profile_picture,
             career_lvl,
@@ -94,6 +95,7 @@ const updateSeekerDetails = async (req, res) => {
             if(!err){
                 res.status(201).json({ msg: "success"})
             }else{
+                console.log("here")
                 res.status(500).json({ msg: err})
             }
         });
