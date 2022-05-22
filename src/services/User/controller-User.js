@@ -41,11 +41,13 @@ function issueJwt(user) {
 function setToken(res,user){
   res.clearCookie("auth");
   const tokenObject = issueJwt(user);
-  res.cookie("auth",tokenObject,{
-    //httpOnly:true,
-    sameSite: "none",
-    secure: ENV == 'dev' ? false : true,
-  }).send({"tokenObject":tokenObject}).status(200)
+  res.send({"tokenObject":tokenObject}).status(200)
+  // .cookie("auth",tokenObject,{
+  //   //httpOnly:true,
+  //   sameSite: "none",
+  //   secure: ENV == 'dev' ? false : true,
+  // })
+  
   //.redirect("https://litfair.herokuapp.com/hi")
   ;
 }
