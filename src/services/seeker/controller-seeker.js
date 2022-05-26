@@ -1,11 +1,11 @@
 
-
+const path= require('path');
 const Seeker_model = require('../seeker/model-seeker').SeekerBaseInfo;
 const SeekerDetails = require('../seeker/model-seeker').SeekerDetails;
 const skills = require('../search/skills/model-skills').skillsModel;
 const jobTitle = require('../search/jobTitle/model-jobTitle').jobTitleModel;
 const jobCategory = require('../search//jobCategory/model-jobCategories').jobCategoriesModel;
-
+const multer =require('../../config/multer')
 const createSeekerProfile =async (req, res) => {
     const {id,email,fname,lname,tokenObject} = req.body;
     try{
@@ -116,8 +116,22 @@ const getSeekerDetails =async (req, res) => {
 
 
 const upload_CV = async (req, res) => {
-    console.log(req.file)
-    res.send("success")
+    if(req.file){
+        res.send("success")
+    }else {
+        res.status(400).json({ msg:"Field to upload the file"})
+    }
+    
+}
+const delete_CV = async (req, res) => {
+    filePath= path.join('..','tmp',"cv",req.user.id+".pdf")
+    try{
+        multer.deleteFile(filePath)
+        res.send("success") 
+    }catch(err){
+        res.status(500).json({ msg: err})
+    }
+    
 }
 
-module.exports = {createSeekerProfile,userProfile,updateUserProfile,updateSeekerDetails,getSeekerDetails,upload_CV}
+module.exports = {createSeekerProfile,userProfile,updateUserProfile,updateSeekerDetails,getSeekerDetails,upload_CV,delete_CV,}

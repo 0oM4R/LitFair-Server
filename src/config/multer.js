@@ -24,7 +24,8 @@ const CV_storage = multer.diskStorage({
       cb(null, cvPath)
     },
     filename: function (req, file, cb) {
-      console.log(file)
+     // console.log(file)
+      
       cb(null, req.user.id+".pdf")
     }
   })
@@ -43,9 +44,12 @@ const upload =multer(
 
 const deleteFile = (filePate)=>{
   fs.unlink(filePate,(err)=>{
-    if(err) console.log(err)
-  })
+    if(err) {
+      console.log(err)
+    }
+    })
 }
+
 const deleteFolder = (dir)=>{
   if(fs.existsSync(dir)){
     fs.rm(dir, {recursive: true},err => {
