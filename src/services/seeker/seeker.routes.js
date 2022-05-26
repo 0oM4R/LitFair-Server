@@ -10,6 +10,6 @@ router.post("/seeker/profile/create",auth.jwtStrategy,role.isSeeker,controller.c
 router.put("/seeker/details/update",auth.jwtStrategy,role.isSeeker,controller.updateSeekerDetails);
 router.get("/seeker/details/view",auth.jwtStrategy,role.isSeeker,controller.getSeekerDetails);
 router.post("/seeker/details/CV",auth.jwtStrategy,role.isSeeker,file.upload.single("cv"),controller.upload_CV)
-router.delete("/seeker/details/cv/delete",auth.jwtStrategy,role.isSeeker,controller.delete_CV)
+router.delete("/seeker/details/cv/delete",auth.jwtStrategy,role.isSeeker,controller.delete_CV )
 
 module.exports = {SeekerRoutes:router};

@@ -104,9 +104,9 @@ const updateSeekerDetails = async (req, res) => {
 const getSeekerDetails =async (req, res) => {
     const id = req.user.id;
     await SeekerDetails.findById(id).sort()
-    .populate({ path: 'skills', model: skills,select:"-_id" })
-    .populate({path: 'jobTitle', model: jobTitle,select:"-_id"})
-    .populate({path: 'jobCategory', model: jobCategory,select:"-_id"})
+    .populate({ path: 'skills', model: skills })
+    .populate({path: 'jobTitle', model: jobTitle})
+    .populate({path: 'jobCategory', model: jobCategory})
     .then(seeker => {
         res.status(200).json(seeker)
     }).catch(err=>{
