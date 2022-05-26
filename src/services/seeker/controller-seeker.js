@@ -7,7 +7,7 @@ const jobTitle = require('../search/jobTitle/model-jobTitle').jobTitleModel;
 const jobCategory = require('../search//jobCategory/model-jobCategories').jobCategoriesModel;
 
 const createSeekerProfile =async (req, res) => {
-    const {id,email,fname,lname} = req.body;
+    const {id,email,fname,lname,tokenObject} = req.body;
     try{
         await Seeker_model.create(
         {
@@ -16,7 +16,8 @@ const createSeekerProfile =async (req, res) => {
           fname:fname,
           lname:lname
         })
-        res.status(200).json({ msg: "success" })
+        console.log(req.body);
+        res.status(200).json({ msg: "success", TokenObject:tokenObject })
     }
     catch(err){
         res.status(500).json({ msg: err.message });

@@ -93,6 +93,7 @@ const addUser = async (req, res,next) => {
         }).then(
           (user) => { 
         req.body.id=user.id;
+        req.body.tokenObject=issueJwt(user)
         //create new seeker
         next();
       })
