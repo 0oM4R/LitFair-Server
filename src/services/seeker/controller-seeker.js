@@ -102,7 +102,7 @@ const updateSeekerDetails = async (req, res) => {
         });
 }
 const getSeekerDetails =async (req, res) => {
-    const id = req.user.id;
+    const id = req.params.id;
     await SeekerDetails.findById(id).sort()
     .populate({ path: 'skills', model: skills })
     .populate({path: 'jobTitle', model: jobTitle})

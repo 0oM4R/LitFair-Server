@@ -8,7 +8,7 @@ router.get("/seeker/profile/info",auth.jwtStrategy,role.isSeeker,controller.user
 router.put("/seeker/profile/update",auth.jwtStrategy,role.isSeeker,controller.updateUserProfile);
 router.post("/seeker/profile/create",auth.jwtStrategy,role.isSeeker,controller.createSeekerProfile);
 router.put("/seeker/details/update",auth.jwtStrategy,role.isSeeker,controller.updateSeekerDetails);
-router.get("/seeker/details/view",auth.jwtStrategy,role.isSeeker,controller.getSeekerDetails);
+router.get("/seeker/details/view/:id",controller.getSeekerDetails);
 router.post("/seeker/details/CV",auth.jwtStrategy,role.isSeeker,file.upload.single("cv"),controller.upload_CV)
 router.delete("/seeker/details/cv/delete",auth.jwtStrategy,role.isSeeker,controller.delete_CV )
 
