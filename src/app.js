@@ -17,8 +17,8 @@ const {UserRoutes} = require('./services/User/userRoutes.routes');
 const {SeekerRoutes} = require('./services/seeker/seeker.routes')
 const {deleteFolder} = require('./config/multer')
 deleteFolder(path.join('..','tmp'))
-//const jobService= require('./services/job');
-//const companyService = require('./services/company');
+const jobService= require('./services/job');
+const companyService = require('./services/company');
 const jobConfig = require('./services/public_config/job.routes');
 const { workspace } = require('./config/env');
 
@@ -76,8 +76,8 @@ app.use(JobTitleRoutes);
 app.use(JobCategoriesRoutes)
 app.use(locationRoutes)
 app.use(jobConfig)
-//jobService(app);
-//companyService(app);
+jobService(app);
+companyService(app);
 
 app.get('*', (req, res) => {
   res.send({msg:"hi anyone"});
