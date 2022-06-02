@@ -1,6 +1,6 @@
-
 const { jobModel } = require('./model');
 const { successfulRes, failedRes } = require('../../utils/response');
+const {upload_video} = require('../../config/cloudinary');
 
 exports.getJobs = async (req, res) => {
   const user = res.locals.user;
@@ -144,3 +144,18 @@ exports.deleteJob = async (req, res) => {
     return failedRes(res, 500, err);
   }
 };
+
+
+exports.upload_video = async(req, res)=>{
+  
+  try{
+    const file = req.file;
+
+    const url = await upload_video(file.path, 'video', 'video_thumb');
+
+
+    return successfulRes(res, 200, url);
+  }catch(err){
+    return failedRes(res, 500, err);
+  }
+}
