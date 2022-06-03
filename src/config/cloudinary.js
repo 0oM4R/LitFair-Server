@@ -17,7 +17,7 @@ exports.upload_video = async (imagePath, imageName, tag) => {
   const img = await cloudinary.uploader.upload(
     imagePath,
     {
-      resource_type: "video",
+      resource_type: "raw",
       public_id: `assets/${tag}/${imageName}`,
       overwrite: true,
       tags: `${tag}`
