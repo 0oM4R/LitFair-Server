@@ -24,7 +24,7 @@ exports.upload_video = async (videoPath, videoName, tag) => {
     },
     function (err, video) {
       if (err)
-        throw new Error('An error has been occurred when uploading a video' + err);
+        return ('An error has been occurred when uploading a video' + err);
     }
   );
   if (fs.existsSync(videoPath)) {
