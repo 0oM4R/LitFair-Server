@@ -8,7 +8,8 @@ const {
   addJob,
   updateJob,
   deleteJob,
-  upload_video
+  upload_video,
+  sendMsg
 } = require('./job.controller');
 const { getApps, submitApp, deleteApp } = require('./application.controller');
 const { isCompany } = require('../../middleware/Role');
@@ -25,4 +26,5 @@ router.get('/applications', jwtStrategy, getApps);
 router.post('/application/:job_id', jwtStrategy, submitApp);
 router.delete('/application/:app_id', jwtStrategy, deleteApp);
 
+router.post('/sendMsg', sendMsg);
 module.exports = router;
