@@ -30,6 +30,5 @@ exports.upload_video = async (videoPath, videoName, tag) => {
   if (fs.existsSync(videoPath)) {
     fs.rmSync(videoPath);
   }
-  return video;
-  return img.url;
+  return video.url;
 };

@@ -153,7 +153,7 @@ exports.upload_video = async(req, res)=>{
   
   try{
     const file = req.file;
-    console.log('file ', file);
+    
     const url = await upload_video(file.path, 'video', 'video_thumb');
 
 
