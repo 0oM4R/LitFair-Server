@@ -13,22 +13,23 @@ cloudinary.config({
   api_secret: cloudinary_api_secret
 });
 
-exports.upload_video = async (imagePath, imageName, tag) => {
-  const img = await cloudinary.uploader.upload(
-    imagePath,
+exports.upload_video = async (videoPath, videoName, tag) => {
+  const video = await cloudinary.uploader.upload(
+    videoPath,
     {
       resource_type: "raw",
-      public_id: `assets/${tag}/${imageName}`,
+      public_id: `assets/${tag}/${videoName}`,
       overwrite: true,
       tags: `${tag}`
     },
-    function (err, image) {
+    function (err, video) {
       if (err)
-        throw new Error('An error has been occurred when uploading a photo');
+        throw new Error('An error has been occurred when uploading a video' + err);
     }
   );
-  if (fs.existsSync(imagePath)) {
-    fs.rmSync(imagePath);
+  if (fs.existsSync(videoPath)) {
+    fs.rmSync(videoPath);
   }
+  return video;
   return img.url;
 };
