@@ -22,7 +22,7 @@ const jobStatus = {
   happy: `I am happy where I am but don't mind finding good opportunities`,
   interested: `I am only interested in very specific opportunities`,
   notLooking: `I am not looking for a job`
-}
+};
 
 router.get('/job-config', (req, res) => {
   successfulRes(res, 200, {

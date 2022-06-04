@@ -1,9 +1,7 @@
 const { jobModel } = require('./model');
 const { successfulRes, failedRes } = require('../../utils/response');
-const {upload_video} = require('../../config/cloudinary');
+const { upload_video } = require('../../config/cloudinary');
 const amqp = require('amqplib/callback_api');
-
-
 
 exports.getJobs = async (req, res) => {
   const user = res.locals.user;
@@ -14,16 +12,12 @@ exports.getJobs = async (req, res) => {
         $match: q
       },
       {
-        $sort: { createdAt: -1 },
+        $sort: { createdAt: -1 }
       },
       {
-        $project: {title: 1, 
-          experience: 1, 
-          job_type: 1, 
-          location:1 
-        }
+        $project: { title: 1, experience: 1, job_type: 1, location: 1 }
       }
-    ])
+    ]);
     // if (doc && doc.length && doc.length > 0) {
     //   for (let i = 0; i < doc.length; i++) {
     //     if (user == doc[i].user) doc[i] = await doc[i].populate('submissions');
@@ -148,51 +142,45 @@ exports.deleteJob = async (req, res) => {
   }
 };
 
-
-exports.upload_video = async(req, res)=>{
-  
-  try{
+exports.upload_video = async (req, res) => {
+  try {
     const file = req.file;
-    
+
     const url = await upload_video(file.path, 'video', 'video_thumb');
 
-
     return successfulRes(res, 200, url);
-  }catch(err){
+  } catch (err) {
     return failedRes(res, 500, err);
   }
-}
+};
 
-
-exports.sendMsg = async (req, res)=>{
-  
-  try{
+exports.sendMsg = async (req, res) => {
+  try {
     const msg = req.body;
-    amqp.connect('amqp://localhost:5672', function(error0, connection) {
+    amqp.connect('amqp://localhost:5672', function (error0, connection) {
       if (error0) {
-          throw error0;
+        throw error0;
       }
-      connection.createChannel(function(error1, channel) {
-          if (error1) {
-              throw error1;
-          }
-          channel.assertQueue('jobs', {
-              durable: false
-          });
-          
-          channel.sendToQueue('jobs', Buffer.from(JSON.stringify(msg)),
-          {
-              persistent: true
-          });
+      connection.createChannel(function (error1, channel) {
+        if (error1) {
+          throw error1;
+        }
+        channel.assertQueue('jobs', {
+          durable: false
+        });
 
-          console.log(`A job sent successfully -${msg}`);
+        channel.sendToQueue('jobs', Buffer.from(JSON.stringify(msg)), {
+          persistent: true
+        });
+
+        console.log(`A job sent successfully -${msg}`);
       });
-      setTimeout(function() {
-          connection.close();
+      setTimeout(function () {
+        connection.close();
       }, 500);
-  });
-  return successfulRes(res, 200, 'A job sent successfully');
-  }catch(err){
+    });
+    return successfulRes(res, 200, 'A job sent successfully');
+  } catch (err) {
     return failedRes(res, 500, err);
   }
-}
+};

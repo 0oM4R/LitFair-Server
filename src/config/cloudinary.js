@@ -17,14 +17,13 @@ exports.upload_video = async (videoPath, videoName, tag) => {
   const video = await cloudinary.uploader.upload(
     videoPath,
     {
-      resource_type: "raw",
+      resource_type: 'video',
       public_id: `assets/${tag}/${videoName}`,
       overwrite: true,
       tags: `${tag}`
     },
-    function (err, video) {
-      if (err)
-        return ('An error has been occurred when uploading a video' + err);
+    function (err, result) {
+      console.log(result, err);
     }
   );
   if (fs.existsSync(videoPath)) {
