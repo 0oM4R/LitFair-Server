@@ -4,7 +4,7 @@ const {
   cloudinary_api_key,
   cloudinary_api_secret
 } = require('./env');
-// const cloudinary = require('cloudinary').v2;
+const cloudinary = require('cloudinary').v2;
 const fs = require('fs');
 
 cloudinary.config({
@@ -13,21 +13,21 @@ cloudinary.config({
   api_secret: cloudinary_api_secret
 });
 
-exports.upload_image = async (imagePath, imageName, tag) => {
-  const img = await cloudinary.uploader.upload(
-    imagePath,
+exports.upload_video = async (videoPath, videoName, tag) => {
+  const video = await cloudinary.uploader.upload(
+    videoPath,
     {
-      public_id: `assets/${tag}/${imageName}`,
+      resource_type: 'video',
+      public_id: `assets/${tag}/${videoName}`,
       overwrite: true,
       tags: `${tag}`
     },
-    function (err, image) {
-      if (err)
-        throw new Error('An error has been occurred when uploading a photo');
+    function (err, result) {
+      console.log(result, err);
     }
   );
-  if (fs.existsSync(imagePath)) {
-    fs.rmSync(imagePath);
+  if (fs.existsSync(videoPath)) {
+    fs.rmSync(videoPath);
   }
-  return img.url;
+  return video.url;
 };

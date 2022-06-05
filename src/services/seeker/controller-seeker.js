@@ -130,7 +130,7 @@ const upload_CV = async (req, res) => {
     
 }
 const delete_CV = async (req, res) => {
-    filePath= path.join('..','tmp',"cv",req.user.id+".pdf")
+    filePath= path.join('tmp',"cv",req.user.id+".pdf")
     try{
         multer.deleteFile(filePath)
         res.send("success") 

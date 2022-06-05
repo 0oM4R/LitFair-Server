@@ -14,8 +14,8 @@ const { company_SQLDB, company_MongoDB } = require('../../config/env');
 const sequelize = new Sequelize('sequelizedb', 'Dev', 'LitFair2022#', {
   host: 'sequelizedb.cbbhykvzmbuz.us-east-1.rds.amazonaws.com',
   dialect: 'mysql',
-  port:3306,
-  logging: false,
+  port: 3306,
+  logging: false
 });
 
 //Create All models in database
@@ -64,14 +64,14 @@ companySchema.virtual('posted_job', {
   foreignField: 'company_id'
 });
 
-const companyConnection = (()=>{
+const companyConnection = (() => {
   const states = {
-    '0': 'disconnected',
-    '1': 'connected',
-    '2': 'connecting',
-    '3': 'disconnecting',
-    '99': 'uninitialized',
-  }
+    0: 'disconnected',
+    1: 'connected',
+    2: 'connecting',
+    3: 'disconnecting',
+    99: 'uninitialized'
+  };
   const conn = mongoose.createConnection(company_MongoDB);
   console.log(`Company_Mongodb has been ${states[conn.readyState]}`);
   return conn;

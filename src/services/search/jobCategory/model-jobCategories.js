@@ -1,15 +1,17 @@
-
 const mongoose = require('mongoose');
-const schema = new mongoose.Schema({ 'jobCategories': String },{ versionKey: false });
-const {createConnection} =require('./../../../DB/MongDB.config')
-const conn = createConnection("jobCategories")
-const jobCategoriesModel=conn.model("jobCategories",schema)
+const schema = new mongoose.Schema(
+  { jobCategories: String },
+  { versionKey: false }
+);
+const { createConnection } = require('./../../../DB/MongDB.config');
+const conn = createConnection('jobCategories');
+const jobCategoriesModel = conn.model('jobCategories', schema);
 
-const disconnect = ()=>{
-    console.log(mongoose.connection.readyState);
-    mongoose.connection.close();
-    console.log(mongoose.connection.readyState);
-}
+const disconnect = () => {
+  console.log(mongoose.connection.readyState);
+  mongoose.connection.close();
+  console.log(mongoose.connection.readyState);
+};
 //const skillsModel = conn.model('skills', schema);
 
 // const getall =async()=>{
@@ -21,4 +23,4 @@ const disconnect = ()=>{
 //     const result =  await skills.find({"Skills Keys" :{$regex : "^" + req.params.skills}})
 // }
 
-module.exports = {jobCategoriesModel, disconnect };
+module.exports = { jobCategoriesModel, disconnect };
