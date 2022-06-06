@@ -1,16 +1,13 @@
 const mongoose = require('mongoose');
-const schema = new mongoose.Schema(
-  { jobCategories: String },
-  { versionKey: false }
-);
+const schema = new mongoose.Schema({ jobCategories: String }, { versionKey: false });
 const { createConnection } = require('./../../../DB/MongDB.config');
 const conn = createConnection('jobCategories');
 const jobCategoriesModel = conn.model('jobCategories', schema);
 
 const disconnect = () => {
-  console.log(mongoose.connection.readyState);
-  mongoose.connection.close();
-  console.log(mongoose.connection.readyState);
+    console.log(mongoose.connection.readyState);
+    mongoose.connection.close();
+    console.log(mongoose.connection.readyState);
 };
 //const skillsModel = conn.model('skills', schema);
 

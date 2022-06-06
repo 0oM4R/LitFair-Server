@@ -8,8 +8,8 @@ const conn = createConnection('skills');
 const skillsModel = conn.model('skills', schema);
 
 const disconnect = () => {
-  const connections = mongoose.connections;
-  console.log(connections[connections.indexOf('skills')]);
+    const connections = mongoose.connections;
+    console.log(connections[connections.indexOf('skills')]);
 };
 //const skillsModel = conn.model('skills', schema);
 
