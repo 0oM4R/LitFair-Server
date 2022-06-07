@@ -1,7 +1,7 @@
+const amqp = require('amqplib/callback_api');
+const fs = require('fs');
 const { jobModel } = require('./model');
 const { successfulRes, failedRes } = require('../../utils/response');
-const { upload_video, folderNames } = require('../../config/cloudinary');
-const amqp = require('amqplib/callback_api');
 
 exports.getJobs = async (req, res) => {
     const q = req.query;
@@ -105,49 +105,6 @@ exports.deleteJob = async (req, res) => {
         const doc = await jobModel.findByIdAndDelete(_id).exec();
 
         return successfulRes(res, 200, doc);
-    } catch (err) {
-        return failedRes(res, 500, err);
-    }
-};
-
-exports.upload_video = async (req, res) => {
-    try {
-        const file = req.file;
-
-        const url = await upload_video(file.path, 'video_29264', folderNames.interviewFolder);
-
-        return successfulRes(res, 200, url);
-    } catch (err) {
-        return failedRes(res, 500, err);
-    }
-};
-
-exports.sendMsg = async (req, res) => {
-    try {
-        const msg = req.body;
-        amqp.connect('amqp://localhost:5672', function (error0, connection) {
-            if (error0) {
-                throw error0;
-            }
-            connection.createChannel(function (error1, channel) {
-                if (error1) {
-                    throw error1;
-                }
-                channel.assertQueue('jobs', {
-                    durable: false
-                });
-
-                channel.sendToQueue('jobs', Buffer.from(JSON.stringify(msg)), {
-                    persistent: true
-                });
-
-                console.log(`A job sent successfully -${msg}`);
-            });
-            setTimeout(function () {
-                connection.close();
-            }, 500);
-        });
-        return successfulRes(res, 200, 'A job sent successfully');
     } catch (err) {
         return failedRes(res, 500, err);
     }

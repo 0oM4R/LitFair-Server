@@ -13,5 +13,10 @@ module.exports = {
     cloudinary_api_key: process.env.cloudinary_api_key,
     cloudinary_api_secret: process.env.cloudinary_api_secret,
 
+    // rabbitMQ
+    MQ_URL: process.env.MQ_URL,
+    PUBLISH_VIDEOMQ_NAME: process.env.PUBLISH_VIDEOMQ_NAME,
+    CONSUME_VIDEOMQ_NAME: process.env.CONSUME_VIDEOMQ_NAME,
+
     workspace: process.env.workspace
 };

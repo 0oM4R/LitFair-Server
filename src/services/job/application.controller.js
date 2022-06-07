@@ -1,5 +1,7 @@
 const { appModel } = require('./model');
 const { successfulRes, failedRes } = require('../../utils/response');
+const { upload_video, folderNames } = require('../../config/cloudinary');
+const { MQ_URL, PUBLISH_VIDEOMQ_NAME } = require('../../config/env');
 
 exports.getApps = async (req, res) => {
     const user = req.user;
@@ -49,12 +51,12 @@ exports.getApp = async (req, res) => {
 exports.submitApp = async (req, res) => {
     const user = req.user;
     const job_id = req.params.job_id;
-    const { answers } = req.body;
+    const { text_questions } = req.body;
     try {
         const doc = new appModel({
             applicant_id: user.id,
             job_post: job_id,
-            answers
+            text_questions
         });
         await doc.save();
         return successfulRes(res, 201, doc);
@@ -78,4 +80,76 @@ exports.deleteApp = async (req, res) => {
     } catch (err) {
         return failedRes(res, 500, err);
     }
+};
+
+exports.upload_video = async (req, res) => {
+    const file = req.file;
+    const user = req.user;
+    try {
+        const url = await upload_video(file.path, `video_ud-${user.id}-${Date.now()}`, folderNames.interviewFolder);
+
+        if (fs.existsSync(videoPath)) {
+            fs.rmSync(videoPath);
+        }
+
+        return successfulRes(res, 200, url);
+    } catch (err) {
+        return failedRes(res, 500, err);
+    }
+};
+
+exports.submitVideo = async (req, res) => {
+    const file = req.file;
+    const user = req.user;
+    const { question } = req.body;
+    try {
+        const url = await upload_video(file.path, `video_ud-${user.id}-${Date.now()}`, folderNames.interviewFolder);
+        const usrDoc = await appModel.findByIdAndUpdate(
+            user.id,
+            {
+                $push: {
+                    video_answers: {
+                        question,
+                        video_url: url
+                    }
+                }
+            },
+            { new: true, upsert: true }
+        );
+        sendVideoMsg(file.path, url, user.id);
+
+        return successfulRes(res, 200, 'Video uploaded successfully');
+    } catch (err) {
+        return failedRes(res, 500, err);
+    }
+};
+
+const sendVideoMsg = (videoPath, videoId, userId) => {
+    const msg = {
+        videoPath,
+        videoId,
+        userId
+    };
+    amqp.connect(MQ_URL, function (error0, connection) {
+        if (error0) {
+            throw error0;
+        }
+        connection.createChannel(function (error1, channel) {
+            if (error1) {
+                throw error1;
+            }
+            channel.assertQueue(PUBLISH_VIDEOMQ_NAME, {
+                durable: false
+            });
+
+            channel.sendToQueue(PUBLISH_VIDEOMQ_NAME, Buffer.from(JSON.stringify(msg)), {
+                persistent: true
+            });
+
+            console.log(`A job sent successfully`);
+        });
+        setTimeout(function () {
+            connection.close();
+        }, 500);
+    });
 };

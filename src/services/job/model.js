@@ -32,7 +32,8 @@ const jobSchema = new mongoose.Schema(
     application: {
       title: { type: String },
       description: { type: String },
-      questions: { type: [String] }
+      text_questions: { type: [String] },
+      video_questions: { type: [String] }
     }
   },
   {
@@ -53,7 +54,13 @@ const applicationSchema = new mongoose.Schema(
   {
     applicant_id: { type: Number, required: true},
     job_post: { type: mongoose.Schema.Types.ObjectId, ref: 'Job' },
-    answers: { type: Map, of: String }
+    text_answers: { type: Map, of: String },
+    video_answers: [{
+      question: { type: String },
+      video_url: { type: String },
+      report:{type: mongoose.Schema.Types.Mixed}
+    }],
+
   },
   {
     timestamps: true

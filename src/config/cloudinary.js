@@ -66,8 +66,10 @@ exports.upload_video = async (videoPath, videoName, tag) => {
             console.log(result, err);
         }
     );
-    if (fs.existsSync(videoPath)) {
-        fs.rmSync(videoPath);
-    }
+
+    //prevent delete file until send to message queue
+    // if (fs.existsSync(videoPath)) {
+    //     fs.rmSync(videoPath);
+    // }
     return video.url;
 };

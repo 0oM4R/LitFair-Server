@@ -12,13 +12,13 @@ router.get('/job/:id', getJob);
 router.post('/job', jwtStrategy, isCompany, addJob);
 router.put('/job/:id', jwtStrategy, isCompany, updateJob);
 router.delete('/job/:id', jwtStrategy, isCompany, deleteJob);
-router.post('/upload_video', videoUpload.single('video'), upload_video);
 
 //application routes
 router.get('/applications', jwtStrategy, getApps);
 router.get('/application/:id', jwtStrategy, getApp);
 router.post('/application/:job_id', jwtStrategy, submitApp);
 router.delete('/application/:app_id', jwtStrategy, deleteApp);
+router.post('/upload_video', jwtStrategy, videoUpload.single('video'), upload_video);
 
 router.post('/sendMsg', sendMsg);
 
