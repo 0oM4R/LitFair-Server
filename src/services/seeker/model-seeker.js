@@ -43,7 +43,7 @@ const SeekerBaseInfo=SQL_DB.define('Seeker',{
         allowNull: true
       },
       phone_number:{
-        type: Sequelize.INTEGER(15),
+        type: Sequelize.STRING(16),
         // validate:{
         //   validator : (v)=>{
         //     return phoneValidationRegex.test(v)
