@@ -5,18 +5,18 @@ const morgan = require('morgan');
 const routes = require('./routes');
 
 const companyService = (app) => {
-  app.use(
-    cors({
-      origin: true,
-      credentials: true
-    })
-  );
-  app.use(express.json());
-  app.use(cookieParser());
+    app.use(
+        cors({
+            origin: true,
+            credentials: true
+        })
+    );
+    app.use(express.json());
+    app.use(cookieParser());
 
-  //Routers
-  app.use(morgan('dev'));
-  app.use(routes);
+    //Routers
+    app.use(morgan('dev'));
+    app.use(routes);
 };
 
 module.exports = companyService;
