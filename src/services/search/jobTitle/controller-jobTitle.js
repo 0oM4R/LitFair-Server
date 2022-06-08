@@ -1,7 +1,4 @@
-const jobTitleModel = require('./model-jobTitle').jobTitleModel;
-const disconnect = require('./model-jobTitle').disconnect;
-const mongoose = require('mongoose');
-const connection = require('../../../DB/MongDB.config');
+const jobTitleModel = require('./model-jobTitle');
 
 const getAll = async (req, res) => {
     const result = await jobTitleModel.find({});

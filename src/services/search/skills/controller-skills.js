@@ -1,4 +1,4 @@
-const { skillsModel, disconnect } = require('./model-skills');
+const skillsModel = require('./model-skills');
 
 const getAll = async (req, res) => {
     const result = await skillsModel.find({});

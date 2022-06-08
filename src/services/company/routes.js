@@ -1,12 +1,13 @@
 const router = require('express').Router();
 const { isCompany } = require('../../middleware/authZ');
+const { jwtStrategy } = require('../../middleware/passport');
 
 const { getCompaniesFull, getCompanyFull, addCompanyFull, updateCompanyFull, deleteCompanyFull } = require('./controller');
 
 router.get('/companies', getCompaniesFull);
-router.get('/company/:id', getCompanyFull);
-router.post('/company', isCompany, addCompanyFull);
-router.put('/company/:id', isCompany, updateCompanyFull);
-router.delete('/company/:id', isCompany, deleteCompanyFull);
+router.get('/companies/:id', getCompanyFull);
+router.post('/companies', jwtStrategy, isCompany, addCompanyFull);
+router.put('/companies/:id', jwtStrategy, isCompany, updateCompanyFull);
+router.delete('/companies/:id', jwtStrategy, isCompany, deleteCompanyFull);
 
 module.exports = router;

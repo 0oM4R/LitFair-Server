@@ -1,10 +1,8 @@
 const User_model = require('./model-User.js').User_model;
-const SeekerBaseInfo = require('../seeker/model-seeker').SeekerBaseInfo;
 const bcrypt = require('bcrypt');
 const jsonwebtoken = require('jsonwebtoken');
 const fs = require('fs');
 const path = require('path');
-const console = require('console');
 const { ENV } = require('../../config/env.js');
 const { OAuth2Client } = require('google-auth-library');
 const client = new OAuth2Client(process.env.CLIENT_ID);
@@ -53,7 +51,6 @@ const refreshJWT = async (req, res) => {
     setToken(res, req.user);
 };
 const getAllUsers = async (req, res) => {
-    console.log(req.user.id);
     let data = await User_model.findAll({});
     res.json(data);
 };

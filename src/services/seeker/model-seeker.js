@@ -1,9 +1,13 @@
 const { SQL_DB, Sequelize } = require('../../DB/SQL.config');
-const User_model = require('../User/model-User').User_model;
+const mongoose = require('mongoose');
+const { User_model } = require('../User/model-User');
+let DB_STRING = process.env.DB_STRING.replace(/DBname/g, 'seekerInfo');
+const conn = mongoose.createConnection(DB_STRING);
+
 const phoneValidationRegex = /^[+]\d{9,13}/;
-const skills = require('../search/skills/model-skills').skillsModel;
-const jobTitle = require('../search/jobTitle/model-jobTitle').jobTitleModel;
-const jobCategory = require('../search//jobCategory/model-jobCategories').jobCategoriesModel;
+const skills = require('../search/skills/model-skills');
+const jobTitle = require('../search/jobTitle/model-jobTitle');
+const jobCategory = require('../search//jobCategory/model-jobCategories');
 
 const SeekerBaseInfo = SQL_DB.define(
     'Seeker',
@@ -81,7 +85,6 @@ SeekerBaseInfo.belongsTo(User_model, {
 SeekerBaseInfo.sync();
 
 //mongoose schema
-const mongoose = require('mongoose');
 const schema = mongoose.Schema(
     {
         //career interests
@@ -122,8 +125,6 @@ const schema = mongoose.Schema(
     { versionKey: false }
 );
 
-let DB_STRING = process.env.DB_STRING.replace(/DBname/g, 'seekerInfo');
-const conn = mongoose.createConnection(DB_STRING);
 const SeekerDetails = conn.model('seeker', schema);
 
 module.exports = { SeekerBaseInfo, SeekerDetails };

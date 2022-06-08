@@ -1,4 +1,4 @@
-const { SQL_DB, createTable, Sequelize } = require('../../DB/SQL.config');
+const { SQL_DB, Sequelize } = require('../../DB/SQL.config');
 
 const User_model = SQL_DB.define('User', {
     id: {

@@ -54,7 +54,7 @@ const companySchema = new mongoose.Schema(
   }
 );
 
-companySchema.virtual('posted_job', {
+companySchema.virtual('posted_jobs', {
     ref: 'Job',
     localField: '_id',
     foreignField: 'company_id'

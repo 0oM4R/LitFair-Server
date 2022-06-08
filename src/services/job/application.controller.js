@@ -23,10 +23,30 @@ exports.getApps = async (req, res) => {
                 }
             },
             {
-                $replaceRoot: { newRoot: { $mergeObjects: [{ $arrayElemAt: ['$job_post', 0] }, '$$ROOT'] } }
+                $lookup: {
+                    from: 'CompanyInfo',
+                    localField: '$jop_post.company_id',
+                    foreignField: '_id',
+                    as: 'company_info'
+                }
             },
+            // {
+            //     $replaceRoot: {
+            //         newRoot: {
+            //             $mergeObjects: [
+            //                 {
+            //                     $arrayElemAt: ['$job_post', 0]
+            //                 },
+            //                 {
+            //                     $arrayElemAt: ['$company_info', 0]
+            //                 },
+            //                 '$$ROOT'
+            //             ]
+            //         }
+            //     }
+            // },
             {
-                $project: { job_post: 0 }
+                $project: { company_id: 1, 'company_info.logo': 1, 'job_post.title': 1, 'job_post.job_type': 1, 'job_post.location': 1 }
             }
         ]);
 

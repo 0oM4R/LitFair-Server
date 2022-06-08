@@ -1,10 +1,10 @@
 const router = require('express').Router();
-const controller = require('./controller-jobCategories');
+const { getAll, search, newJobCategory } = require('./controller-jobCategories');
 router.get('/skill', (req, res) => {
     res.send('skills');
 });
-router.get('/jobCategories/all', controller.getAll);
-router.get('/jobCategories/search', controller.search);
-router.post('/skills/newJobCategories/:skillName', controller.newJobCategory);
+router.get('/jobCategories/all', getAll);
+router.get('/jobCategories/search', search);
+router.post('/skills/newJobCategories/:skillName', newJobCategory);
 
 module.exports = router;

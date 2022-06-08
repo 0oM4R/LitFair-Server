@@ -1,7 +1,4 @@
-const jobCategoriesModel = require('./model-jobCategories').jobCategoriesModel;
-const disconnect = require('./model-jobCategories').disconnect;
-const mongoose = require('mongoose');
-const connection = require('../../../DB/MongDB.config');
+const jobCategoriesModel = require('./model-jobCategories');
 
 const getAll = async (req, res) => {
     const result = await jobCategoriesModel.find({});

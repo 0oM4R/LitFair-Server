@@ -30,7 +30,7 @@ exports.getCompanyFull = async (req, res) => {
         const profile = await companyProfile.findOne({ where: { id: user.id } });
         if (profile) {
             let info = await companyInfo.findById(profile.id).exec();
-            info = await info.populate('posted_job');
+            info = await info.populate('posted_jobs', 'title job_type location').exec();
             response = { profile, info };
         }
         return successfulRes(res, 200, response);
