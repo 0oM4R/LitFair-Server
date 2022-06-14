@@ -1,22 +1,20 @@
-
 const router = require('express').Router();
-const auth = require('../../middleware/passport');
-const googleAuth = require('../../middleware/googleOauth')
-const controller = require('../User/controller-User');
-const controllerSeeker =require('../seeker/controller-seeker').createSeekerProfile
+const { jwtStrategy, googleCallback, googleCallbackAddUser, googleAuthenticateAddUser } = require('../../middleware/passport');
+const loginGoogle = require('../../middleware/googleOauth');
+const { getAllUsers, addUser, login, logout, refreshJWT, googleLogin } = require('../User/controller-User');
+const { createSeekerProfile } = require('../seeker/controller-seeker');
 
+router.get('/getAll', jwtStrategy, getAllUsers);
+router.post('/addUser', addUser, createSeekerProfile);
+router.post('/login', login);
+router.delete('/logout', logout);
 
-router.get('/getAll', auth.jwtStrategy, controller.getAllUsers);
-router.post('/addUser', controller.addUser,controllerSeeker);
-router.post('/login', controller.login);
-router.delete('/logout', controller.logout);
+router.get('/jwtValidate', jwtStrategy, refreshJWT);
 
-router.get("/jwtValidate",auth.jwtStrategy, controller.refreshJWT)
+router.post('/auth/google', loginGoogle, googleLogin);
+router.get('/google/callback', googleCallback, googleLogin);
 
-router.post('/auth/google', googleAuth.login, controller.googleLogin);
-router.get('/google/callback', auth.googleCallback, controller.googleLogin);
+router.get('/google/addUser', googleAuthenticateAddUser);
+router.get('/google/callback/addUser', googleCallbackAddUser, addUser);
 
-router.get('/google/addUser', auth.googleAuthenticateAddUser);
-router.get('/google/callback/addUser', auth.googleCallbackAddUser, controller.addUser);
-
-module.exports ={ UserRoutes:router};
+module.exports = router;

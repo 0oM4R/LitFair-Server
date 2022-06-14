@@ -1,17 +1,22 @@
 require('dotenv').config();
 
 module.exports = {
-  ENV: process.env.ENV,
-  PORT: process.env.PORT,
-  company_SQLDB: process.env.company_SQLDB,
-  company_MongoDB: process.env.company_MongoDB,
-  job_DB: process.env.job_DB,
-  seeker_DB: process.env.seeker_DB,
+    ENV: process.env.ENV,
+    PORT: process.env.PORT,
+    company_SQLDB: process.env.company_SQLDB,
+    company_MongoDB: process.env.company_MongoDB,
+    job_DB: process.env.job_DB,
+    seeker_DB: process.env.seeker_DB,
 
-  //clouninary
-  // cloudinary_name,
-  // cloudinary_api_key,
-  // cloudinary_api_secret
+    // clouninary
+    cloudinary_name: process.env.cloudinary_name,
+    cloudinary_api_key: process.env.cloudinary_api_key,
+    cloudinary_api_secret: process.env.cloudinary_api_secret,
 
-  workspace: process.env.workspace
+    // rabbitMQ
+    MQ_URL: process.env.MQ_URL,
+    PUBLISH_VIDEOMQ_NAME: process.env.PUBLISH_VIDEOMQ_NAME,
+    CONSUME_VIDEOMQ_NAME: process.env.CONSUME_VIDEOMQ_NAME,
+
+    workspace: process.env.workspace
 };
