@@ -24,13 +24,13 @@ exports.getCompaniesFull = async (req, res) => {
 };
 
 exports.getCompanyFull = async (req, res) => {
-    const user = req.params.user;
+    const id = req.params.id;
     let response = { profile: 'null', info: 'null' };
     try {
-        const profile = await companyProfile.findOne({ where: { id: user.id } });
+        const profile = await companyProfile.findOne({ where: { id } });
         if (profile) {
             let info = await companyInfo.findById(profile.id).exec();
-            info = await info.populate('posted_jobs', 'title job_type location').exec();
+            info = await info.populate('posted_jobs', 'title job_type location');
             response = { profile, info };
         }
         return successfulRes(res, 200, response);
@@ -136,8 +136,13 @@ exports.updateCompanyProfile = async (req, res) => {
     try {
         // prettier-ignore
         if (name ||nationality ||company_size ||
-      verified ||phone_number || email ||title) {
-      const profile = await companyProfile.findOne({ where: { id: user.id } });
+        verified ||phone_number || email ||title) {
+        let profile = await companyProfile.findOne({ where: { id: user.id } });
+        if(!profile){
+            profile = await companyProfile.build({
+                id: user.id})
+        }
+
       profile.name = name ? name : profile.name;
       profile.nationality = nationality ? nationality : profile.nationality;
       profile.company_size = company_size ? company_size : profile.company_size;
@@ -146,12 +151,17 @@ exports.updateCompanyProfile = async (req, res) => {
       profile.email = email ? email : profile.email;
       profile.title = title ? title : profile.title;
 
-      await profile.update({}, {upsert: true});
+      await profile.save();
       response.profile = profile;
     }
 
         if (description || social || CRN_num || CRN_exp) {
-            const info = await companyInfo.findById(user.id).exec();
+            let info = await companyInfo.findById(user.id).exec();
+            if (!info) {
+                info = new companyInfo({
+                    _id: user.id
+                });
+            }
 
             info.description = description ? description : info.description;
             info.social = social ? social : info.social;
@@ -160,11 +170,11 @@ exports.updateCompanyProfile = async (req, res) => {
                 info.logo = files[0] ? await upload_image(files[0], `${info._id}_logo`, 'Companies_logos') : info.logo;
                 info.CRN.thumbnail = files[0] ? await upload_image(files[1], `${info._id}_CRN`, 'Companies_CRN') : info.CRN.thumbnail;
             }
-            
+
             info.CRN.number = CRN_num ? CRN_num : info.CRN.number;
             info.CRN.exp_date = CRN_exp ? CRN_exp : info.CRN.exp_date;
 
-            await info.update({}, {upsert: true});
+            await info.save();
             response.info = info;
         }
 

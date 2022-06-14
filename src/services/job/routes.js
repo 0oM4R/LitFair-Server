@@ -8,7 +8,7 @@ const { getApps, submitApp, deleteApp, getApp, upload_video, submitVideo } = req
 
 //job routes
 router.get('/jobs', getJobs);
-router.get('/jobs/:id', getJob);
+router.get('/jobs/:id', jwtStrategy, getJob);
 router.post('/jobs', jwtStrategy, isCompany, addJob);
 router.put('/jobs/:id', jwtStrategy, isCompany, updateJob);
 router.delete('/jobs/:id', jwtStrategy, isCompany, deleteJob);
