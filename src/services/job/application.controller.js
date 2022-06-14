@@ -1,3 +1,5 @@
+const amqp = require('amqplib/callback_api');
+const fs = require('fs');
 const { appModel } = require('./model');
 const { successfulRes, failedRes } = require('../../utils/response');
 const { upload_video, folderNames } = require('../../config/cloudinary');

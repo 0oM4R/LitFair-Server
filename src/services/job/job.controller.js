@@ -1,5 +1,3 @@
-const amqp = require('amqplib/callback_api');
-const fs = require('fs');
 const { jobModel } = require('./model');
 const { successfulRes, failedRes } = require('../../utils/response');
 

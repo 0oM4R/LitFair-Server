@@ -3,7 +3,7 @@ const client = new OAuth2Client(process.env.CLIENT_ID);
 const User_model = require('../services/User/model-User').User_model;
 const server = require('express').Router();
 
-const login = async (req, res, next) => {
+const loginGoogle = async (req, res, next) => {
     const { token } = req.body;
     try {
         const ticket = await client.verifyIdToken({
@@ -24,4 +24,4 @@ const login = async (req, res, next) => {
     }
 };
 
-module.exports = { login };
+module.exports = loginGoogle;
