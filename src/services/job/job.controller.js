@@ -1,5 +1,3 @@
-const amqp = require('amqplib/callback_api');
-const fs = require('fs');
 const { jobModel } = require('./model');
 const { successfulRes, failedRes } = require('../../utils/response');
 
@@ -38,7 +36,7 @@ exports.getJob = async (req, res) => {
 
 exports.addJob = async (req, res) => {
     const user = req.user;
-    const { title, experience, job_type, location, categories, requirements, skills_tools, description, app_title, app_des, app_ques } = req.body;
+    const { title, experience, job_type, location, categories, requirements, skills_tools, description, app_title, app_description, app_video_questions } = req.body;
 
     try {
         const doc = new jobModel({
@@ -51,9 +49,12 @@ exports.addJob = async (req, res) => {
             requirements,
             skills_tools,
             description,
-            app_title,
-            app_des,
-            app_ques
+            application:{
+                title: app_title,
+                description: app_description,
+                video_questions: app_video_questions
+            }
+            
         });
         await doc.save();
         return successfulRes(res, 201, doc);

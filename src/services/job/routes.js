@@ -3,12 +3,12 @@ const { jwtStrategy } = require('../../middleware/passport');
 const { videoUpload } = require('../../config/multer');
 const { isCompany } = require('../../middleware/authZ');
 
-const { getJobs, getJob, addJob, updateJob, deleteJob, upload_video, sendMsg } = require('./job.controller');
-const { getApps, submitApp, deleteApp } = require('./application.controller');
+const { getJobs, getJob, addJob, updateJob, deleteJob } = require('./job.controller');
+const { getApps, submitApp, deleteApp, getApp, upload_video, submitVideo } = require('./application.controller');
 
 //job routes
 router.get('/jobs', getJobs);
-router.get('/jobs/:id', getJob);
+router.get('/jobs/:id', jwtStrategy, getJob);
 router.post('/jobs', jwtStrategy, isCompany, addJob);
 router.put('/jobs/:id', jwtStrategy, isCompany, updateJob);
 router.delete('/jobs/:id', jwtStrategy, isCompany, deleteJob);
@@ -20,6 +20,6 @@ router.post('/applications/:job_id', jwtStrategy, submitApp);
 router.delete('/applications/:app_id', jwtStrategy, deleteApp);
 router.post('/upload_video', jwtStrategy, videoUpload.single('video'), upload_video);
 
-router.post('/sendMsg', sendMsg);
+router.post('/sendMsg', submitVideo);
 
 module.exports = router;

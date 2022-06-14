@@ -1,4 +1,6 @@
-const { appModel } = require('./model');
+const amqp = require('amqplib/callback_api');
+const fs = require('fs');
+const { appModel, jobModel } = require('./model');
 const { successfulRes, failedRes } = require('../../utils/response');
 const { upload_video, folderNames } = require('../../config/cloudinary');
 const { MQ_URL, PUBLISH_VIDEOMQ_NAME } = require('../../config/env');
@@ -25,7 +27,7 @@ exports.getApps = async (req, res) => {
             {
                 $lookup: {
                     from: 'CompanyInfo',
-                    localField: '$jop_post.company_id',
+                    localField: 'jop_post.company_id',
                     foreignField: '_id',
                     as: 'company_info'
                 }
@@ -71,12 +73,13 @@ exports.getApp = async (req, res) => {
 exports.submitApp = async (req, res) => {
     const user = req.user;
     const job_id = req.params.job_id;
-    const { text_questions } = req.body;
+    const { text_answers,video_question, video_answers } = req.body;
     try {
         const doc = new appModel({
             applicant_id: user.id,
             job_post: job_id,
-            text_questions
+            text_answers,
+            $push:{}
         });
         await doc.save();
         return successfulRes(res, 201, doc);

@@ -54,7 +54,10 @@ const applicationSchema = new mongoose.Schema(
   {
     applicant_id: { type: Number, required: true},
     job_post: { type: mongoose.Schema.Types.ObjectId, ref: 'Job' },
-    text_answers: { type: Map, of: String },
+    text_answers: [{
+      question: {type: String},
+      answer: {type: String}
+    }],
     video_answers: [{
       question: { type: String },
       video_url: { type: String },
