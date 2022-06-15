@@ -135,15 +135,17 @@ const upload_CV = async (req, res) => {
     if (req.file) {
         let fileName= req.file.originalname;
         let splitArray = fileName.split(".");
-        let date = new Date().getFullYear()+"-"+new Date().getMonth()+"-"+new Date().getDate();
+        let month =new Date().getMonth()+1
+        let date = new Date().getFullYear()+"-"+month+"-"+new Date().getDate();
         fileName = splitArray[0]+ "$"+ date;
         
        try{ 
+            const id = req.user.id;
             let url = await upload_raw(req.file.path, fileName,folderNames.cvFolder)
-            SeekerDetails.findOneAndUpdate(
-                { _id: req.user.id },
-                {  CV: {fileName:fileName, fileUrl:url }})
-            .then((seeker)=>{console.log(seeker)})
+            SeekerDetails.findByIdAndUpdate(
+                { _id: id },
+                {  CV: {fileName:fileName, fileUrl:url }},{upsert: true,new: true})
+            .then((seeker)=>{})
             res.send('success')
         }
         catch(err){
@@ -154,12 +156,14 @@ const upload_CV = async (req, res) => {
     }
 };
 const delete_CV = async (req, res) => {
-    filePath = path.join('tmp', 'cv', req.user.id + '.pdf');
+    const id = req.user.id;
+  
     try {
-        multer.deleteFile(filePath);
+        SeekerDetails.findByIdAndUpdate({ _id:id },{  CV: { }},{upsert: true,new: true})
+        .then((seeker)=>{})
         res.send('success');
     } catch (err) {
-        res.status(500).json({ msg: err });
+        res.status(400).json({ msg: err });
     }
 };
 
