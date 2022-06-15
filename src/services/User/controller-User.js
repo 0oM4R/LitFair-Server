@@ -129,7 +129,37 @@ const logout = (req, res) => {
     res.sendStatus(200);
 };
 
+const changePassword = (req, res) => {
+    const oldPassword = req.body.oldPassword;
+    const newPassword = req.body.newPassword;
+    const id = req.user.id;
+    User_model.findOne({ where: {id: id } })
+        .then(async (user) => {
+            if (user) {
+                const matches = await bcrypt.compare(oldPassword, user.password);
+                if (matches) {
+                    bcrypt.hash(newPassword, salt, async (err, hash) => {
+                        try {
+                            User_model.update({ password:hash},{where: {id: id}})
+                            res.status(200).send("success");
+                        }catch (err) {
+                            res.status(500).send({ msg: err.message });
+                        }
+                    })
+                } else {
+                    res.status(401).json({ msg: 'Invalid  password' });
+                }
+            } else {
+                res.status(401).json({ msg: 'Invalid  password' });
+            }
+        })
+        .catch((err) => {
+            res.status(500).json({ msg: err.message });
+        });
+}
+
 module.exports = {
+    changePassword,
     getAllUsers,
     refreshJWT,
     addUser,
