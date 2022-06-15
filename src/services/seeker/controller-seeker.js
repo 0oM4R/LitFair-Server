@@ -4,7 +4,7 @@ const skills = require('../search/skills/model-skills');
 const jobTitle = require('../search/jobTitle/model-jobTitle');
 const jobCategory = require('../search//jobCategory/model-jobCategories');
 const multer = require('../../config/multer');
-
+const {upload_raw,folderNames} = require('../../config/cloudinary')
 const createSeekerProfile = async (req, res) => {
     const { id, email, fname, lname, tokenObject } = req.body;
     try {
@@ -133,7 +133,22 @@ const getSeekerDetails = (req, res) => {
 
 const upload_CV = async (req, res) => {
     if (req.file) {
-        res.send('success');
+        let fileName= req.file.originalname;
+        let splitArray = fileName.split(".");
+        let date = new Date().getFullYear()+"-"+new Date().getMonth()+"-"+new Date().getDate();
+        fileName = splitArray[0]+ "$"+ date;
+        
+       try{ 
+            let url = await upload_raw(req.file.path, fileName,folderNames.cvFolder)
+            SeekerDetails.findOneAndUpdate(
+                { _id: req.user.id },
+                {  CV: {fileName:fileName, fileUrl:url }})
+            .then((seeker)=>{console.log(seeker)})
+            res.send('success')
+        }
+        catch(err){
+        res.status(500).json({ msg: err.message})
+        }
     } else {
         res.status(400).json({ msg: 'Field to upload the file' });
     }

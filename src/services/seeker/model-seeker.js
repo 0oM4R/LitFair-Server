@@ -1,4 +1,4 @@
-const { SQL_DB, Sequelize } = require('../../DB/SQL.config');
+const { SQL_DB, Sequelize,createTable } = require('../../DB/SQL.config');
 const mongoose = require('mongoose');
 const { User_model } = require('../User/model-User');
 let DB_STRING = process.env.DB_STRING.replace(/DBname/g, 'seekerInfo');
@@ -82,7 +82,7 @@ SeekerBaseInfo.belongsTo(User_model, {
     onDelete: 'RESTRICT'
 });
 
-SeekerBaseInfo.sync();
+SeekerBaseInfo.sync({ alter: true });
 
 //mongoose schema
 const schema = mongoose.Schema(
@@ -118,7 +118,10 @@ const schema = mongoose.Schema(
                 ref: skills
             }
         ],
-        CV: { type: String },
+        CV: {
+            fileName: { type: String },
+            fileUrl: { type: String } 
+        },
         description: { type: String },
         appliedJobs: [{ type: String }]
     },

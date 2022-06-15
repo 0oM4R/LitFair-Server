@@ -17,7 +17,7 @@ exports.folderNames = {
 
 exports.upload_raw = async (rawPath, rawName, tag) => {
     const video = await cloudinary.uploader.upload(
-        videoPath,
+        rawPath,
         {
             resource_type: 'raw',
             public_id: `litfair_media/${tag}/${rawName}`,

@@ -46,7 +46,8 @@ const upload = multer({
         cb(null, true);
     },
     storage: CV_storage
-});
+    
+},);
 
 const videoStorage = multer.diskStorage({
     destination: function (req, file, cb) {
