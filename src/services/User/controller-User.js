@@ -133,19 +133,16 @@ const changePassword = (req, res) => {
     const oldPassword = req.body.oldPassword;
     const newPassword = req.body.newPassword;
     const id = req.user.id;
+    if(oldPassword && newPassword){
+        res.status(400).send("only one value allowed")
+    }
+    else if(oldPassword){
     User_model.findOne({ where: {id: id } })
         .then(async (user) => {
             if (user) {
                 const matches = await bcrypt.compare(oldPassword, user.password);
                 if (matches) {
-                    bcrypt.hash(newPassword, salt, async (err, hash) => {
-                        try {
-                            User_model.update({ password:hash},{where: {id: id}})
-                            res.status(200).send("success");
-                        }catch (err) {
-                            res.status(500).send({ msg: err.message });
-                        }
-                    })
+                   res.status(200).send( "success")
                 } else {
                     res.status(401).json({ msg: 'Invalid  password' });
                 }
@@ -156,6 +153,16 @@ const changePassword = (req, res) => {
         .catch((err) => {
             res.status(500).json({ msg: err.message });
         });
+    }else if(newPassword){
+        bcrypt.hash(newPassword, salt, async (err, hash) => {
+            try {
+                User_model.update({ password:hash},{where: {id: id}})
+                res.status(200).send("success");
+            }catch (err) {
+                res.status(500).send({ msg: err.message });
+            }
+        })
+    }
 }
 
 module.exports = {
