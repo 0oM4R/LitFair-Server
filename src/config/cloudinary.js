@@ -16,7 +16,7 @@ exports.folderNames = {
 };
 
 exports.upload_raw = async (rawPath, rawName, tag) => {
-    const video = await cloudinary.uploader.upload(
+    const file = await cloudinary.uploader.upload(
         rawPath,
         {
             resource_type: 'raw',
@@ -31,7 +31,7 @@ exports.upload_raw = async (rawPath, rawName, tag) => {
     if (fs.existsSync(rawPath)) {
         fs.rmSync(rawPath);
     }
-    return video.url;
+    return file.url;
 };
 
 exports.upload_image = async (imagePath, imageName, tag) => {
