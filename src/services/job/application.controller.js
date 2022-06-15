@@ -73,13 +73,17 @@ exports.getApp = async (req, res) => {
 exports.submitApp = async (req, res) => {
     const user = req.user;
     const job_id = req.params.job_id;
-    const { text_answers,video_question, video_answers } = req.body;
+    const { text_question, text_answers } = req.body;
     try {
         const doc = new appModel({
             applicant_id: user.id,
-            job_post: job_id,
-            text_answers,
-            $push:{}
+            job_post: job_id
+        });
+        doc.text_answers = text_question.map((e, i) => {
+            return {
+                question: e,
+                answers: text_answers[i]
+            };
         });
         await doc.save();
         return successfulRes(res, 201, doc);
@@ -108,6 +112,7 @@ exports.deleteApp = async (req, res) => {
 exports.upload_video = async (req, res) => {
     const file = req.file;
     const user = req.user;
+
     try {
         const url = await upload_video(file.path, `video_ud-${user.id}-${Date.now()}`, folderNames.interviewFolder);
 
@@ -124,33 +129,33 @@ exports.upload_video = async (req, res) => {
 exports.submitVideo = async (req, res) => {
     const file = req.file;
     const user = req.user;
-    const { question } = req.body;
+    const app_id = req.params.app_id;
+    const { video_question, video_answer } = req.body;
     try {
         const url = await upload_video(file.path, `video_ud-${user.id}-${Date.now()}`, folderNames.interviewFolder);
-        const usrDoc = await appModel.findByIdAndUpdate(
-            user.id,
-            {
-                $push: {
-                    video_answers: {
-                        question,
-                        video_url: url
-                    }
-                }
-            },
-            { new: true, upsert: true }
-        );
-        sendVideoMsg(file.path, url, user.id);
-
+        const appDoc = await appModel.findById(app_id).exec();
+        if (appDoc) {
+            appDoc.video_answers.push({
+                question: video_question,
+                video_url: url,
+                report: 'Analyzing by AI...'
+            })
+            sendVideoMsg(url, video_question, user.id);
+            if (fs.existsSync(videoPath)) {
+                fs.rmSync(videoPath);
+            }
+            await appDoc.save();
+        }
         return successfulRes(res, 200, 'Video uploaded successfully');
     } catch (err) {
         return failedRes(res, 500, err);
     }
 };
 
-const sendVideoMsg = (videoPath, videoId, userId) => {
+const sendVideoMsg = (videoPath, question, userId) => {
     const msg = {
         videoPath,
-        videoId,
+        question,
         userId
     };
     amqp.connect(MQ_URL, function (error0, connection) {

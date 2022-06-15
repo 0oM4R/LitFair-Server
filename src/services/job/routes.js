@@ -18,8 +18,8 @@ router.get('/applications', jwtStrategy, getApps);
 router.get('/applications/:id', jwtStrategy, getApp);
 router.post('/applications/:job_id', jwtStrategy, submitApp);
 router.delete('/applications/:app_id', jwtStrategy, deleteApp);
-router.post('/upload_video', jwtStrategy, videoUpload.single('video'), upload_video);
 
-router.post('/sendMsg', submitVideo);
+router.post('/upload_video', jwtStrategy, videoUpload.single('video'), upload_video);
+router.post('/submit_video/:app_id', jwtStrategy, videoUpload.single('video'), submitVideo);
 
 module.exports = router;
