@@ -73,11 +73,12 @@ exports.getApp = async (req, res) => {
 exports.submitApp = async (req, res) => {
     const user = req.user;
     const job_id = req.params.job_id;
-    const { text_question, text_answers } = req.body;
+    const { text_question, text_answers,cv_url } = req.body;
     try {
         const doc = new appModel({
             applicant_id: user.id,
-            job_post: job_id
+            job_post: job_id,
+            cv_url
         });
         doc.text_answers = text_question.map((e, i) => {
             return {
