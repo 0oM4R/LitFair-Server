@@ -10,6 +10,7 @@ const UserRoutes = require('./services/User/userRoutes.routes');
 const SeekerRoutes = require('./services/seeker/seeker.routes');
 const jobRoutes = require('./services/job/routes');
 const companyRoutes = require('./services/company/routes');
+const utlisRoutes = require('./services/utils/utlis.routes');
 
 //public configuration routes
 const SkillsRoutes = require('./services/search/skills/skills.routes');
@@ -87,6 +88,7 @@ app.use(UserRoutes);
 app.use(SeekerRoutes);
 app.use(jobRoutes);
 app.use(companyRoutes);
+app.use(utlisRoutes);
 
 //public configuration routes
 app.use(SkillsRoutes);

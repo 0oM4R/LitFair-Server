@@ -109,23 +109,6 @@ exports.deleteApp = async (req, res) => {
     }
 };
 
-exports.upload_video = async (req, res) => {
-    const file = req.file;
-    const user = req.user;
-
-    try {
-        const url = await upload_video(file.path, `video_ud-${user.id}-${Date.now()}`, folderNames.interviewFolder);
-
-        if (fs.existsSync(videoPath)) {
-            fs.rmSync(videoPath);
-        }
-
-        return successfulRes(res, 200, url);
-    } catch (err) {
-        return failedRes(res, 500, err);
-    }
-};
-
 exports.submitVideo = async (req, res) => {
     const file = req.file;
     const user = req.user;
@@ -139,7 +122,7 @@ exports.submitVideo = async (req, res) => {
                 question: video_question,
                 video_url: url,
                 report: 'Analyzing by AI...'
-            })
+            });
             sendVideoMsg(url, video_question, user.id);
             if (fs.existsSync(videoPath)) {
                 fs.rmSync(videoPath);

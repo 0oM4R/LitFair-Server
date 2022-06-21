@@ -4,7 +4,7 @@ const skills = require('../search/skills/model-skills');
 const jobTitle = require('../search/jobTitle/model-jobTitle');
 const jobCategory = require('../search//jobCategory/model-jobCategories');
 const multer = require('../../config/multer');
-const {upload_raw,folderNames} = require('../../config/cloudinary')
+const { upload_raw, folderNames } = require('../../config/cloudinary');
 const createSeekerProfile = async (req, res) => {
     const { id, email, fname, lname, tokenObject } = req.body;
     try {
@@ -133,23 +133,21 @@ const getSeekerDetails = (req, res) => {
 
 const upload_CV = async (req, res) => {
     if (req.file) {
-        let fileName= req.file.originalname;
-        let splitArray = fileName.split(".");
-        let month =new Date().getMonth()+1
-        let date = new Date().getFullYear()+"-"+month+"-"+new Date().getDate();
-        fileName = splitArray[0]+ "$"+ date;
-        
-       try{ 
+        let fileName = req.file.originalname;
+        let splitArray = fileName.split('.');
+        let month = new Date().getMonth() + 1;
+        let date = new Date().getFullYear() + '-' + month + '-' + new Date().getDate();
+        fileName = splitArray[0] + '$' + date;
+
+        try {
             const id = req.user.id;
-            let url = await upload_raw(req.file.path, fileName,folderNames.cvFolder)
-            SeekerDetails.findByIdAndUpdate(
-                { _id: id },
-                {  CV: {fileName:fileName, fileUrl:url }},{upsert: true,new: true})
-            .then((seeker)=>{})
-            res.send('success')
-        }
-        catch(err){
-        res.status(500).json({ msg: err.message})
+            let url = await upload_raw(req.file.path, fileName, folderNames.cvFolder);
+            SeekerDetails.findByIdAndUpdate({ _id: id }, { CV: { fileName: fileName, fileUrl: url } }, { upsert: true, new: true }).then(
+                (seeker) => {}
+            );
+            res.send('success');
+        } catch (err) {
+            res.status(500).json({ msg: err.message });
         }
     } else {
         res.status(400).json({ msg: 'Field to upload the file' });
@@ -157,10 +155,9 @@ const upload_CV = async (req, res) => {
 };
 const delete_CV = async (req, res) => {
     const id = req.user.id;
-  
+
     try {
-        SeekerDetails.findByIdAndUpdate({ _id:id },{  CV: { }},{upsert: true,new: true})
-        .then((seeker)=>{})
+        SeekerDetails.findByIdAndUpdate({ _id: id }, { CV: {} }, { upsert: true, new: true }).then((seeker) => {});
         res.send('success');
     } catch (err) {
         res.status(400).json({ msg: err });

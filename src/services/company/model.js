@@ -61,15 +61,15 @@ companySchema.virtual('posted_jobs', {
 });
 
 const companyConnection = (() => {
-    const states = {
-        0: 'disconnected',
-        1: 'connected',
-        2: 'connecting',
-        3: 'disconnecting',
-        99: 'uninitialized'
-    };
     const conn = mongoose.createConnection(company_MongoDB);
-    console.log(`Company_Mongodb has been ${states[conn.readyState]}`);
+    conn.on('connected', () => {
+        console.log(`Company_Mongodb has been Connected`);
+    });
+
+    conn.on('disconnected', () => {
+        console.log(`Company_Mongodb has been Disconnected`);
+    });
+
     return conn;
 })();
 

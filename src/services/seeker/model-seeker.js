@@ -1,4 +1,4 @@
-const { SQL_DB, Sequelize,createTable } = require('../../DB/SQL.config');
+const { SQL_DB, Sequelize, createTable } = require('../../DB/SQL.config');
 const mongoose = require('mongoose');
 const { User_model } = require('../User/model-User');
 let DB_STRING = process.env.DB_STRING.replace(/DBname/g, 'seekerInfo');
@@ -120,7 +120,7 @@ const schema = mongoose.Schema(
         ],
         CV: {
             fileName: { type: String },
-            fileUrl: { type: String } 
+            fileUrl: { type: String }
         },
         description: { type: String },
         appliedJobs: [{ type: String }]

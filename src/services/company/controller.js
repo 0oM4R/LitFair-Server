@@ -5,8 +5,17 @@ const { successfulRes, failedRes } = require('../../utils/response');
 exports.getCompaniesFull = async (req, res) => {
     let response = [];
     try {
-        const profiles = await companyProfile.findAll();
-        const infos = await companyInfo.find().exec();
+        const profiles = await companyProfile.findAll({
+            attributes: ['id', 'name', 'nationality', 'verified']
+        });
+        const infos = await companyInfo.aggregate([
+            {
+                $sort: { createdAt: -1 }
+            },
+            {
+                $project: { _id: 1, logo: 1, description: 1 }
+            }
+        ]);
         for (const profx in profiles) {
             for (const infox in infos) {
                 if (profiles[profx].id == infos[infox]._id) {
@@ -83,14 +92,19 @@ exports.addCompanyFull = async (req, res) => {
 exports.updateCompanyFull = async (req, res) => {
     const user = req.user;
 
-    const { name, nationality, company_size, verified, phone_number, email, title, CRN_num, CRN_exp, description, social } = req.body;
-    const files = req.files;
+    const { name, nationality, company_size, verified, phone_number, email, title, logo, CRN_thumbnail, CRN_num, CRN_exp, description, social } =
+        req.body;
     let response = { profile: 'null', info: 'null' };
     try {
         // prettier-ignore
         if (name ||nationality ||company_size ||
       verified ||phone_number || email ||title) {
       const profile = await companyProfile.findOne({ where: { id: user.id } });
+      if(!profile){
+        profile = await companyProfile.build({
+            id: user.id})
+    }
+
       profile.name = name ? name : profile.name;
       profile.nationality = nationality ? nationality : profile.nationality;
       profile.company_size = company_size ? company_size : profile.company_size;
@@ -105,72 +119,15 @@ exports.updateCompanyFull = async (req, res) => {
 
         if (description || social || CRN_num || CRN_exp) {
             const info = await companyInfo.findById(user.id).exec();
-
-            info.description = description ? description : info.description;
-            info.social = social ? social : info.social;
-
-            if (files) {
-                info.logo = files[0] ? await upload_image(files[0], `${info._id}_logo`, 'Companies_logos') : info.logo;
-                info.CRN.thumbnail = files[0] ? await upload_image(files[1], `${info._id}_CRN`, 'Companies_CRN') : info.CRN.thumbnail;
-            }
-
-            info.CRN.number = CRN_num ? CRN_num : info.CRN.number;
-            info.CRN.exp_date = CRN_exp ? CRN_exp : info.CRN.exp_date;
-
-            info.save();
-            response.info = info;
-        }
-
-        return successfulRes(res, 200, response);
-    } catch (e) {
-        return failedRes(res, 500, e);
-    }
-};
-
-exports.updateCompanyProfile = async (req, res) => {
-    const user = req.user;
-
-    const { name, nationality, company_size, verified, phone_number, email, title, CRN_num, CRN_exp, description, social } = req.body;
-    const files = req.files;
-    let response = { profile: 'null', info: 'null' };
-    try {
-        // prettier-ignore
-        if (name ||nationality ||company_size ||
-        verified ||phone_number || email ||title) {
-        let profile = await companyProfile.findOne({ where: { id: user.id } });
-        if(!profile){
-            profile = await companyProfile.build({
-                id: user.id})
-        }
-
-      profile.name = name ? name : profile.name;
-      profile.nationality = nationality ? nationality : profile.nationality;
-      profile.company_size = company_size ? company_size : profile.company_size;
-      profile.verified = verified ? verified : profile.verified;
-      profile.phone_number = phone_number ? phone_number : profile.phone_number;
-      profile.email = email ? email : profile.email;
-      profile.title = title ? title : profile.title;
-
-      await profile.save();
-      response.profile = profile;
-    }
-
-        if (description || social || CRN_num || CRN_exp) {
-            let info = await companyInfo.findById(user.id).exec();
             if (!info) {
                 info = new companyInfo({
                     _id: user.id
                 });
             }
-
             info.description = description ? description : info.description;
             info.social = social ? social : info.social;
-
-            if (files) {
-                info.logo = files[0] ? await upload_image(files[0], `${info._id}_logo`, 'Companies_logos') : info.logo;
-                info.CRN.thumbnail = files[0] ? await upload_image(files[1], `${info._id}_CRN`, 'Companies_CRN') : info.CRN.thumbnail;
-            }
-
+            info.logo = logo ? logo : info.logo;
+            info.CRN_thumbnail = CRN_thumbnail ? CRN_thumbnail : info.CRN_thumbnail;
             info.CRN.number = CRN_num ? CRN_num : info.CRN.number;
             info.CRN.exp_date = CRN_exp ? CRN_exp : info.CRN.exp_date;
 
@@ -185,7 +142,7 @@ exports.updateCompanyProfile = async (req, res) => {
 };
 
 exports.deleteCompanyFull = async (req, res) => {
-    const user = res.params.user;
+    const user = req.user;
     let response = { profile: 'null', info: 'null' };
     try {
         const profile = await companyProfile.destroy({ where: { id: user.id } });

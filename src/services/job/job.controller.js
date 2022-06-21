@@ -2,8 +2,8 @@ const { jobModel } = require('./model');
 const { successfulRes, failedRes } = require('../../utils/response');
 
 exports.getJobs = async (req, res) => {
-    const q = req.query;
     try {
+        const q = req.query;
         const doc = await jobModel.aggregate([
             {
                 $match: q

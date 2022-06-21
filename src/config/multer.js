@@ -46,8 +46,7 @@ const upload = multer({
         cb(null, true);
     },
     storage: CV_storage
-    
-},);
+});
 
 const videoStorage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -64,6 +63,22 @@ const videoStorage = multer.diskStorage({
     }
 });
 
-const videoUpload = multer({ storage: videoStorage });
+const photoStorage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        const tmpPath = path.join('tmp', 'photos');
 
-module.exports = { videoUpload, upload, deleteFolder, deleteFile };
+        if (!fs.existsSync(tmpPath)) {
+            fs.mkdirSync(tmpPath, { recursive: true });
+        }
+        cb(null, tmpPath);
+    },
+    filename: function (req, file, cb) {
+        const uniquePreffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+        cb(null, uniquePreffix + file.originalname);
+    }
+});
+
+const videoUpload = multer({ storage: videoStorage });
+const photoUpload = multer({ storage: photoStorage });
+
+module.exports = { videoUpload, photoUpload, upload, deleteFolder, deleteFile };

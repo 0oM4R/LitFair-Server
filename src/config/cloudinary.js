@@ -12,7 +12,9 @@ cloudinary.config({
 exports.folderNames = {
     cvFolder: 'cv',
     profileFolder: 'profile',
-    interviewFolder: 'interview'
+    interviewFolder: 'interview',
+    Companies_logos: 'Companies_logos',
+    Companies_CRN: 'Companies_CRN'
 };
 
 exports.upload_raw = async (rawPath, rawName, tag) => {
