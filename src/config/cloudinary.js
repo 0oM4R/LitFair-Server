@@ -27,7 +27,10 @@ exports.upload_raw = async (rawPath, rawName, tag) => {
             tags: `${tag}`
         },
         function (err, result) {
-            console.log(result, err);
+            if (err) {
+                console.log(err);
+                return err;
+            }
         }
     );
     if (fs.existsSync(rawPath)) {
@@ -38,7 +41,7 @@ exports.upload_raw = async (rawPath, rawName, tag) => {
 
 exports.upload_image = async (imagePath, imageName, tag) => {
     const video = await cloudinary.uploader.upload(
-        videoPath,
+        imagePath,
         {
             resource_type: 'image',
             public_id: `litfair_media/${tag}/${imageName}`,
@@ -46,7 +49,10 @@ exports.upload_image = async (imagePath, imageName, tag) => {
             tags: `${tag}`
         },
         function (err, result) {
-            console.log(result, err);
+            if (err) {
+                console.log(err);
+                return err;
+            }
         }
     );
     if (fs.existsSync(imagePath)) {
@@ -65,7 +71,10 @@ exports.upload_video = async (videoPath, videoName, tag) => {
             tags: `${tag}`
         },
         function (err, result) {
-            console.log(result, err);
+            if (err) {
+                console.log(err);
+                return err;
+            }
         }
     );
 
