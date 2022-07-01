@@ -3,16 +3,24 @@ const mongoose = require('mongoose');
 
 const validator = require('validator');
 const { company_SQLDB, company_MongoDB } = require('../../config/env');
+const { ENV } = require('../../config/env');
 
-const sequelize = new Sequelize('sequelizedb', 'Dev', 'LitFair2022#', {
-    host: 'sequelizedb.cbbhykvzmbuz.us-east-1.rds.amazonaws.com',
-    dialect: 'mysql',
-    port: 3306,
-    logging: false,
-    define: {
-        freezeTableName: true //freeze table name to match the model name
-    }
-});
+let sequelize;
+if (ENV == 'dev') {
+    sequelize = new Sequelize('litfair', 'root', 'password', {
+        host: 'localhost',
+        dialect: 'mysql',
+        port: 3306,
+        logging: false
+    });
+} else {
+    sequelize = new Sequelize('sequelizedb', 'Dev', 'LitFair2022#', {
+        host: 'sequelizedb.cbbhykvzmbuz.us-east-1.rds.amazonaws.com',
+        dialect: 'mysql',
+        port: 3306,
+        logging: false
+    });
+}
 
 //Create All models in database
 sequelize

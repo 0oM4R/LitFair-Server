@@ -9,8 +9,7 @@ router.get('/companies', getCompaniesFull);
 router.get('/companies/:id', getCompanyFull);
 
 // Like an admin
-router.post('/companies', jwtStrategy, isCompany, addCompanyFull);
-router.put('/companies', jwtStrategy, isCompany, updateCompanyFull);
-router.delete('/companies', jwtStrategy, isCompany, deleteCompanyFull);
+router.put('/companies/profile', jwtStrategy, isCompany, updateCompanyFull);
+router.delete('/companies/profile', jwtStrategy, isCompany, deleteCompanyFull);
 
 module.exports = router;
