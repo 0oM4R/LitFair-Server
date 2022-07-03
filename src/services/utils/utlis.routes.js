@@ -45,13 +45,13 @@ router.post('/upload-file', jwtStrategy, upload.single('file'), async (req, res)
         const file = req.file;
         const user = req.user;
         const folderName = req.body.folderName ? req.body.folderName : 'files';
-        const videoName = `${new Date().toISOString()}-${user.id}`;
+        const fileName = `${new Date().toISOString()}-${user.id}`;
 
-        const url = await upload_raw(file.path, videoName, folderName);
+        const url = await upload_raw(file.path, fileName, folderName);
         if (fs.existsSync(file.path)) {
             fs.rmSync(file.path);
         }
-        return successfulRes(res, 200, { file_url: url });
+        return successfulRes(res, 200, { file_url: url,original_name: file.originalname});
     } catch (err) {
         return failedRes(res, 500, err);
     }

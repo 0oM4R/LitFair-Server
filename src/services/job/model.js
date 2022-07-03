@@ -30,6 +30,7 @@ const jobSchema = new mongoose.Schema(
     skills_tools: {type: [String]},
     description: {type: String},
     application: {
+      _id: false,
       title: { type: String },
       description: { type: String },
       text_questions: { type: [String] },
