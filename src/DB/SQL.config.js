@@ -1,16 +1,26 @@
 const Sequelize = require('sequelize');
 
-require('dotenv').config();
+const { ENV } = require('../config/env');
 
-/**
- * @description SQL_DB instance of connected database.
- */
-const SQL_DB = new Sequelize('sequelizedb', 'Dev', 'LitFair2022#', {
-    host: 'sequelizedb.cbbhykvzmbuz.us-east-1.rds.amazonaws.com',
-    dialect: 'mysql',
-    port: 3306,
-    logging: false
-});
+let SQL_DB;
+if (ENV == 'dev') {
+    SQL_DB = new Sequelize('litfair', 'root', 'password', {
+        host: 'localhost',
+        dialect: 'mysql',
+        port: 3306,
+        logging: false
+    });
+} else {
+    /**
+     * @description SQL_DB instance of connected database.
+     */
+    SQL_DB = new Sequelize('sequelizedb', 'Dev', 'LitFair2022#', {
+        host: 'sequelizedb.cbbhykvzmbuz.us-east-1.rds.amazonaws.com',
+        dialect: 'mysql',
+        port: 3306,
+        logging: false
+    });
+}
 
 const testConnection = async () => {
     try {

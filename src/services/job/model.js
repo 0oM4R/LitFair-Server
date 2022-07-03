@@ -30,6 +30,7 @@ const jobSchema = new mongoose.Schema(
     skills_tools: {type: [String]},
     description: {type: String},
     application: {
+      _id: false,
       title: { type: String },
       description: { type: String },
       text_questions: { type: [String] },
@@ -54,6 +55,7 @@ const applicationSchema = new mongoose.Schema(
   {
     applicant_id: { type: Number, required: true},
     job_post: { type: mongoose.Schema.Types.ObjectId, ref: 'Job' },
+    cv_url: {type: String},
     text_answers: [{
       question: {type: String},
       answer: {type: String}
@@ -71,16 +73,14 @@ const applicationSchema = new mongoose.Schema(
 );
 
 const { jobModel, appModel } = (() => {
-    const states = {
-        0: 'disconnected',
-        1: 'connected',
-        2: 'connecting',
-        3: 'disconnecting',
-        99: 'uninitialized'
-    };
     const conn = mongoose.createConnection(job_DB);
-    console.log(`JOB_Mongodb has been ${states[conn.readyState]}`);
+    conn.on('connected', () => {
+        console.log(`JOB_Mongodb has been Connected`);
+    });
 
+    conn.on('disconnected', () => {
+        console.log(`JOB_Mongodb has been Dissconnected`);
+    });
     const jobModel = conn.model('Job', jobSchema);
     const appModel = conn.model('Application', applicationSchema);
     return { jobModel, appModel };

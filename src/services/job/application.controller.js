@@ -32,21 +32,6 @@ exports.getApps = async (req, res) => {
                     as: 'company_info'
                 }
             },
-            // {
-            //     $replaceRoot: {
-            //         newRoot: {
-            //             $mergeObjects: [
-            //                 {
-            //                     $arrayElemAt: ['$job_post', 0]
-            //                 },
-            //                 {
-            //                     $arrayElemAt: ['$company_info', 0]
-            //                 },
-            //                 '$$ROOT'
-            //             ]
-            //         }
-            //     }
-            // },
             {
                 $project: { company_id: 1, 'company_info.logo': 1, 'job_post.title': 1, 'job_post.job_type': 1, 'job_post.location': 1 }
             }
@@ -73,11 +58,12 @@ exports.getApp = async (req, res) => {
 exports.submitApp = async (req, res) => {
     const user = req.user;
     const job_id = req.params.job_id;
-    const { text_question, text_answers } = req.body;
+    const { text_question, text_answers, cv_url } = req.body;
     try {
         const doc = new appModel({
             applicant_id: user.id,
-            job_post: job_id
+            job_post: job_id,
+            cv_url
         });
         doc.text_answers = text_question.map((e, i) => {
             return {
@@ -109,23 +95,6 @@ exports.deleteApp = async (req, res) => {
     }
 };
 
-exports.upload_video = async (req, res) => {
-    const file = req.file;
-    const user = req.user;
-
-    try {
-        const url = await upload_video(file.path, `video_ud-${user.id}-${Date.now()}`, folderNames.interviewFolder);
-
-        if (fs.existsSync(videoPath)) {
-            fs.rmSync(videoPath);
-        }
-
-        return successfulRes(res, 200, url);
-    } catch (err) {
-        return failedRes(res, 500, err);
-    }
-};
-
 exports.submitVideo = async (req, res) => {
     const file = req.file;
     const user = req.user;
@@ -139,7 +108,7 @@ exports.submitVideo = async (req, res) => {
                 question: video_question,
                 video_url: url,
                 report: 'Analyzing by AI...'
-            })
+            });
             sendVideoMsg(url, video_question, user.id);
             if (fs.existsSync(videoPath)) {
                 fs.rmSync(videoPath);

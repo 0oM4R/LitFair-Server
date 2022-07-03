@@ -2,11 +2,21 @@ const { jobModel } = require('./model');
 const { successfulRes, failedRes } = require('../../utils/response');
 
 exports.getJobs = async (req, res) => {
-    const q = req.query;
+    const allowfilters = ['title', 'categories', 'all'];
+    let query = { };
     try {
+        let { filter = 'all', value, page = 1 } = req.query;
+
+        if (!allowfilters.includes(filter)) throw new Error('Invalid filter');
+        if(value) {
+            const regex = Array.from(value.split(' '), (e)=>new RegExp(e, 'si'));
+            value ? query[filter] = {$in: regex} : null;
+        }
+        const skip = (page - 1) * 20;
+        
         const doc = await jobModel.aggregate([
             {
-                $match: q
+                $match: query
             },
             {
                 $sort: { createdAt: -1 }
@@ -14,6 +24,13 @@ exports.getJobs = async (req, res) => {
             {
                 $project: { title: 1, experience: 1, job_type: 1, location: 1 }
             }
+            ,
+            {
+                $facet: {
+                  current_data: [{ $skip: skip }, { $limit: 20 }],
+                  page_info: [{ $count: 'total_pages' }, { $addFields: { page: page } }],
+                },
+            },
         ]);
 
         return successfulRes(res, 200, doc);
