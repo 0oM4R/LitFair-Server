@@ -4,6 +4,7 @@ const { appModel, jobModel } = require('./model');
 const { successfulRes, failedRes } = require('../../utils/response');
 const { upload_video, folderNames } = require('../../config/cloudinary');
 const { MQ_URL, PUBLISH_VIDEOMQ_NAME } = require('../../config/env');
+const { SeekerDetails } = require('../seeker/model-seeker');
 
 exports.getApps = async (req, res) => {
     const user = req.user;
@@ -60,6 +61,8 @@ exports.submitApp = async (req, res) => {
     const job_id = req.params.job_id;
     const { text_question, text_answers, cv_url } = req.body;
     try {
+        const usr = await SeekerDetails.findById(user.id).exec();
+        if(usr.appliedJobs.includes(job_id)) return failedRes(res, 401, new Error('You have already applied to this job'))
         const doc = new appModel({
             applicant_id: user.id,
             job_post: job_id,
@@ -71,8 +74,12 @@ exports.submitApp = async (req, res) => {
                 answers: text_answers[i]
             };
         });
+        doc.progress.app_submitted = true;
+        usr.appliedJobs.push(job_id);
+        const savedUsr = await usr.save();
         await doc.save();
-        return successfulRes(res, 201, doc);
+
+        return successfulRes(res, 201, { applicatoin: doc, user_appliedJobs: savedUsr.appliedJobs });
     } catch (err) {
         return failedRes(res, 500, err);
     }
@@ -104,6 +111,7 @@ exports.submitVideo = async (req, res) => {
         const url = await upload_video(file.path, `video_ud-${user.id}-${Date.now()}`, folderNames.interviewFolder);
         const appDoc = await appModel.findById(app_id).exec();
         if (appDoc) {
+            doc.progress.live_inter = true;
             appDoc.video_answers.push({
                 question: video_question,
                 video_url: url,

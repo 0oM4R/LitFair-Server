@@ -1,10 +1,11 @@
-const path = require('path');
 const { SeekerDetails, SeekerBaseInfo } = require('../seeker/model-seeker');
 const skills = require('../search/skills/model-skills');
 const jobTitle = require('../search/jobTitle/model-jobTitle');
 const jobCategory = require('../search//jobCategory/model-jobCategories');
-const multer = require('../../config/multer');
 const { upload_raw, folderNames } = require('../../config/cloudinary');
+const { failedRes, successfulRes } = require('../../utils/response');
+
+/*
 const createSeekerProfile = async (req, res) => {
     const { id, email, fname, lname, tokenObject } = req.body;
     try {
@@ -20,42 +21,43 @@ const createSeekerProfile = async (req, res) => {
         res.status(500).json({ msg: err.message });
     }
 };
+*/
 
 const userProfile = (req, res) => {
-    try {
-        SeekerBaseInfo.findOne({ where: { id: req.user.id } }).then((seeker) => {
-            res.send(seeker);
-        });
-    } catch (err) {
-        res.status(500).json({ msg: err.message });
-    }
+    SeekerBaseInfo.findOne({ where: { id: req.user.id } })
+        .then((seeker) => {
+            if (!seeker) return failedRes(res, 404, new Error('Seeker Not Found'));
+            return res.send(seeker);
+        })
+        .catch((err) => res.status(500).json({ msg: err.message }));
 };
 
 const updateUserProfile = async (req, res) => {
-    const newValue = req.body;
+    const {date_of_birth, fname, lname, country, city, nationality, gender, phone_number, title} = req.body;
     try {
-        const seeker = await SeekerBaseInfo.update(
+        const user  = req.user;
+        const seeker = await SeekerBaseInfo.upsert(
             {
-                date_of_birth: newValue?.date_of_birth,
-                fname: newValue?.fname,
-                lname: newValue?.lname,
-                country: newValue?.country,
-                city: newValue?.city,
-                nationality: newValue?.nationality,
-                gender: newValue?.gender,
-                phone_number: newValue?.phone_number,
-                title: newValue?.title
+                id: user.id, 
+                date_of_birth,
+                fname,
+                lname,
+                country,
+                city,
+                nationality,
+                gender,
+                phone_number,
+                title
             },
-            { where: { id: req.user.id } }
+            { where: { id: user.id }, returning:true}
         );
-        res.status(201).send({ msg: 'success' });
+        return successfulRes(res, 200, seeker[0]);
     } catch (e) {
-        res.status(400).send({ msg: { err: e.name, details: e.message } });
+        return failedRes(res, 500, e);
     }
 };
 
 const updateSeekerDetails = (req, res) => {
-    const id = req.user.id;
     const {
         profile_picture,
         career_lvl,
@@ -70,24 +72,11 @@ const updateSeekerDetails = (req, res) => {
         description,
         appliedJobs
     } = req.body;
-    try {
-        SeekerBaseInfo.findOne({ where: { id: id } })
-            .then((seeker) => {
-                if (!seeker) {
-                    res.status(400).json({ msg: 'Seeker not found' });
-                }
-            })
-            .catch((e) => {
-                throw e;
-            });
-    } catch (err) {
-        res.status(500).json({ msg: err.message });
-    }
-
-    SeekerDetails.findOneAndUpdate(
-        { _id: id },
+    const user = req.user;
+    SeekerDetails.findByIdAndUpdate(
+        user.id,
         {
-            _id: id,
+            _id: user.id,
             profile_picture,
             career_lvl,
             jobType,
@@ -102,25 +91,23 @@ const updateSeekerDetails = (req, res) => {
             appliedJobs
         },
         { upsert: true },
-        (err) => {
-            if (!err) {
-                res.status(201).json({ msg: 'success' });
-            } else {
-                res.status(500).json({ msg: err });
-            }
+        function(err, doc){
+            if(err)return failedRes(res, 500, err);
+            return successfulRes(res, 200, doc)
         }
-    );
+    )
 };
+
 const getSeekerDetails = (req, res) => {
     const id = req.params.id;
 
     SeekerDetails.findById(id)
-        .sort()
         .populate({ path: 'skills', model: skills })
         .populate({ path: 'jobTitle', model: jobTitle })
         .populate({ path: 'jobCategory', model: jobCategory })
         .then((seeker) => {
-            res.status(200).json(seeker);
+            if (!seeker) return failedRes(res, 404, new Error('Seeker Not Found'));
+            return res.send(seeker);
         })
         .catch((err) => {
             if (err.name == 'CastError') {
@@ -153,6 +140,7 @@ const upload_CV = async (req, res) => {
         res.status(400).json({ msg: 'Field to upload the file' });
     }
 };
+
 const delete_CV = async (req, res) => {
     const id = req.user.id;
 
@@ -165,7 +153,7 @@ const delete_CV = async (req, res) => {
 };
 
 module.exports = {
-    createSeekerProfile,
+    // createSeekerProfile,
     userProfile,
     updateUserProfile,
     updateSeekerDetails,

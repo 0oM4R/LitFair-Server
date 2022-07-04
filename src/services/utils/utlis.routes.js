@@ -51,7 +51,7 @@ router.post('/upload-file', jwtStrategy, upload.single('file'), async (req, res)
         if (fs.existsSync(file.path)) {
             fs.rmSync(file.path);
         }
-        return successfulRes(res, 200, { file_url: url,original_name: file.originalname});
+        return successfulRes(res, 200, { file_url: url, original_name: file.originalname });
     } catch (err) {
         return failedRes(res, 500, err);
     }

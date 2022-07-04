@@ -9,15 +9,14 @@ const env = {
     CONSUME_VIDEOMQ_NAME: process.env.CONSUME_VIDEOMQ_NAME,
 };
 const appModel  = (() => {
-    const states = {
-        0: 'disconnected',
-        1: 'connected',
-        2: 'connecting',
-        3: 'disconnecting',
-        99: 'uninitialized'
-    };
     const conn = mongoose.createConnection(process.env.job_DB);
-    console.log(`JOB_Mongodb has been ${states[conn.readyState]}`);
+    conn.on('connected', () => {
+        console.log(`JOB_Mongodb has been Connected`);
+    });
+
+    conn.on('disconnected', () => {
+        console.log(`JOB_Mongodb has been Dissconnected`);
+    });
 
     const appModel = conn.models;
     console.log(appModel)
