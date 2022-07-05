@@ -18,24 +18,17 @@ exports.getApps = async (req, res) => {
                 $sort: { createdAt: -1 }
             },
             {
-                $lookup: {
-                    from: 'jobs',
-                    localField: 'jop_post',
-                    foreignField: '_id',
-                    as: 'job_post'
-                }
+              $lookup: { from: 'jobs', localField: 'job_post', foreignField: '_id', as: 'job_post'}
+
             },
             {
                 $lookup: {
-                    from: 'CompanyInfo',
-                    localField: 'jop_post.company_id',
+                    from: 'companyinfos',
+                    localField: 'job_post.company_id',
                     foreignField: '_id',
                     as: 'company_info'
                 }
             },
-            {
-                $project: { company_id: 1, 'company_info.logo': 1, 'job_post.title': 1, 'job_post.job_type': 1, 'job_post.location': 1 }
-            }
         ]);
 
         return successfulRes(res, 200, doc);
