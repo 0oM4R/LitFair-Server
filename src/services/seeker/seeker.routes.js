@@ -4,7 +4,6 @@ const { isSeeker } = require('../../middleware/authZ');
 const {
     userProfile,
     updateUserProfile,
-    createSeekerProfile,
     updateSeekerDetails,
     getSeekerDetails,
     upload_CV,

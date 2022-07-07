@@ -153,7 +153,6 @@ const delete_CV = async (req, res) => {
 };
 
 module.exports = {
-    // createSeekerProfile,
     userProfile,
     updateUserProfile,
     updateSeekerDetails,

@@ -5,6 +5,7 @@ const { successfulRes, failedRes } = require('../../utils/response');
 const { upload_video, folderNames } = require('../../config/cloudinary');
 const { MQ_URL, PUBLISH_VIDEOMQ_NAME } = require('../../config/env');
 const { SeekerDetails } = require('../seeker/model-seeker');
+const path = require('path');
 
 exports.getApps = async (req, res) => {
     const user = req.user;
@@ -55,10 +56,13 @@ exports.submitApp = async (req, res) => {
     const { text_question, text_answers, cv_url } = req.body;
     try {
         const usr = await SeekerDetails.findById(user.id).exec();
-        if(usr.appliedJobs.includes(job_id)) return failedRes(res, 401, new Error('You have already applied to this job'))
+        if(usr.appliedJobs.includes(job_id)) return failedRes(res, 401, new Error('You have already applied to this job'));
+        const company_doc = await jobModel.findById(job_id).exec();
+
         const doc = new appModel({
             applicant_id: user.id,
             job_post: job_id,
+            company_id: company_doc.company_id,
             cv_url
         });
         doc.text_answers = text_question.map((e, i) => {
@@ -95,25 +99,44 @@ exports.deleteApp = async (req, res) => {
     }
 };
 
+exports.submitFeedback = async (req, res)=>{
+    
+    try{
+        const app_id = req.params.app_id;
+        const {feedback} = req.body;
+        const user = req.user;
+        
+        const doc = await appModel.findById(app_id).exe();
+        if(user.id != doc.company_id) return failedRes(res, 401, new Error('You are NOT authorized to add feedback to this application'))
+        doc.feedback_2 = feedback;
+        await doc.save();
+        
+        return successfulRes(res, 201, response);
+    }catch(err){
+        return failedRes(res, 500, err);
+    }
+};
 exports.submitVideo = async (req, res) => {
     const file = req.file;
     const user = req.user;
     const app_id = req.params.app_id;
     const { video_question, video_answer } = req.body;
     try {
-        const url = await upload_video(file.path, `video_ud-${user.id}-${Date.now()}`, folderNames.interviewFolder);
+        
+        // const url = await upload_video(file.path, `video_ud-${user.id}-${Date.now()}`, folderNames.interviewFolder);
+        
         const appDoc = await appModel.findById(app_id).exec();
         if (appDoc) {
-            doc.progress.live_inter = true;
+            appDoc.progress.live_inter = true;
             appDoc.video_answers.push({
                 question: video_question,
-                video_url: url,
+                video_url: path.resolve(file.path),
                 report: 'Analyzing by AI...'
             });
-            sendVideoMsg(url, video_question, user.id);
-            if (fs.existsSync(videoPath)) {
-                fs.rmSync(videoPath);
-            }
+            sendVideoMsg(path.resolve(file.path), video_question, app_id);
+            // if (fs.existsSync(videoPath)) {
+            //     fs.rmSync(videoPath);
+            // }
             await appDoc.save();
         }
         return successfulRes(res, 200, 'Video uploaded successfully');
@@ -122,12 +145,32 @@ exports.submitVideo = async (req, res) => {
     }
 };
 
-const sendVideoMsg = (videoPath, question, userId) => {
+const sendVideoMsg = (videoPath, question, appId) => {
     const msg = {
         videoPath,
         question,
-        userId
+        appId
     };
+    // const msg = {
+    //     _id: {videoPath, question, appId},
+    //     predictions: {
+    //     Excited: 1.5,
+    //     Engaged: 1.5,
+    //     Smiled: 1.5,
+    //     RecommendHiring: 1.5,
+    //     NoFillers: 1.5,
+    //     StructuredAnswers: 1.5,
+    //     Friendly: 1.5,
+    //     Focused: 1.5,
+    //     NotAwkward: 1.5,
+    //     Paused: 1.5,
+    //     EyeContact: 1.5,
+    //     Authentic: 1.5,
+    //     Calm: 1.5,
+    //     SpeakingRate: 1.5,
+    //     NotStressed: 1.5}
+    // }
+    
     amqp.connect(MQ_URL, function (error0, connection) {
         if (error0) {
             throw error0;
