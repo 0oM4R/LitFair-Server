@@ -39,14 +39,8 @@ function setToken(res, user) {
     res.clearCookie('auth');
     const tokenObject = issueJwt(user);
     res.send({ tokenObject: tokenObject }).status(200);
-    // .cookie("auth",tokenObject,{
-    //   //httpOnly:true,
-    //   sameSite: "none",
-    //   secure: ENV == 'dev' ? false : true,
-    // })
-
-    //.redirect("https://litfair.herokuapp.com/hi")
 }
+
 const refreshJWT = async (req, res) => {
     setToken(res, req.user);
 };
@@ -75,23 +69,22 @@ const addUser = async (req, res, next) => {
         password = req.body.password;
         role = req.body.role;
     }
-    bcrypt.hash(password, salt, async (err, hash) => {
-        try {
-            const user = await User_model.create({
-                email,
-                password: hash,
-                role,
-                external_type: provider,
-                external_id
-            }).then((user) => {
-                req.body.id = user.id;
-                req.body.tokenObject = issueJwt(user);
-                //create new seeker
-                next();
+    bcrypt.hash(password, salt, (err, hash) => {
+        if (err) return res.status(500).json({ msg: err.message });
+        User_model.create({
+            email,
+            password: hash,
+            role,
+            external_type: provider,
+            external_id
+        })
+            .then((user) => {
+                const tokenObject = issueJwt(user);
+                return res.status(200).json({ msg: 'success', TokenObject: tokenObject });
+            })
+            .catch((err) => {
+                return res.status(400).send({ msg: err.message });
             });
-        } catch (err) {
-            res.status(400).send({ msg: err.message });
-        }
     });
 };
 

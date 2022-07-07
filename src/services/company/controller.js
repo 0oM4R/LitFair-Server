@@ -1,5 +1,4 @@
 const { companyProfile, companyInfo } = require('./model');
-// const { upload_image } = require('../../config/cloudinary');
 const { successfulRes, failedRes } = require('../../utils/response');
 
 exports.getCompaniesFull = async (req, res) => {

@@ -1,6 +1,5 @@
 //pre-required npm packages
 const express = require('express');
-const cors = require('cors');
 const morgan = require('morgan');
 const cookies = require('cookie-parser');
 const path = require('path');
@@ -29,6 +28,7 @@ deleteFolder(path.join('tmp'));
 const port = PORT || 8000;
 const app = express();
 
+/*
 if (workspace != 'cupcake') {
     app.use((req, res, next) => {
         const os = (req) => {
@@ -55,22 +55,16 @@ if (workspace != 'cupcake') {
         next();
     });
 }
-
+*/
 //middilewares
 /**
  * Origin[true] puts wildcard * in header
  * which is not suitable for all CORS requests
  */
-// app.use(cors(
-//   {
-//     origin: true,
-//     credentials: true}
-// ));
 app.use((req, res, next) => {
     // const allowedOrigins = ['http://localhost:3000'];
     // if (allowedOrigins.includes(origin))
     const origin = req.headers.origin;
-
     res.set('Access-Control-Allow-Origin', origin);
     res.set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
     res.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
