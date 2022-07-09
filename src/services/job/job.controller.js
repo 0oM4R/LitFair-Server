@@ -63,6 +63,7 @@ exports.addJob = async (req, res) => {
         description,
         app_title,
         app_description,
+        app_text_questions,
         app_video_questions
     } = req.body;
 
@@ -80,6 +81,7 @@ exports.addJob = async (req, res) => {
             application: {
                 title: app_title,
                 description: app_description,
+                text_questions: app_text_questions,
                 video_questions: app_video_questions
             }
         });
@@ -93,7 +95,20 @@ exports.addJob = async (req, res) => {
 exports.updateJob = async (req, res) => {
     const _id = req.params.id;
     const user = req.user;
-    const { title, experience, job_type, location, categories, requirements, skills_tools, description, app_title, app_des, app_ques } = req.body;
+    const {
+        title,
+        experience,
+        job_type,
+        location,
+        categories,
+        requirements,
+        skills_tools,
+        description,
+        app_title,
+        app_description,
+        app_text_questions,
+        app_video_questions
+    } = req.body;
     try {
         const doc = await jobModel.findById(_id).exec();
         if (doc.company_id != user.id) {
@@ -108,9 +123,11 @@ exports.updateJob = async (req, res) => {
         doc.requirements = requirements ? requirements : doc.requirements;
         doc.skills_tools = skills_tools ? skills_tools : doc.skills_tools;
         doc.description = description ? description : doc.description;
-        doc.app_title = app_title ? app_title : doc.app_title;
-        doc.app_des = app_des ? app_des : doc.app_des;
-        doc.app_ques = app_ques ? app_ques : doc.app_ques;
+        doc.application.title = app_title ? app_title : doc.application.title;
+        doc.application.description = app_description ? app_description : doc.application.description;
+        doc.application.text_questions = app_text_questions ? app_text_questions : doc.application.text_questions;
+        doc.application.video_questions = app_video_questions ? app_video_questions : doc.application.video_questions;
+        
 
         const valid = doc.validateSync();
         if (valid) throw valid;
