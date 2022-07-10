@@ -95,6 +95,13 @@ exports.deleteApp = async (req, res) => {
             return failedRes(res, 401, new Error('You are NOT authorized to delete this application'));
         }
         const doc = await appModel.findByIdAndDelete(app_id).exec();
+        const usr = await SeekerDetails.findById(user.id).exec();
+        const remJobs = [];
+        appliedJobs.forEach(e=>{
+            if(e != app_id)remJobs.push(e); 
+        });
+        usr.appliedJobs = remJobs;
+        await usr.save();
         return successfulRes(res, 200, doc);
     } catch (err) {
         return failedRes(res, 500, err);
