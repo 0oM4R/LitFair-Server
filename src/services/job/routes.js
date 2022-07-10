@@ -19,6 +19,7 @@ router.get('/applications/:id', jwtStrategy, getApp);
 router.post('/applications/:job_id', jwtStrategy, submitApp);
 router.delete('/applications/:app_id', jwtStrategy, deleteApp);
 
+router.post('/feedback-mocking/:app_id')
 router.post('/submit-feedback/:app_id', isCompany, submitFeedback);
 router.post('/submit-video/:app_id', jwtStrategy, videoUpload.single('video'), submitVideo);
 
