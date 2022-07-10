@@ -4,7 +4,7 @@ const { videoUpload } = require('../../config/multer');
 const { isCompany } = require('../../middleware/authZ');
 
 const { getJobs, getJob, addJob, updateJob, deleteJob } = require('./job.controller');
-const { getApps, submitApp, deleteApp, getApp, submitVideo, submitFeedback } = require('./application.controller');
+const { getApps, submitApp, deleteApp, getApp, submitVideo, submitFeedback, feedbackMocking } = require('./application.controller');
 
 //job routes
 router.get('/jobs', getJobs);
@@ -19,7 +19,7 @@ router.get('/applications/:id', jwtStrategy, getApp);
 router.post('/applications/:job_id', jwtStrategy, submitApp);
 router.delete('/applications/:app_id', jwtStrategy, deleteApp);
 
-router.post('/feedback-mocking/:app_id')
+router.post('/feedback-mocking/:app_id', feedbackMocking);
 router.post('/submit-feedback/:app_id', isCompany, submitFeedback);
 router.post('/submit-video/:app_id', jwtStrategy, videoUpload.single('video'), submitVideo);
 
