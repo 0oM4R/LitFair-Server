@@ -89,8 +89,8 @@ exports.deleteApp = async (req, res) => {
     try {
         const app = await appModel.findById(app_id).exec();
 
-        if(!app) return failedRes(res, 404, new Error(`Can NOT find application with id-${app}`));
-        
+        if(!app) return failedRes(res, 404, new Error(`Can NOT find application with id-${app_id}`));
+
         if (app.applicant_id != user.id) {
             return failedRes(res, 401, new Error('You are NOT authorized to delete this application'));
         }
