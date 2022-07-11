@@ -124,12 +124,13 @@ exports.getApplications = async (req, res)=>{
         
         const docs = await appModel.find({job_post: job_id, company_id: user.id}).sort({total_score: 1});
         if(!docs) return failedRes(res, 404, new Error(`Can NOT found applications with job-${job_id}`));
-        
+
         const response = [];
         for(const e of docs){
-            e.applicant_BaseInfo = await SeekerBaseInfo.findOne({where: {id: e.applicant_id}});
-            e.profile_picture = await SeekerDetails.findById(e.applicant_id).select('profile_picture');
-            response.push(e);
+            const obj = {...e};
+            obj.applicant_BaseInfo = await SeekerBaseInfo.findOne({where: {id: e.applicant_id}});
+            obj.profile_picture = await SeekerDetails.findById(e.applicant_id).select('profile_picture');
+            response.push(obj);
         }
         return successfulRes(res, 200, response);
     }catch(e){
