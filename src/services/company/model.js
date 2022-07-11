@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const validator = require('validator');
 const { company_SQLDB, company_MongoDB } = require('../../config/env');
 const { ENV } = require('../../config/env');
+const { jobModel } = require('../job/model');
 
 let sequelize;
 if (ENV == 'dev') {
@@ -35,7 +36,7 @@ sequelize
 //prettier-ignore
 const companyProfile = sequelize.define('companyProfile', {
   id: { type: DataTypes.INTEGER, primaryKey: true },
-  name: { type: DataTypes.STRING(20) },
+  name: { type: DataTypes.STRING(20), allowNull: false },
   nationality: { type: DataTypes.STRING(20) },
   company_size: { type: DataTypes.INTEGER },
   verified: { type: DataTypes.STRING(20) },
@@ -63,7 +64,7 @@ const companySchema = new mongoose.Schema(
 );
 
 companySchema.virtual('posted_jobs', {
-    ref: 'Job',
+    ref: jobModel,
     localField: '_id',
     foreignField: 'company_id'
 });

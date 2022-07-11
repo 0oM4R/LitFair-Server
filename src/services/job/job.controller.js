@@ -1,5 +1,6 @@
 const { jobModel } = require('./model');
 const { successfulRes, failedRes } = require('../../utils/response');
+const {companyProfile} = require('../company/model');
 
 exports.getJobs = async (req, res) => {
     const allowfilters = ['title', 'categories', 'all'];
@@ -22,7 +23,7 @@ exports.getJobs = async (req, res) => {
                 $sort: { createdAt: -1 }
             },
             {
-                $project: { title: 1, experience: 1, job_type: 1, location: 1 }
+                $project: { title: 1, experience: 1, job_type: 1, location: 1, company_id: 1 }
             },
             {
                 $facet: {
@@ -31,8 +32,19 @@ exports.getJobs = async (req, res) => {
                 }
             }
         ]);
+        doc[0].page_info = doc[0].page_info[0];
 
-        return successfulRes(res, 200, doc);
+        const response = [{page_info: doc[0].page_info, current_data: []}];
+        for(const e of doc[0].current_data){
+            const company = await companyProfile.findOne({where:{id: e.company_id}, attributes:['name', 'verified']});
+            
+            let obj = {};
+            if(company)  obj ={company_name: company.toJSON().name, company_verified: company.toJSON().verified}
+            response[0].current_data.push({...e, ...obj});
+        }
+
+
+        return successfulRes(res, 200, response);
     } catch (err) {
         return failedRes(res, 500, err);
     }

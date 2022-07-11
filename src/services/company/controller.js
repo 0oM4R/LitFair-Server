@@ -1,7 +1,7 @@
 const ObjectId = require('mongoose').Types.ObjectId;
 const { companyProfile, companyInfo } = require('./model');
 const { successfulRes, failedRes } = require('../../utils/response');
-const { appModel } = require('../job/model');
+const { appModel, jobModel } = require('../job/model');
 const { SeekerBaseInfo, SeekerDetails } = require('../seeker/model-seeker');
 
 exports.getCompaniesFull = async (req, res) => {
@@ -41,7 +41,7 @@ exports.getCompanyFull = async (req, res) => {
         const profile = await companyProfile.findOne({ where: { id } });
         if (profile) {
             let info = await companyInfo.findById(profile.id).exec();
-            info = await info.populate('posted_jobs', 'title job_type location');
+            info = await info.populate({path:'posted_jobs', select:'title job_type location', model: jobModel});
             response = { profile, info };
         }
         return successfulRes(res, 200, response);
