@@ -123,10 +123,10 @@ exports.getApplications = async (req, res)=>{
         
         let response = await appModel.find({job_post: job_id, company_id: user.id}).sort({total_score: 1});
 
-        response = response.forEach( async e=>{
+        response = response.map( async e=>{
             e.applicant_BaseInfo = await SeekerBaseInfo.findOne({where: {id: e.applicant_id}});
             e.profile_picture = await SeekerDetails.findById(e.applicant_id).select('profile_picture');
-
+            return e;
         })
 
         return successfulRes(res, 200, response);
