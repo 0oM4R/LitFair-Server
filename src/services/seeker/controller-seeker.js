@@ -152,11 +152,59 @@ const delete_CV = async (req, res) => {
     }
 };
 
+const saveSavedJob = async (req, res) =>{
+    try{
+        const job_id = req.params.job_id;
+        const user = req.user;
+        
+        let response = await SeekerDetails.findById(user.id).exec();
+        response.saved_jobs.push(job_id);
+        response= await response.save();
+        return successfulRes(res, 201, response.saved_jobs);
+    }catch(err){
+        return failedRes(res, 500, err);
+    }
+};
+
+const getSevedJobs = async (req, res) =>{
+    try{
+        const user = req.user;
+        
+        let response = await SeekerDetails.findById(user.id).exec();
+        
+        return successfulRes(res, 201, response.saved_jobs);
+    }catch(err){
+        return failedRes(res, 500, err);
+    }
+};
+
+const deleteSavedJob = async (req, res) =>{
+    try{
+        const job_id = req.params.job_id;
+        const user = req.user;
+        
+        let response = await SeekerDetails.findById(user.id).exec();
+        
+        let newSavedJobs = [];
+        response.saved_jobs.forEach(e=>{
+            if(e != job_id) newSavedJobs.push(e); 
+        });
+        response.saved_jobs = newSavedJobs;
+        response= await response.save();
+        return successfulRes(res, 201, response.saved_jobs);
+    }catch(err){
+        return failedRes(res, 500, err);
+    }
+};
+
 module.exports = {
     userProfile,
     updateUserProfile,
     updateSeekerDetails,
     getSeekerDetails,
     upload_CV,
-    delete_CV
+    delete_CV,
+    saveSavedJob,
+    getSevedJobs,
+    deleteSavedJob
 };

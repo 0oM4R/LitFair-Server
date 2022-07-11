@@ -112,7 +112,8 @@ exports.feedbackMocking = async (req, res)=>{
     try{
         const app_id = req.params.app_id;
         const doc = await appModel.findByIdAndUpdate(app_id, 
-            {feedback_1: {
+            {
+                feedback_1: {
                 
                 Excited: 5.3,
                 Engaged: 2.3,
@@ -129,7 +130,9 @@ exports.feedbackMocking = async (req, res)=>{
                 Calm: 7.8,
                 SpeakingRate: 8.9,
                 NotStressed: 9.2,
-              }},{new: true}
+              },
+            total_score: 8.2
+        },{new: true}
             );
             return successfulRes(res, 200, doc);
     }catch(err){

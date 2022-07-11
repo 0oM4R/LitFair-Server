@@ -1,5 +1,6 @@
 const { companyProfile, companyInfo } = require('./model');
 const { successfulRes, failedRes } = require('../../utils/response');
+const { appModel } = require('../job/model');
 
 exports.getCompaniesFull = async (req, res) => {
     let response = [];
@@ -110,6 +111,18 @@ exports.deleteCompanyFull = async (req, res) => {
 
         return successfulRes(res, 200, response);
     } catch (e) {
+        return failedRes(res, 500, e);
+    }
+};
+
+exports.getApplications = async (req, res)=>{
+    try{
+        const job_id = req.params.id;
+        const user = req.user;
+        
+        const response = await appModel.find({job_post: job_id, company_id: user.id}).sort({total_score: 1});
+        return successfulRes(res, 200, response);
+    }catch(e){
         return failedRes(res, 500, e);
     }
 };

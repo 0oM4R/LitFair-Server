@@ -20,12 +20,15 @@ mongoose.connect(env.job_DB).then(async(connection)=>{
 let doc = await mongoose.connection.collection('applications').find({_id: ObjectId(_id.appId)}).toArray();
 doc = doc[0];
 let update = {};
+let total_score = 0;
 for(const [key, value] of Object.entries(predictions)){
-	const inc = (doc.feedback_1[key]+predictions[key])/5;
+	const inc = (doc.feedback_1[key]*5+predictions[key])/5;
+    total_score+= inc;
 	update[key] = Math.round( inc * 100) / 100;
 
 }
- res = await mongoose.connection.collection('applications').updateOne({_id: ObjectId(_id.appId)}, {$set:{feedback_1:update}});
+total_score = Math.round( (total_score/15) * 100) / 100;
+ res = await mongoose.connection.collection('applications').updateOne({_id: ObjectId(_id.appId)}, {$set:{feedback_1:update, total_score: total_score}});
 connection.disconnect();
 
 console.log(res);

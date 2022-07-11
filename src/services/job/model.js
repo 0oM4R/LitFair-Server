@@ -92,6 +92,7 @@ const applicationSchema = new mongoose.Schema(
       Calm: {type: Number,set: (v) => Math.round(v * 100) / 100, default: 0.0},
       SpeakingRate: {type: Number,set: (v) => Math.round(v * 100) / 100, default: 0.0},
       NotStressed: {type: Number,set: (v) => Math.round(v * 100) / 100, default: 0.0},
+      total_score: {type: Number, set: (v) => Math.round(v * 100) / 100, default: 0.0},
     },
     feedback_2: {
       _id: false,
