@@ -21,6 +21,7 @@ router.delete('/applications/:app_id', jwtStrategy, deleteApp);
 
 router.post('/feedback-mocking/:app_id', feedbackMocking);
 router.post('/submit-feedback/:app_id', isCompany, submitFeedback);
-router.post('/submit-video/:app_id', jwtStrategy, videoUpload.single('video'), submitVideo);
+// router.post('/submit-video/:app_id', jwtStrategy, videoUpload.single('video'), submitVideo);
+router.post('/submit-video/:app_id',  videoUpload.single('video'), submitVideo);
 
 module.exports = router;
