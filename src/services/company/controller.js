@@ -122,8 +122,8 @@ exports.getApplications = async (req, res)=>{
         const user = req.user;
         
         let response = await appModel.findOne({job_post: job_id, company_id: user.id}).sort({total_score: 1});
-        response[BaseInfo] = await SeekerBaseInfo.findOne({where: {id: response.applicant_id}});
-        response[Detailes] = await SeekerDetails.findById(response.applicant_id).select('profile_picture');
+        response.applicant_BaseInfo = await SeekerBaseInfo.findOne({where: {id: response.applicant_id}});
+        response.applicant_Details = await SeekerDetails.findById(response.applicant_id).select('profile_picture');
 
         return successfulRes(res, 200, response);
     }catch(e){
