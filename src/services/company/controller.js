@@ -1,6 +1,7 @@
 const { companyProfile, companyInfo } = require('./model');
 const { successfulRes, failedRes } = require('../../utils/response');
 const { appModel } = require('../job/model');
+const {SeekerBaseInfo, SeekerDetails} = require('../seeker/model-seeker');
 
 exports.getCompaniesFull = async (req, res) => {
     let response = [];
@@ -120,7 +121,10 @@ exports.getApplications = async (req, res)=>{
         const job_id = req.params.id;
         const user = req.user;
         
-        const response = await appModel.find({job_post: job_id, company_id: user.id}).sort({total_score: 1});
+        let response = await appModel.findOne({job_post: job_id, company_id: user.id}).sort({total_score: 1});
+        response[BaseInfo] = await SeekerBaseInfo.findOne({where: {id: response.applicant_id}});
+        response[Detailes] = await SeekerDetails.findById(response.applicant_id).select('profile_picture');
+
         return successfulRes(res, 200, response);
     }catch(e){
         return failedRes(res, 500, e);
