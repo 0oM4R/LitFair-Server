@@ -119,12 +119,12 @@ exports.deleteCompanyFull = async (req, res) => {
 
 exports.getApplications = async (req, res)=>{
     try{
-        const job_id = req.params.id;
+        const job_id = req.params.job_id;
         const user = req.user;
         
         const docs = await appModel.find({job_post: job_id, company_id: user.id}).sort({total_score: 1});
-console.log(docs);
-console.log(job_id, user.id)
+        if(!docs) return failedRes(res, 404, new Error(`Can NOT found applications with job-${job_id}`));
+        
         const response = [];
         for(const e of docs){
             e.applicant_BaseInfo = await SeekerBaseInfo.findOne({where: {id: e.applicant_id}});
