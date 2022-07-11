@@ -128,7 +128,7 @@ exports.getApplications = async (req, res)=>{
         const response = [];
         for(const e of docs){
             const obj = {...e._doc};
-            obj.applicant_BaseInfo = await SeekerBaseInfo.findOne({where: {id: e.applicant_id}},{attributes:['fname', 'lname', 'email']});
+            obj.applicant_BaseInfo = await SeekerBaseInfo.findOne({where: {id: e.applicant_id}, attributes:['fname', 'lname', 'email']});
             obj.profile_picture = await SeekerDetails.findById(e.applicant_id).select('profile_picture');
             response.push(obj);
         }
