@@ -122,8 +122,9 @@ exports.getApplications = async (req, res)=>{
         const job_id = req.params.id;
         const user = req.user;
         
-        const docs = await appModel.find({job_post: ObjectId(job_id), company_id: user.id}).sort({total_score: 1});
+        const docs = await appModel.find({job_post: job_id, company_id: user.id}).sort({total_score: 1});
 console.log(docs);
+console.log(job_id, user.id)
         const response = [];
         for(const e of docs){
             e.applicant_BaseInfo = await SeekerBaseInfo.findOne({where: {id: e.applicant_id}});
