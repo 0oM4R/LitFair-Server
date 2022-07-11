@@ -98,7 +98,7 @@ exports.deleteApp = async (req, res) => {
         const usr = await SeekerDetails.findById(user.id).exec();
         const remJobs = [];
         usr.appliedJobs.forEach(e=>{
-            if(e != app_id)remJobs.push(e); 
+            if(e != app.job_post)remJobs.push(e); 
         });
         usr.appliedJobs = remJobs;
         await usr.save();
