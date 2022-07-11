@@ -127,7 +127,6 @@ exports.updateJob = async (req, res) => {
         doc.application.description = app_description ? app_description : doc.application.description;
         doc.application.text_questions = app_text_questions ? app_text_questions : doc.application.text_questions;
         doc.application.video_questions = app_video_questions ? app_video_questions : doc.application.video_questions;
-        
 
         const valid = doc.validateSync();
         if (valid) throw valid;

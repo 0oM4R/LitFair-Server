@@ -33,12 +33,12 @@ const userProfile = (req, res) => {
 };
 
 const updateUserProfile = async (req, res) => {
-    const {date_of_birth, fname, lname, country, city, nationality, gender, phone_number, title} = req.body;
+    const { date_of_birth, fname, lname, country, city, nationality, gender, phone_number, title } = req.body;
     try {
-        const user  = req.user;
+        const user = req.user;
         const seeker = await SeekerBaseInfo.upsert(
             {
-                id: user.id, 
+                id: user.id,
                 date_of_birth,
                 fname,
                 lname,
@@ -49,7 +49,7 @@ const updateUserProfile = async (req, res) => {
                 phone_number,
                 title
             },
-            { where: { id: user.id }, returning:true}
+            { where: { id: user.id }, returning: true }
         );
         return successfulRes(res, 200, seeker[0]);
     } catch (e) {
@@ -91,11 +91,11 @@ const updateSeekerDetails = (req, res) => {
             appliedJobs
         },
         { upsert: true },
-        function(err, doc){
-            if(err)return failedRes(res, 500, err);
-            return successfulRes(res, 200, doc)
+        function (err, doc) {
+            if (err) return failedRes(res, 500, err);
+            return successfulRes(res, 200, doc);
         }
-    )
+    );
 };
 
 const getSeekerDetails = (req, res) => {
@@ -152,47 +152,47 @@ const delete_CV = async (req, res) => {
     }
 };
 
-const saveSavedJob = async (req, res) =>{
-    try{
+const saveSavedJob = async (req, res) => {
+    try {
         const job_id = req.params.job_id;
         const user = req.user;
-        
+
         let response = await SeekerDetails.findById(user.id).exec();
         response.saved_jobs.push(job_id);
-        response= await response.save();
+        response = await response.save();
         return successfulRes(res, 201, response.saved_jobs);
-    }catch(err){
+    } catch (err) {
         return failedRes(res, 500, err);
     }
 };
 
-const getSevedJobs = async (req, res) =>{
-    try{
+const getSevedJobs = async (req, res) => {
+    try {
         const user = req.user;
-        
+
         let response = await SeekerDetails.findById(user.id).exec();
-        
+
         return successfulRes(res, 201, response.saved_jobs);
-    }catch(err){
+    } catch (err) {
         return failedRes(res, 500, err);
     }
 };
 
-const deleteSavedJob = async (req, res) =>{
-    try{
+const deleteSavedJob = async (req, res) => {
+    try {
         const job_id = req.params.job_id;
         const user = req.user;
-        
+
         let response = await SeekerDetails.findById(user.id).exec();
-        
+
         let newSavedJobs = [];
-        response.saved_jobs.forEach(e=>{
-            if(e != job_id) newSavedJobs.push(e); 
+        response.saved_jobs.forEach((e) => {
+            if (e != job_id) newSavedJobs.push(e);
         });
         response.saved_jobs = newSavedJobs;
-        response= await response.save();
+        response = await response.save();
         return successfulRes(res, 201, response.saved_jobs);
-    }catch(err){
+    } catch (err) {
         return failedRes(res, 500, err);
     }
 };

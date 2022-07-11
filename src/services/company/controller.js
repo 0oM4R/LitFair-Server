@@ -2,7 +2,7 @@ const ObjectId = require('mongoose').Types.ObjectId;
 const { companyProfile, companyInfo } = require('./model');
 const { successfulRes, failedRes } = require('../../utils/response');
 const { appModel } = require('../job/model');
-const {SeekerBaseInfo, SeekerDetails} = require('../seeker/model-seeker');
+const { SeekerBaseInfo, SeekerDetails } = require('../seeker/model-seeker');
 
 exports.getCompaniesFull = async (req, res) => {
     let response = [];
@@ -117,23 +117,23 @@ exports.deleteCompanyFull = async (req, res) => {
     }
 };
 
-exports.getApplications = async (req, res)=>{
-    try{
+exports.getApplications = async (req, res) => {
+    try {
         const job_id = req.params.job_id;
         const user = req.user;
-        
-        const docs = await appModel.find({job_post: job_id, company_id: user.id}).sort({total_score: 1});
-        if(!docs) return failedRes(res, 404, new Error(`Can NOT found applications with job-${job_id}`));
+
+        const docs = await appModel.find({ job_post: job_id, company_id: user.id }).sort({ total_score: 1 });
+        if (!docs) return failedRes(res, 404, new Error(`Can NOT found applications with job-${job_id}`));
 
         const response = [];
-        for(const e of docs){
-            const obj = {...e._doc};
-            obj.applicant_BaseInfo = await SeekerBaseInfo.findOne({where: {id: e.applicant_id}, attributes:['fname', 'lname', 'email']});
+        for (const e of docs) {
+            const obj = { ...e._doc };
+            obj.applicant_BaseInfo = await SeekerBaseInfo.findOne({ where: { id: e.applicant_id }, attributes: ['fname', 'lname', 'email'] });
             obj.profile_picture = await SeekerDetails.findById(e.applicant_id).select('profile_picture');
             response.push(obj);
         }
         return successfulRes(res, 200, response);
-    }catch(e){
+    } catch (e) {
         return failedRes(res, 500, e);
     }
 };

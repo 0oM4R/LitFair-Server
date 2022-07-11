@@ -124,7 +124,7 @@ const schema = mongoose.Schema(
         },
         description: { type: String },
         appliedJobs: [{ type: String }],
-        saved_jobs: [{type: mongoose.Schema.Types.ObjectId, ref: 'Job'}]
+        saved_jobs: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Job' }]
     },
     { versionKey: false }
 );

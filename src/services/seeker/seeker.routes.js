@@ -28,6 +28,6 @@ router.delete('/seeker/details/cv/delete', jwtStrategy, isSeeker, delete_CV);
 //saved jobs
 router.get('/seeker/saved-jobs', jwtStrategy, isSeeker, getSevedJobs);
 router.post('/seeker/saved-jobs/:job_id', jwtStrategy, isSeeker, saveSavedJob);
-router.delete('/seeker/saved-jobs/:job_id', jwtStrategy, isSeeker,deleteSavedJob);
+router.delete('/seeker/saved-jobs/:job_id', jwtStrategy, isSeeker, deleteSavedJob);
 
 module.exports = router;

@@ -19,8 +19,7 @@ exports.getApps = async (req, res) => {
                 $sort: { createdAt: -1 }
             },
             {
-              $lookup: { from: 'jobs', localField: 'job_post', foreignField: '_id', as: 'job_post'}
-
+                $lookup: { from: 'jobs', localField: 'job_post', foreignField: '_id', as: 'job_post' }
             },
             {
                 $lookup: {
@@ -29,7 +28,7 @@ exports.getApps = async (req, res) => {
                     foreignField: '_id',
                     as: 'company_info'
                 }
-            },
+            }
         ]);
 
         return successfulRes(res, 200, doc);
@@ -56,7 +55,7 @@ exports.submitApp = async (req, res) => {
     const { text_question, text_answers, cv_url } = req.body;
     try {
         const usr = await SeekerDetails.findById(user.id).exec();
-        if(usr.appliedJobs.includes(job_id)) return failedRes(res, 401, new Error('You have already applied to this job'));
+        if (usr.appliedJobs.includes(job_id)) return failedRes(res, 401, new Error('You have already applied to this job'));
         const company_doc = await jobModel.findById(job_id).exec();
 
         const doc = new appModel({
@@ -89,7 +88,7 @@ exports.deleteApp = async (req, res) => {
     try {
         const app = await appModel.findById(app_id).exec();
 
-        if(!app) return failedRes(res, 404, new Error(`Can NOT find application with id-${app_id}`));
+        if (!app) return failedRes(res, 404, new Error(`Can NOT find application with id-${app_id}`));
 
         if (app.applicant_id != user.id) {
             return failedRes(res, 401, new Error('You are NOT authorized to delete this application'));
@@ -97,8 +96,8 @@ exports.deleteApp = async (req, res) => {
         const doc = await appModel.findByIdAndDelete(app_id).exec();
         const usr = await SeekerDetails.findById(user.id).exec();
         const remJobs = [];
-        usr.appliedJobs.forEach(e=>{
-            if(e != app.job_post)remJobs.push(e); 
+        usr.appliedJobs.forEach((e) => {
+            if (e != app.job_post) remJobs.push(e);
         });
         usr.appliedJobs = remJobs;
         await usr.save();
@@ -108,52 +107,52 @@ exports.deleteApp = async (req, res) => {
     }
 };
 
-exports.feedbackMocking = async (req, res)=>{
-    try{
+exports.feedbackMocking = async (req, res) => {
+    try {
         const app_id = req.params.app_id;
-        const doc = await appModel.findByIdAndUpdate(app_id, 
+        const doc = await appModel.findByIdAndUpdate(
+            app_id,
             {
                 feedback_1: {
-                
-                Excited: 5.3,
-                Engaged: 2.3,
-                Smiled: 7.4,
-                RecommendHiring: 1.3,
-                NoFillers: 4.2,
-                StructuredAnswers: 5.6,
-                Friendly: 6.7,
-                Focused: 5.5,
-                NotAwkward: 6.1,
-                Paused: 1.6,
-                EyeContact: 3.3,
-                Authentic: 4.2,
-                Calm: 7.8,
-                SpeakingRate: 8.9,
-                NotStressed: 9.2,
-              },
-            total_score: 8.2
-        },{new: true}
-            );
-            return successfulRes(res, 200, doc);
-    }catch(err){
-        return failedRes(res, 500, err)
+                    Excited: 5.3,
+                    Engaged: 2.3,
+                    Smiled: 7.4,
+                    RecommendHiring: 1.3,
+                    NoFillers: 4.2,
+                    StructuredAnswers: 5.6,
+                    Friendly: 6.7,
+                    Focused: 5.5,
+                    NotAwkward: 6.1,
+                    Paused: 1.6,
+                    EyeContact: 3.3,
+                    Authentic: 4.2,
+                    Calm: 7.8,
+                    SpeakingRate: 8.9,
+                    NotStressed: 9.2
+                },
+                total_score: 8.2
+            },
+            { new: true }
+        );
+        return successfulRes(res, 200, doc);
+    } catch (err) {
+        return failedRes(res, 500, err);
     }
-}
+};
 
-exports.submitFeedback = async (req, res)=>{
-    
-    try{
+exports.submitFeedback = async (req, res) => {
+    try {
         const app_id = req.params.app_id;
-        const {feedback} = req.body;
+        const { feedback } = req.body;
         const user = req.user;
-        
+
         const doc = await appModel.findById(app_id).exe();
-        if(user.id != doc.company_id) return failedRes(res, 401, new Error('You are NOT authorized to add feedback to this application'))
+        if (user.id != doc.company_id) return failedRes(res, 401, new Error('You are NOT authorized to add feedback to this application'));
         doc.feedback_2 = feedback;
         await doc.save();
-        
+
         return successfulRes(res, 201, response);
-    }catch(err){
+    } catch (err) {
         return failedRes(res, 500, err);
     }
 };
@@ -163,9 +162,8 @@ exports.submitVideo = async (req, res) => {
     const app_id = req.params.app_id;
     const { video_question, video_answer } = req.body;
     try {
-        
         // const url = await upload_video(file.path, `video_ud-${user.id}-${Date.now()}`, folderNames.interviewFolder);
-        
+
         const appDoc = await appModel.findById(app_id).exec();
         if (appDoc) {
             appDoc.progress.live_inter = true;
@@ -211,7 +209,7 @@ const sendVideoMsg = (videoPath, question, appId) => {
     //     SpeakingRate: 1.5,
     //     NotStressed: 1.5}
     // }
-    
+
     amqp.connect(MQ_URL, function (error0, connection) {
         if (error0) {
             throw error0;
