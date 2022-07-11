@@ -128,9 +128,9 @@ exports.feedbackMocking = async (req, res) => {
                     Authentic: 4.2,
                     Calm: 7.8,
                     SpeakingRate: 8.9,
-                    NotStressed: 9.2
-                },
-                total_score: 8.2
+                    NotStressed: 9.2,
+                    total_score: 8.2
+                }
             },
             { new: true }
         );

@@ -58,6 +58,7 @@ const applicationSchema = new mongoose.Schema(
     company_id: { type: Number, required: [true, '_id field MUST be added manually'], ref: 'CompanyInfo' },
     cv_url: {type: String},
     text_answers: [{
+      _id: false,
       question: {type: String},
       answer: {type: String}
     }],
