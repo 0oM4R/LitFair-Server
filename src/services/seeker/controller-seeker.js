@@ -90,7 +90,7 @@ const updateSeekerDetails = (req, res) => {
             description,
             appliedJobs
         },
-        { upsert: true },
+        { upsert: true, new: true},
         function (err, doc) {
             if (err) return failedRes(res, 500, err);
             return successfulRes(res, 200, doc);
