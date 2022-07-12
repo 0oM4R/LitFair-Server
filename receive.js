@@ -53,7 +53,7 @@ async function receive() {
                     throw error1;
                 }
                 channel.assertQueue(env.CONSUME_VIDEOMQ_NAME, {
-                    durable: false
+                    durable: true
                 });
 
 
@@ -69,7 +69,7 @@ async function receive() {
 
                 }, 
                 {
-                    noAck: true
+                    noAck: false
                 });
 
 

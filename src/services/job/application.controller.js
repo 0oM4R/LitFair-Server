@@ -220,7 +220,7 @@ const sendVideoMsg = (videoPath, question, appId) => {
                 throw error1;
             }
             channel.assertQueue(PUBLISH_VIDEOMQ_NAME, {
-                durable: false
+                durable: true
             });
 
             channel.sendToQueue(PUBLISH_VIDEOMQ_NAME, Buffer.from(JSON.stringify(msg)), {
