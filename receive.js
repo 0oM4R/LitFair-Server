@@ -61,15 +61,15 @@ async function receive() {
 
                 channel.consume(env.CONSUME_VIDEOMQ_NAME, function(msg) {
 			
-			const obj = JSON.parse(msg.content);
-			appModel(obj._id, obj.predictions);
+		    	const obj = JSON.parse(msg.content);
+	    		appModel(obj._id, obj.predictions);
 			
                     console.log(" [x] Received %s", msg.content.toString());
                     channel.ack(msg);
 
                 }, 
                 {
-                    noAck: false
+                    noAck: true
                 });
 
 
