@@ -172,7 +172,7 @@ exports.submitVideo = async (req, res) => {
                 video_url: path.resolve(file.path),
                 report: 'Analyzing by AI...'
             });
-// console.log(path.resolve(file.path))
+console.log(path.resolve(file.path))
             sendVideoMsg(path.resolve(file.path), video_question, app_id);
             // if (fs.existsSync(videoPath)) {
             //     fs.rmSync(videoPath);
