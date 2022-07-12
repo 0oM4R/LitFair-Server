@@ -125,12 +125,16 @@ exports.getApplications = async (req, res) => {
         const docs = await appModel.find({ job_post: job_id, company_id: user.id }).select('-text_answers -video_answers -updatedAt -cv_url').sort({ 'feedback_1.total_score': 1 });
         if (!docs) return failedRes(res, 404, new Error(`Can NOT found applications with job-${job_id}`));
 
-        const response = [];
+        let job = await jobModel.findById(job_id).select('title job_type location');
+        if (!job) return failedRes(res, 404, new Error(`Can NOT found job with ID-${job_id}`));
+        
+        job = job.toJSON();
+        const response = {job_title: job.title, job_type: job.job_type, job_location: job.location, applications:[]};
         for (const e of docs) {
             const baseInfo = await SeekerBaseInfo.findOne({ where: { id: e.applicant_id }, attributes: ['fname', 'lname', 'email'] });
             const details = await SeekerDetails.findById(e.applicant_id).select( '-_id profile_picture');
             
-            response.push({ ...e.toJSON(), ...baseInfo.toJSON(), ...details.toJSON() });
+            response.applications.push({ ...e.toJSON(), ...baseInfo.toJSON(), ...details.toJSON() });
         }
         return successfulRes(res, 200, response);
     } catch (e) {
