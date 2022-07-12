@@ -117,6 +117,25 @@ exports.deleteCompanyFull = async (req, res) => {
     }
 };
 
+exports.getPostedJobs = async (req, res)=>{
+    try{
+        const user = req.user;
+        
+        const docs = await jobModel.find({company_id: user.id}).select('title job_type location createdAt');
+        
+        const response = [];
+        for(const e of docs){
+            const apps = await appModel.find({job_post: e._id, company_id: user.id}).count();
+
+            response.push({...e.toJSON(), applications_count: apps});
+        }
+
+        return successfulRes(res, 200, response);
+    }catch(e){
+        return failedRes(res, 500, e);
+    }
+};
+
 exports.getApplications = async (req, res) => {
     try {
         const job_id = req.params.job_id;

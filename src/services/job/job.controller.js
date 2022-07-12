@@ -55,7 +55,7 @@ exports.getJob = async (req, res) => {
     const user = req.user;
     try {
         let doc = await jobModel.findById(_id).exec();
-        if (user.id == doc.company_id) doc = await doc.populate('submissions');
+    
         return successfulRes(res, 200, doc);
     } catch (err) {
         return failedRes(res, 500, err);
