@@ -22,7 +22,7 @@ doc = doc[0];
 let update = {};
 let total_score = 0;
 for(const [key, value] of Object.entries(predictions)){
-    const inc = doc.feedback_1[key]+value;
+    const inc = parseFloat(doc.feedback_1[key])+ parseFloat(value);
     console.log(`${key}: ${value}`)
     if(inc>=0.0){
         total_score+= inc;
