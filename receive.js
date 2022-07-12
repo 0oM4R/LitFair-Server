@@ -31,7 +31,7 @@ for(const [key, value] of Object.entries(predictions)){
 
 }
 update.total_score = Math.round( total_score * 100) / 100;
- res = await mongoose.connection.collection('applications').updateOne({_id: ObjectId(_id.appId)}, {$set:{feedback_1:update}});
+ res = await mongoose.connection.collection('applications').updateOne({_id: ObjectId(_id.appId)}, {$set:{feedback_1:update, 'progress.feedback_1': true}});
 connection.disconnect();
 
 console.log(res);
