@@ -22,16 +22,16 @@ doc = doc[0];
 let update = {};
 let total_score = 0;
 for(const [key, value] of Object.entries(predictions)){
-    const inc = ((doc.feedback_1[key]*5)+parseInt(value))/5;
-    console.log(`${inc}`)
+    const inc = doc.feedback_1[key]+parseInt(value);
+    console.log(`${key}: ${value}`)
     if(inc>=0.0){
         total_score+= inc;
         update[key] = Math.round( inc * 100) / 100;
     }
 
 }
-total_score = Math.round( (total_score/15) * 100) / 100;
- res = await mongoose.connection.collection('applications').updateOne({_id: ObjectId(_id.appId)}, {$set:{feedback_1:update, total_score: total_score}});
+update.total_score = Math.round( total_score * 100) / 100;
+ res = await mongoose.connection.collection('applications').updateOne({_id: ObjectId(_id.appId)}, {$set:{feedback_1:update}});
 connection.disconnect();
 
 console.log(res);

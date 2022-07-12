@@ -53,7 +53,7 @@ exports.getCompanyFull = async (req, res) => {
 exports.updateCompanyFull = async (req, res) => {
     const user = req.user;
 
-    const { name, nationality, company_size, verified, phone_number, email, title, logo, CRN_thumbnail, CRN_num, CRN_exp, description, social } =
+    const { name, nationality, company_size, verified, phone_number, email, title, logo, CRN_thumbnail, CRN_num, CRN_exp, description, social, cover } =
         req.body;
     let response = { profile: 'null', info: 'null' };
     try {
@@ -77,7 +77,7 @@ exports.updateCompanyFull = async (req, res) => {
             response.profile = profile;
         }
 
-        if (description || social || CRN_num || CRN_exp) {
+        if (description || social || CRN_num || CRN_exp || logo || cover) {
             let info = await companyInfo.findById(user.id).exec();
             if (!info) {
                 info = new companyInfo({
@@ -87,6 +87,7 @@ exports.updateCompanyFull = async (req, res) => {
             info.description = description ? description : info.description;
             info.social = social ? social : info.social;
             info.logo = logo ? logo : info.logo;
+            info.cover = cover ? cover : info.cover;
             info.CRN_thumbnail = CRN_thumbnail ? CRN_thumbnail : info.CRN_thumbnail;
             info.CRN.number = CRN_num ? CRN_num : info.CRN.number;
             info.CRN.exp_date = CRN_exp ? CRN_exp : info.CRN.exp_date;

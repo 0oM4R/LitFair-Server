@@ -50,6 +50,7 @@ const companySchema = new mongoose.Schema(
   {
     _id: { type: Number, required: true,},
     logo: { type: String },
+    cover: { type: String },
     social: { type: Map, of: String },
     CRN: {
       number: { type: String },
