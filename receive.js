@@ -22,7 +22,7 @@ doc = doc[0];
 let update = {};
 let total_score = 0;
 for(const [key, value] of Object.entries(predictions)){
-    const inc = ((doc.feedback_1[key]*5)+value)/5;
+    const inc = ((doc.feedback_1[key]*5)+parseInt(value))/5;
     console.log(`${inc}`)
     total_score+= inc;
 	update[key] = Math.round( inc * 100) / 100;
