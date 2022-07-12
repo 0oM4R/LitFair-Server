@@ -24,8 +24,10 @@ let total_score = 0;
 for(const [key, value] of Object.entries(predictions)){
     const inc = ((doc.feedback_1[key]*5)+parseInt(value))/5;
     console.log(`${inc}`)
-    total_score+= inc;
-	update[key] = Math.round( inc * 100) / 100;
+    if(Number.isInteger(inc)){
+        total_score+= inc;
+        update[key] = Math.round( inc * 100) / 100;
+    }
 
 }
 total_score = Math.round( (total_score/15) * 100) / 100;
