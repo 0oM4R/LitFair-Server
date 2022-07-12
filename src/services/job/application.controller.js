@@ -187,9 +187,11 @@ exports.submitVideo = async (req, res) => {
 
 const sendVideoMsg = (videoPath, question, appId) => {
     const msg = {
-        videoPath,
-        question,
-        appId
+        path: videoPath,
+        _id: {
+            question,
+            appId
+        }
     };
     // const msg = {
     //     _id: {videoPath, question, appId},
