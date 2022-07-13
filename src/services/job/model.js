@@ -107,7 +107,9 @@ const applicationSchema = new mongoose.Schema(
   }
 );
 
-const roundToDigits = num => Math.round(num*10)/10;
+function roundToDigits(num){
+  return Math.round(num*10)/10;
+}
 
 const { jobModel, appModel } = (() => {
     const conn = mongoose.createConnection(job_DB);
