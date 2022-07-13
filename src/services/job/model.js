@@ -108,7 +108,7 @@ const applicationSchema = new mongoose.Schema(
 );
 
 function roundToDigits(num){
-  return Math.round(num*10)/10;
+  return num/5 <=10 ? Math.round(num/5 *10)/10 : 10;
 }
 
 const { jobModel, appModel } = (() => {
