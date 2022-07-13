@@ -6,6 +6,8 @@ const { upload_video, folderNames } = require('../../config/cloudinary');
 const { MQ_URL, PUBLISH_VIDEOMQ_NAME } = require('../../config/env');
 const { SeekerDetails } = require('../seeker/model-seeker');
 const path = require('path');
+const { smtpMail } = require('../../utils/smtp');
+const { User_model } = require('../User/model-User');
 
 exports.getApps = async (req, res) => {
     const user = req.user;
@@ -156,6 +158,28 @@ exports.submitFeedback = async (req, res) => {
         return failedRes(res, 500, err);
     }
 };
+
+exports.feedbackEmail = async(req, res)=>{
+    try{
+        const job_id = req.params.job_id;
+        const {user_id, email_subject, email_body} = req.body;
+        const user = req.user;
+        
+        const job = await appModel.findById(job_id).exec();
+        if(!app) return failedRes(res, 404, `JOB with [ID: ${job_id}] NOT FOUND`);
+        if(job.company_id != user.id) return failedRes(res, 401, `You DO NOT have permission to access this job`);
+
+        const seeker = await User_model.findOne({ where: { id: user_id } });
+        if(!seeker) return failedRes(res, 404, `Applicant with [ID: ${user_id}] NOT FOUND`);
+
+        const info = await smtpMail(seeker.email, 'Company', user.email, `${email_subject} [${job.title}]`, email_body);
+
+        return successfulRes(res, 200, { response: info.response, from: info.envelope.from, to: info.envelope.to[0] });
+    }catch(err){
+        return failedRes(res, 500, err);
+    }
+}
+
 exports.submitVideo = async (req, res) => {
     const file = req.file;
     const user = req.user;
@@ -172,7 +196,7 @@ exports.submitVideo = async (req, res) => {
                 video_url: path.resolve(file.path),
                 report: 'Analyzing by AI...'
             });
-console.log(path.resolve(file.path))
+
             sendVideoMsg(path.resolve(file.path), video_question, app_id);
             // if (fs.existsSync(videoPath)) {
             //     fs.rmSync(videoPath);
