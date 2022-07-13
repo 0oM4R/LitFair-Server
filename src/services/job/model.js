@@ -78,22 +78,22 @@ const applicationSchema = new mongoose.Schema(
     },
     feedback_1: {
       _id: false,
-      Excited: {type: Number,get:getn , default: 0.0},
-      Engaged: {type: Number,get: (v) => (Math.round(v * 100) / 100)/5, default: 0.0},
-      Smiled: {type: Number,get: (v) => (Math.round(v * 100) / 100)/5, default: 0.0},
-      RecommendHiring: {type: Number,get: (v) => (Math.round(v * 100) / 100)/5, default: 0.0},
-      NoFillers: {type: Number,get: (v) => (Math.round(v * 100) / 100)/5, default: 0.0},
-      StructuredAnswers: {type: Number,get: (v) => (Math.round(v * 100) / 100)/5, default: 0.0},
-      Friendly: {type: Number,get: (v) => (Math.round(v * 100) / 100)/5, default: 0.0},
-      Focused: {type: Number,get: (v) => (Math.round(v * 100) / 100)/5, default: 0.0},
-      NotAwkward: {type: Number,get: (v) => (Math.round(v * 100) / 100)/5, default: 0.0},
-      Paused: {type: Number,get: (v) => (Math.round(v * 100) / 100)/5, default: 0.0},
-      EyeContact: {type: Number,get: (v) => (Math.round(v * 100) / 100)/5, default: 0.0},
-      Authentic: {type: Number,get: (v) => (Math.round(v * 100) / 100)/5, default: 0.0},
-      Calm: {type: Number,get: (v) => (Math.round(v * 100) / 100)/5, default: 0.0},
-      SpeakingRate: {type: Number,get: (v) => (Math.round(v * 100) / 100)/5, default: 0.0},
-      NotStressed: {type: Number,get: (v) => (Math.round(v * 100) / 100)/5, default: 0.0},
-      total_score: {type: Number, get: (v) => (Math.round(v * 100) / 100)/15, default: 0.0},
+      Excited: {type: Number,get:roundToDigits(v/5) , default: 0.0},
+      Engaged: {type: Number,get: roundToDigits(v/5), default: 0.0},
+      Smiled: {type: Number,get: roundToDigits(v/5), default: 0.0},
+      RecommendHiring: {type: Number,get: roundToDigits(v/5), default: 0.0},
+      NoFillers: {type: Number,get: roundToDigits(v/5), default: 0.0},
+      StructuredAnswers: {type: Number,get: roundToDigits(v/5), default: 0.0},
+      Friendly: {type: Number,get: roundToDigits(v/5), default: 0.0},
+      Focused: {type: Number,get: roundToDigits(v/5), default: 0.0},
+      NotAwkward: {type: Number,get: roundToDigits(v/5), default: 0.0},
+      Paused: {type: Number,get: roundToDigits(v/5), default: 0.0},
+      EyeContact: {type: Number,get: roundToDigits(v/5), default: 0.0},
+      Authentic: {type: Number,get: roundToDigits(v/5), default: 0.0},
+      Calm: {type: Number,get: roundToDigits(v/5), default: 0.0},
+      SpeakingRate: {type: Number,get: roundToDigits(v/5), default: 0.0},
+      NotStressed: {type: Number,get: roundToDigits(v/5), default: 0.0},
+      total_score: {type: Number, get: roundToDigits(v/15), default: 0.0},
     },
     feedback_2: {
       _id: false,
@@ -106,7 +106,9 @@ const applicationSchema = new mongoose.Schema(
     toJSON : {getters: true}
   }
 );
-function getn(v) {return v/3}
+
+const roundToDigits = num => Math.round(num*10)/10;
+
 const { jobModel, appModel } = (() => {
     const conn = mongoose.createConnection(job_DB);
     conn.on('connected', () => {
