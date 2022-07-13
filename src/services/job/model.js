@@ -78,7 +78,7 @@ const applicationSchema = new mongoose.Schema(
     },
     feedback_1: {
       _id: false,
-      Excited: {type: Number,get: (v) => (Math.round(v * 100) / 100)/5, default: 0.0},
+      Excited: {type: Number,get: function(v) {retrun (Math.round(v * 100) / 100)/5}, default: 0.0},
       Engaged: {type: Number,get: (v) => (Math.round(v * 100) / 100)/5, default: 0.0},
       Smiled: {type: Number,get: (v) => (Math.round(v * 100) / 100)/5, default: 0.0},
       RecommendHiring: {type: Number,get: (v) => (Math.round(v * 100) / 100)/5, default: 0.0},
