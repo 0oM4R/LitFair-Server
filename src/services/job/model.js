@@ -102,6 +102,8 @@ const applicationSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
+    toObject : {getters: true},
+    toJSON : {getters: true}
   }
 );
 function getn(v) {return v/3}
