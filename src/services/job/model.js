@@ -104,7 +104,7 @@ const applicationSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
-function getn(v) {return (Math.round(v * 100) / 100)/5}
+function getn(v) {return v/3}
 const { jobModel, appModel } = (() => {
     const conn = mongoose.createConnection(job_DB);
     conn.on('connected', () => {
