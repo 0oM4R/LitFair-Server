@@ -21,7 +21,7 @@ exports.smtpMail = async (toEmail, fromName, fromEmail, subject, text) => {
       text: text,
       html: `<p>${text}</p> 
       <div>
-        <img src="https://res.cloudinary.com/duruvgdtm/image/upload/v1657835890/litfair_media/photos/2022-07-14T21:58:09.967Z-18.gif">
+        <img src="https://res.cloudinary.com/duruvgdtm/image/upload/v1657835890/litfair_media/photos/2022-07-14T21:58:09.967Z-18.gif"  width="300" height="150">
       </div>`,
     });
     return info;
