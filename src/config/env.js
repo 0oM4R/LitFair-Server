@@ -23,5 +23,6 @@ module.exports = {
     SMTP_PORT: process.env.SMTP_PORT,
     SENDINBLUE_USER: process.env.SENDINBLUE_USER,
     SENDINBLUE_KEY: process.env.SENDINBLUE_KEY,
+    
     workspace: process.env.workspace
 };
