@@ -165,14 +165,14 @@ exports.feedbackEmail = async(req, res)=>{
         const {user_id, email_subject, email_body} = req.body;
         const user = req.user;
         
-        const job = await appModel.findById(job_id).exec();
+        const job = await jobModel.findById(job_id).exec();
         if(!job) return failedRes(res, 404, new Error(`JOB with [ID: ${job_id}] NOT FOUND`));
         if(job.company_id != user.id) return failedRes(res, 401, `You DO NOT have permission to access this job`);
 
         const seeker = await User_model.findOne({ where: { id: user_id } });
         if(!seeker) return failedRes(res, 404, new Error(`Applicant with [ID: ${user_id}] NOT FOUND`));
 
-        const info = await smtpMail(seeker.email, 'Company', user.email, `${email_subject} [${job.title}]`, email_body);
+        const info = await smtpMail(seeker.email, 'Company', user.email, email_subject, email_body);
 
         return successfulRes(res, 200, { response: info.response, from: info.envelope.from, to: info.envelope.to[0] });
     }catch(err){
