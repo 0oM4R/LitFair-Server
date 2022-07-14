@@ -5,12 +5,12 @@ exports.smtpMail = async (toEmail, fromName, fromEmail, subject, text) => {
   try {
 
     const transport = nodemailer.createTransport({
-      host: smtp_host,
-      port: smtp_port,
+      host: SMTP_HOST,
+      port: SMTP_PORT,
       secure: false,
       auth: {
-        user: sendinblue_user,
-        pass: sendinblue_key,
+        user: SENDINBLUE_USER,
+        pass: SENDINBLUE_KEY,
       },
     });
 
