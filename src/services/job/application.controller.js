@@ -8,6 +8,7 @@ const { SeekerDetails } = require('../seeker/model-seeker');
 const path = require('path');
 const { smtpMail } = require('../../utils/smtp');
 const { User_model } = require('../User/model-User');
+const { companyProfile } = require('../company/model');
 
 exports.getApps = async (req, res) => {
     const user = req.user;
@@ -173,8 +174,10 @@ exports.feedbackEmail = async(req, res)=>{
 
         const seeker = await User_model.findOne({ where: { id: user_id } });
         if(!seeker) return failedRes(res, 404, new Error(`Applicant with [ID: ${user_id}] NOT FOUND`));
+        const company = await companyProfile.findOne({where: {id: user.id}});
+        if (company) return failedRes(res, 404, new Error(`Can NOT found your Company Email`));
 
-        const info = await smtpMail(seeker.email, 'Company', user.email, email_subject, email_body);
+        const info = await smtpMail(seeker.email, company.name, user.email, email_subject, email_body);
 
         return successfulRes(res, 200, { response: info.response, from: info.envelope.from, to: info.envelope.to[0] });
     }catch(err){
