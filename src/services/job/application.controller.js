@@ -249,7 +249,6 @@ const sendVideoMsg = (videoPath, question, appId) => {
     //     SpeakingRate: 1.5,
     //     NotStressed: 1.5}
     // }
-    console.log(`Enter to the message queue`);
 
     amqp.connect(MQ_URL, function (error0, connection) {
         if (error0) {
