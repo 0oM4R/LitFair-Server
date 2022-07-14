@@ -178,6 +178,8 @@ exports.feedbackEmail = async(req, res)=>{
 
         const info = await smtpMail(seeker.email, company.name, user.email, email_subject, email_body);
 
+        const app = await appModel.findOneAndUpdate({applicant_id: user_id}, {'progress.hr_inter':true});
+
         return successfulRes(res, 200, { response: info.response, from: info.envelope.from, to: info.envelope.to[0] });
     }catch(err){
         return failedRes(res, 500, err);
