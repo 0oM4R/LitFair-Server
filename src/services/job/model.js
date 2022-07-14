@@ -76,6 +76,7 @@ const applicationSchema = new mongoose.Schema(
       hr_inter: {type: Boolean, default: false},
       feedback_2: {type: Boolean, default: false},
     },
+    user_state: {type: String, enum:['rejected', 'accepted', 'pending'], default: 'pending'},
     feedback_1: {
       _id: false,
       Excited: {type: Number,get:roundToDigits , default: 0.0},

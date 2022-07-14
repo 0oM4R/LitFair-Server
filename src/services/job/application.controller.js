@@ -165,6 +165,9 @@ exports.feedbackEmail = async(req, res)=>{
         const job_id = req.params.job_id;
         const {user_id, email_subject, email_body} = req.body;
         const user = req.user;
+        const {hr_inter, user_state} = req.query;
+        
+        if(!hr_inter && !user_state) return failedRes(res, 400, new Error(`Provide a valid query value`));
         
         if(!user_id) return failedRes(res, 400, new Error(`You Must provide user_id`));
 
@@ -178,7 +181,11 @@ exports.feedbackEmail = async(req, res)=>{
 
         const info = await smtpMail(seeker.email, company.name, user.email, email_subject, email_body);
 
-        const app = await appModel.findOneAndUpdate({applicant_id: user_id}, {'progress.hr_inter':true});
+        if(hr_inter){
+            await appModel.findOneAndUpdate({applicant_id: user_id}, {'progress.hr_inter':true});
+        }else if(user_state){
+            await appModel.findOneAndUpdate({applicant_id: user_id}, {user_state: `${user_state}`});
+        } 
 
         return successfulRes(res, 200, { response: info.response, from: info.envelope.from, to: info.envelope.to[0] });
     }catch(err){
