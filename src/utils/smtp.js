@@ -3,6 +3,7 @@ const { smtp_host, smtp_port, sendinblue_user, sendinblue_key } = require('../co
 
 exports.smtpMail = async (toEmail, fromName, fromEmail, subject, text) => {
   try {
+    console.log(smtp_host, smtp_port, sendinblue_user, sendinblue_key);
     let transport = nodemailer.createTransport({
       host: smtp_host,
       port: smtp_port,
