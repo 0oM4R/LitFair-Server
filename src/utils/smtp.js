@@ -6,7 +6,7 @@ exports.smtpMail = async (toEmail, fromName, fromEmail, subject, text) => {
     let transport = nodemailer.createTransport({
       host: smtp_host,
       port: smtp_port,
-      // secure: false,
+      secure: false,
       auth: {
         user: sendinblue_user,
         pass: sendinblue_key,
