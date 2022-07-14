@@ -165,6 +165,8 @@ exports.feedbackEmail = async(req, res)=>{
         const {user_id, email_subject, email_body} = req.body;
         const user = req.user;
         
+        if(!user_id) return failedRes(res, 400, new Error(`You Must provide user_id`));
+
         const job = await jobModel.findById(job_id).exec();
         if(!job) return failedRes(res, 404, new Error(`JOB with [ID: ${job_id}] NOT FOUND`));
         if(job.company_id != user.id) return failedRes(res, 401, `You DO NOT have permission to access this job`);
