@@ -19,7 +19,10 @@ exports.smtpMail = async (toEmail, fromName, fromEmail, subject, text) => {
       to: toEmail,
       subject: subject,
       text: text,
-      html: `<p>${text}</p>`,
+      html: `<p>${text}</p> 
+      <div>
+        <img src="https://res.cloudinary.com/duruvgdtm/image/upload/v1657835890/litfair_media/photos/2022-07-14T21:58:09.967Z-18.gif">
+      </div>`,
     });
     return info;
   } catch (e) {
