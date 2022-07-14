@@ -173,9 +173,9 @@ exports.feedbackEmail = async(req, res)=>{
 
         const seeker = await User_model.findOne({ where: { id: user_id } });
         if(!seeker) return failedRes(res, 404, new Error(`Applicant with [ID: ${user_id}] NOT FOUND`));
-
+console.log('smtp here')
         const info = await smtpMail(seeker.email, 'Company', user.email, email_subject, email_body);
-
+        console.log('smtp there')
         return successfulRes(res, 200, { response: info.response, from: info.envelope.from, to: info.envelope.to[0] });
     }catch(err){
         return failedRes(res, 500, err);
