@@ -156,7 +156,7 @@ exports.getApplications = async (req, res) => {
             
             response.applications.push({ ...e.toJSON(), ...baseInfo.toJSON(), ...details.toJSON() });
         }
-        const doco = doc.map(e => e.applicant_id);
+        const doco = docs.map(e => e.applicant_id);
         return successfulRes(res, 200, {response, doco});
     } catch (e) {
         return failedRes(res, 500, e);
