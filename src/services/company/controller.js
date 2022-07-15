@@ -156,8 +156,8 @@ exports.getApplications = async (req, res) => {
             
             response.applications.push({ ...e.toJSON(), ...baseInfo.toJSON(), ...details.toJSON() });
         }
-        const doco = docs.map(e => e.feedback_1.total_score);
-        return successfulRes(res, 200, {response, doco});
+        
+        return successfulRes(res, 200, response);
     } catch (e) {
         return failedRes(res, 500, e);
     }
