@@ -15,8 +15,8 @@ if (ENV == 'dev') {
         logging: false
     });
 } else {
-    sequelize = new Sequelize('sequelizedb', 'Dev', 'LitFair2022#', {
-        host: 'sequelizedb.cbbhykvzmbuz.us-east-1.rds.amazonaws.com',
+    sequelize = new Sequelize('litfair', 'cupcake', 'password', {
+        host: 'localhost',
         dialect: 'mysql',
         port: 3306,
         logging: false
