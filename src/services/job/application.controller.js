@@ -113,26 +113,12 @@ exports.deleteApp = async (req, res) => {
 exports.feedbackMocking = async (req, res) => {
     try {
         const app_id = req.params.app_id;
+        const feedback = req.body.feedback;
         const doc = await appModel.findByIdAndUpdate(
             app_id,
             {
                 feedback_1: {
-                    Excited: 5.3,
-                    Engaged: 2.3,
-                    Smiled: 7.4,
-                    RecommendHiring: 1.3,
-                    NoFillers: 4.2,
-                    StructuredAnswers: 5.6,
-                    Friendly: 6.7,
-                    Focused: 5.5,
-                    NotAwkward: 6.1,
-                    Paused: 1.6,
-                    EyeContact: 3.3,
-                    Authentic: 4.2,
-                    Calm: 7.8,
-                    SpeakingRate: 8.9,
-                    NotStressed: 9.2,
-                    total_score: 8.2
+                    feedback
                 }
             },
             { new: true }
