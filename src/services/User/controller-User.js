@@ -80,7 +80,7 @@ const addUser = async (req, res, next) => {
             external_type: provider,
             external_id
         })
-            .then((user) => {
+            .then(async (user) => {
                 const tokenObject = issueJwt(user);
                 if(role == 'Seeker'){
                     await SeekerBaseInfo.upsert({
