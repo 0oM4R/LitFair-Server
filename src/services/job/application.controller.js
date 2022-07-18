@@ -117,9 +117,7 @@ exports.feedbackMocking = async (req, res) => {
         const doc = await appModel.findByIdAndUpdate(
             app_id,
             {
-                feedback_1: {
-                    feedback
-                }
+                feedback_1:feedback
             },
             { new: true }
         );
