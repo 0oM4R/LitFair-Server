@@ -70,7 +70,7 @@ const applicationSchema = new mongoose.Schema(
     progress: {
       _id: false,
       app_submitted: {type: Boolean, default: false},
-      cv_scanned: {type: Boolean, default: false},
+      cv_scanned: {type: Boolean, default: true},
       live_inter: {type: Boolean, default: false},
       feedback_1: {type: Boolean, default: false},
       hr_inter: {type: Boolean, default: false},
