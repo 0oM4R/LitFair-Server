@@ -14,8 +14,8 @@ if (ENV == 'dev') {
     /**
      * @description SQL_DB instance of connected database.
      */
-    SQL_DB = new Sequelize('sequelizedb', 'Dev', 'LitFair2022#', {
-        host: 'sequelizedb.cbbhykvzmbuz.us-east-1.rds.amazonaws.com',
+    SQL_DB = new Sequelize('litfair', 'cupcake', 'password', {
+        host: 'localhost',
         dialect: 'mysql',
         port: 3306,
         logging: false

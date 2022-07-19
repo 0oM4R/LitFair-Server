@@ -58,6 +58,7 @@ const applicationSchema = new mongoose.Schema(
     company_id: { type: Number, required: [true, '_id field MUST be added manually'], ref: 'CompanyInfo' },
     cv_url: {type: String},
     text_answers: [{
+      _id: false,
       question: {type: String},
       answer: {type: String}
     }],
@@ -69,29 +70,31 @@ const applicationSchema = new mongoose.Schema(
     progress: {
       _id: false,
       app_submitted: {type: Boolean, default: false},
-      cv_scanned: {type: Boolean, default: false},
+      cv_scanned: {type: Boolean, default: true},
       live_inter: {type: Boolean, default: false},
       feedback_1: {type: Boolean, default: false},
       hr_inter: {type: Boolean, default: false},
       feedback_2: {type: Boolean, default: false},
     },
+    user_state: {type: String, enum:['rejected', 'accepted', 'pending'], default: 'pending'},
     feedback_1: {
       _id: false,
-      Excited: {type: Number,set: (v) => Math.round(v * 100) / 100, default: 0.0},
-      Engaged: {type: Number,set: (v) => Math.round(v * 100) / 100, default: 0.0},
-      Smiled: {type: Number,set: (v) => Math.round(v * 100) / 100, default: 0.0},
-      RecommendHiring: {type: Number,set: (v) => Math.round(v * 100) / 100, default: 0.0},
-      NoFillers: {type: Number,set: (v) => Math.round(v * 100) / 100, default: 0.0},
-      StructuredAnswers: {type: Number,set: (v) => Math.round(v * 100) / 100, default: 0.0},
-      Friendly: {type: Number,set: (v) => Math.round(v * 100) / 100, default: 0.0},
-      Focused: {type: Number,set: (v) => Math.round(v * 100) / 100, default: 0.0},
-      NotAwkward: {type: Number,set: (v) => Math.round(v * 100) / 100, default: 0.0},
-      Paused: {type: Number,set: (v) => Math.round(v * 100) / 100, default: 0.0},
-      EyeContact: {type: Number,set: (v) => Math.round(v * 100) / 100, default: 0.0},
-      Authentic: {type: Number,set: (v) => Math.round(v * 100) / 100, default: 0.0},
-      Calm: {type: Number,set: (v) => Math.round(v * 100) / 100, default: 0.0},
-      SpeakingRate: {type: Number,set: (v) => Math.round(v * 100) / 100, default: 0.0},
-      NotStressed: {type: Number,set: (v) => Math.round(v * 100) / 100, default: 0.0},
+      Excited: {type: Number,get:roundToDigits , default: 0.0},
+      Engaged: {type: Number,get: roundToDigits, default: 0.0},
+      Smiled: {type: Number,get: roundToDigits, default: 0.0},
+      RecommendHiring: {type: Number,get: roundToDigits, default: 0.0},
+      NoFillers: {type: Number,get: roundToDigits, default: 0.0},
+      StructuredAnswers: {type: Number,get: roundToDigits, default: 0.0},
+      Friendly: {type: Number,get: roundToDigits, default: 0.0},
+      Focused: {type: Number,get: roundToDigits, default: 0.0},
+      NotAwkward: {type: Number,get: roundToDigits, default: 0.0},
+      Paused: {type: Number,get: roundToDigits, default: 0.0},
+      EyeContact: {type: Number,get: roundToDigits, default: 0.0},
+      Authentic: {type: Number,get: roundToDigits, default: 0.0},
+      Calm: {type: Number,get: roundToDigits, default: 0.0},
+      SpeakingRate: {type: Number,get: roundToDigits, default: 0.0},
+      NotStressed: {type: Number,get: roundToDigits, default: 0.0},
+      total_score: {type: Number, get: (v)=> Math.round(v/15 * 10)/10, default: 0.0},
     },
     feedback_2: {
       _id: false,
@@ -99,9 +102,15 @@ const applicationSchema = new mongoose.Schema(
     }
   },
   {
-    timestamps: true
+    timestamps: true,
+    toObject : {getters: true},
+    toJSON : {getters: true}
   }
 );
+
+function roundToDigits(num){
+  return num/5 <=10 ? Math.round(num/5 *10)/10 : 10;
+}
 
 const { jobModel, appModel } = (() => {
     const conn = mongoose.createConnection(job_DB);

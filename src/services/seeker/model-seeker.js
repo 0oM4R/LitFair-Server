@@ -123,7 +123,8 @@ const schema = mongoose.Schema(
             fileUrl: { type: String }
         },
         description: { type: String },
-        appliedJobs: [{ type: String }]
+        appliedJobs: [{ type: String }],
+        saved_jobs: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Job' }]
     },
     { versionKey: false }
 );

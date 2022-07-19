@@ -18,5 +18,11 @@ module.exports = {
     PUBLISH_VIDEOMQ_NAME: process.env.PUBLISH_VIDEOMQ_NAME,
     CONSUME_VIDEOMQ_NAME: process.env.CONSUME_VIDEOMQ_NAME,
 
+    //smtp_api
+    SMTP_HOST: process.env.SMTP_HOST,
+    SMTP_PORT: process.env.SMTP_PORT,
+    SENDINBLUE_USER: process.env.SENDINBLUE_USER,
+    SENDINBLUE_KEY: process.env.SENDINBLUE_KEY,
+    
     workspace: process.env.workspace
 };

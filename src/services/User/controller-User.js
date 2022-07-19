@@ -5,6 +5,8 @@ const fs = require('fs');
 const path = require('path');
 const { ENV } = require('../../config/env.js');
 const { OAuth2Client } = require('google-auth-library');
+const { SeekerBaseInfo } = require('../seeker/model-seeker.js');
+const { companyProfile } = require('../company/model.js');
 const client = new OAuth2Client(process.env.CLIENT_ID);
 
 /**
@@ -78,8 +80,19 @@ const addUser = async (req, res, next) => {
             external_type: provider,
             external_id
         })
-            .then((user) => {
+            .then(async (user) => {
                 const tokenObject = issueJwt(user);
+                if(role == 'Seeker'){
+                    await SeekerBaseInfo.upsert({
+                        id: user.id,
+                        email
+                    });
+                }else{
+                    await companyProfile.upsert({
+                        id: user.id,
+                        email
+                    });
+                }
                 return res.status(200).json({ msg: 'success', TokenObject: tokenObject });
             })
             .catch((err) => {

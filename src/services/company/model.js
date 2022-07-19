@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const validator = require('validator');
 const { company_SQLDB, company_MongoDB } = require('../../config/env');
 const { ENV } = require('../../config/env');
+const { jobModel } = require('../job/model');
 
 let sequelize;
 if (ENV == 'dev') {
@@ -14,8 +15,8 @@ if (ENV == 'dev') {
         logging: false
     });
 } else {
-    sequelize = new Sequelize('sequelizedb', 'Dev', 'LitFair2022#', {
-        host: 'sequelizedb.cbbhykvzmbuz.us-east-1.rds.amazonaws.com',
+    sequelize = new Sequelize('litfair', 'cupcake', 'password', {
+        host: 'localhost',
         dialect: 'mysql',
         port: 3306,
         logging: false
@@ -35,7 +36,7 @@ sequelize
 //prettier-ignore
 const companyProfile = sequelize.define('companyProfile', {
   id: { type: DataTypes.INTEGER, primaryKey: true },
-  name: { type: DataTypes.STRING(20) },
+  name: { type: DataTypes.STRING(20), allowNull: false },
   nationality: { type: DataTypes.STRING(20) },
   company_size: { type: DataTypes.INTEGER },
   verified: { type: DataTypes.STRING(20) },
@@ -49,6 +50,7 @@ const companySchema = new mongoose.Schema(
   {
     _id: { type: Number, required: true,},
     logo: { type: String },
+    cover: { type: String },
     social: { type: Map, of: String },
     CRN: {
       number: { type: String },
@@ -63,7 +65,7 @@ const companySchema = new mongoose.Schema(
 );
 
 companySchema.virtual('posted_jobs', {
-    ref: 'Job',
+    ref: jobModel,
     localField: '_id',
     foreignField: 'company_id'
 });

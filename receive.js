@@ -20,12 +20,18 @@ mongoose.connect(env.job_DB).then(async(connection)=>{
 let doc = await mongoose.connection.collection('applications').find({_id: ObjectId(_id.appId)}).toArray();
 doc = doc[0];
 let update = {};
+let total_score = 0;
 for(const [key, value] of Object.entries(predictions)){
-	const inc = (doc.feedback_1[key]+predictions[key])/5;
-	update[key] = Math.round( inc * 100) / 100;
+    const inc = parseFloat(doc.feedback_1[key])+ parseFloat(value);
+    console.log(`${key}: ${value}`)
+    if(inc>=0.0){
+        total_score+= inc;
+        update[key] = Math.round( inc * 100) / 100;
+    }
 
 }
- res = await mongoose.connection.collection('applications').updateOne({_id: ObjectId(_id.appId)}, {$set:{feedback_1:update}});
+update.total_score = Math.round( total_score * 100) / 100;
+ res = await mongoose.connection.collection('applications').updateOne({_id: ObjectId(_id.appId)}, {$set:{feedback_1:update, 'progress.feedback_1': true}});
 connection.disconnect();
 
 console.log(res);
@@ -50,7 +56,7 @@ async function receive() {
                     throw error1;
                 }
                 channel.assertQueue(env.CONSUME_VIDEOMQ_NAME, {
-                    durable: false
+                    durable: true
                 });
 
 
@@ -58,8 +64,8 @@ async function receive() {
 
                 channel.consume(env.CONSUME_VIDEOMQ_NAME, function(msg) {
 			
-			const obj = JSON.parse(msg.content);
-			appModel(obj._id, obj.predictions);
+		    	const obj = JSON.parse(msg.content);
+	    		appModel(obj._id, obj.predictions);
 			
                     console.log(" [x] Received %s", msg.content.toString());
                     channel.ack(msg);
