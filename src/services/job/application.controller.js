@@ -1,9 +1,10 @@
 const amqp = require('amqplib/callback_api');
 const fs = require('fs');
+const axios = require('axios');
 const { appModel, jobModel } = require('./model');
 const { successfulRes, failedRes } = require('../../utils/response');
 const { upload_video, folderNames } = require('../../config/cloudinary');
-const { MQ_URL, PUBLISH_VIDEOMQ_NAME } = require('../../config/env');
+const { MQ_URL, PUBLISH_VIDEOMQ_NAME, PUBLISH_CVMQ_NAME } = require('../../config/env');
 const { SeekerDetails } = require('../seeker/model-seeker');
 const path = require('path');
 const { smtpMail } = require('../../utils/smtp');
@@ -78,6 +79,22 @@ exports.submitApp = async (req, res) => {
         const savedUsr = await usr.save();
         await doc.save();
 
+        if(cv_url){
+            const splitted = cv_url.split('/upload/');
+            const downloadUrl = splitted[0]+'/upload/fl_attachment/'+splitted[1];
+            axios.get(downloadUrl, { responseType: 'blob' })
+            .then((response) => {
+                const filePath = path.join(__dirname, '../../../tmp/files/', `${user.id}.pdf`);
+                if(!fs.existsSync(path.join(__dirname, '../../../tmp/files/'))){
+                    fs.mkdirSync(path.join(__dirname, '../../../tmp/files/'));
+                }
+                fs.writeFile(path.resolve(filePath), response.data, (err) => {
+                    if(err) throw err;
+                    console.log('The file has been saved!');
+                    analyzeCv(filePath, doc._id, company_doc.skills_tools);
+                })
+            })
+        }
         return successfulRes(res, 201, { applicatoin: doc, user_appliedJobs: savedUsr.appliedJobs });
     } catch (err) {
         return failedRes(res, 500, err);
@@ -113,11 +130,11 @@ exports.deleteApp = async (req, res) => {
 exports.feedbackMocking = async (req, res) => {
     try {
         const app_id = req.params.app_id;
-        const {feedback} = req.body;
+        const { feedback } = req.body;
         const doc = await appModel.findByIdAndUpdate(
             app_id,
             {
-                feedback_1:feedback
+                feedback_1: feedback
             },
             { new: true }
         );
@@ -144,38 +161,38 @@ exports.submitFeedback = async (req, res) => {
     }
 };
 
-exports.feedbackEmail = async(req, res)=>{
-    try{
+exports.feedbackEmail = async (req, res) => {
+    try {
         const job_id = req.params.job_id;
-        const {user_id, email_subject, email_body} = req.body;
+        const { user_id, email_subject, email_body } = req.body;
         const user = req.user;
-        const {hr_inter, user_state} = req.query;
-        
-        if(!hr_inter && !user_state) return failedRes(res, 400, new Error(`Provide a valid query value`));
-        
-        if(!user_id) return failedRes(res, 400, new Error(`You Must provide user_id`));
+        const { hr_inter, user_state } = req.query;
+
+        if (!hr_inter && !user_state) return failedRes(res, 400, new Error(`Provide a valid query value`));
+
+        if (!user_id) return failedRes(res, 400, new Error(`You Must provide user_id`));
 
         const job = await jobModel.findById(job_id).exec();
-        if(!job) return failedRes(res, 404, new Error(`JOB with [ID: ${job_id}] NOT FOUND`));
-        if(job.company_id != user.id) return failedRes(res, 401, `You DO NOT have permission to access this job`);
+        if (!job) return failedRes(res, 404, new Error(`JOB with [ID: ${job_id}] NOT FOUND`));
+        if (job.company_id != user.id) return failedRes(res, 401, `You DO NOT have permission to access this job`);
 
         const seeker = await User_model.findOne({ where: { id: user_id } });
-        if(!seeker) return failedRes(res, 404, new Error(`Applicant with [ID: ${user_id}] NOT FOUND`));
-        const company = await companyProfile.findOne({where: {id: user.id}});
+        if (!seeker) return failedRes(res, 404, new Error(`Applicant with [ID: ${user_id}] NOT FOUND`));
+        const company = await companyProfile.findOne({ where: { id: user.id } });
 
         const info = await smtpMail(seeker.email, company.name, user.email, email_subject, email_body);
 
-        if(hr_inter){
-            await appModel.findOneAndUpdate({applicant_id: user_id}, {'progress.hr_inter':true});
-        }else if(user_state){
-            await appModel.findOneAndUpdate({applicant_id: user_id}, {user_state: `${user_state}`});
-        } 
+        if (hr_inter) {
+            await appModel.findOneAndUpdate({ applicant_id: user_id }, { 'progress.hr_inter': true });
+        } else if (user_state) {
+            await appModel.findOneAndUpdate({ applicant_id: user_id }, { user_state: `${user_state}` });
+        }
 
         return successfulRes(res, 200, { response: info.response, from: info.envelope.from, to: info.envelope.to[0] });
-    }catch(err){
+    } catch (err) {
         return failedRes(res, 500, err);
     }
-}
+};
 
 exports.submitVideo = async (req, res) => {
     const file = req.file;
@@ -251,6 +268,37 @@ const sendVideoMsg = (videoPath, question, appId) => {
             });
 
             console.log(`A job sent successfully`);
+        });
+        setTimeout(function () {
+            connection.close();
+        }, 500);
+    });
+};
+
+const analyzeCv = (cvPath, _appicationid, jobSkills) => {
+    const msg = {
+        _appicationid,
+        cvPath,
+        jobSkills
+    };
+
+    amqp.connect(MQ_URL, function (error0, connection) {
+        if (error0) {
+            throw error0;
+        }
+        connection.createChannel(function (error1, channel) {
+            if (error1) {
+                throw error1;
+            }
+            channel.assertQueue(PUBLISH_CVMQ_NAME, {
+                durable: true
+            });
+
+            channel.sendToQueue(PUBLISH_CVMQ_NAME, Buffer.from(JSON.stringify(msg)), {
+                persistent: true
+            });
+
+            console.log(`A CV sent successfully`);
         });
         setTimeout(function () {
             connection.close();

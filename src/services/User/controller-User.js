@@ -82,18 +82,21 @@ const addUser = async (req, res, next) => {
         })
             .then((user) => {
                 const tokenObject = issueJwt(user);
-                if(role == 'Seeker'){
+                if (role == 'Seeker') {
                     SeekerBaseInfo.upsert({
                         id: user.id,
                         email
-                    }).then(_=>res.status(200).json({ msg: 'success', TokenObject: tokenObject }))
-                    .catch(err=>res.status(400).send({msg: err.message}))
-                }else{
-                    companyProfile.upsert({
-                        id: user.id,
-                        email
-                    }).then(_=>res.status(200).json({ msg: 'success', TokenObject: tokenObject }))
-                    .catch(err=>res.status(400).send({msg: err.message}))
+                    })
+                        .then((_) => res.status(200).json({ msg: 'success', TokenObject: tokenObject }))
+                        .catch((err) => res.status(400).send({ msg: err.message }));
+                } else {
+                    companyProfile
+                        .upsert({
+                            id: user.id,
+                            email
+                        })
+                        .then((_) => res.status(200).json({ msg: 'success', TokenObject: tokenObject }))
+                        .catch((err) => res.status(400).send({ msg: err.message }));
                 }
             })
             .catch((err) => {
