@@ -80,20 +80,24 @@ const addUser = async (req, res, next) => {
             external_type: provider,
             external_id
         })
-            .then(async (user) => {
+            .then((user) => {
                 const tokenObject = issueJwt(user);
-                if(role == 'Seeker'){
-                    await SeekerBaseInfo.upsert({
+                if (role == 'Seeker') {
+                    SeekerBaseInfo.upsert({
                         id: user.id,
                         email
-                    });
-                }else{
-                    await companyProfile.upsert({
-                        id: user.id,
-                        email
-                    });
+                    })
+                        .then((_) => res.status(200).json({ msg: 'success', TokenObject: tokenObject }))
+                        .catch((err) => res.status(400).send({ msg: err.message }));
+                } else {
+                    companyProfile
+                        .upsert({
+                            id: user.id,
+                            email
+                        })
+                        .then((_) => res.status(200).json({ msg: 'success', TokenObject: tokenObject }))
+                        .catch((err) => res.status(400).send({ msg: err.message }));
                 }
-                return res.status(200).json({ msg: 'success', TokenObject: tokenObject });
             })
             .catch((err) => {
                 return res.status(400).send({ msg: err.message });

@@ -41,7 +41,7 @@ exports.getCompanyFull = async (req, res) => {
         const profile = await companyProfile.findOne({ where: { id } });
         if (profile) {
             let info = await companyInfo.findById(profile.id).exec();
-            info = await info.populate({path:'posted_jobs', select:'title job_type location', model: jobModel});
+            info = await info.populate({ path: 'posted_jobs', select: 'title job_type location', model: jobModel });
             response = { profile, info };
         }
         return successfulRes(res, 200, response);
@@ -53,8 +53,22 @@ exports.getCompanyFull = async (req, res) => {
 exports.updateCompanyFull = async (req, res) => {
     const user = req.user;
 
-    const { name, nationality, company_size, verified, phone_number, email, title, logo, CRN_thumbnail, CRN_num, CRN_exp, description, social, cover } =
-        req.body;
+    const {
+        name,
+        nationality,
+        company_size,
+        verified,
+        phone_number,
+        email,
+        title,
+        logo,
+        CRN_thumbnail,
+        CRN_num,
+        CRN_exp,
+        description,
+        social,
+        cover
+    } = req.body;
     let response = { profile: 'null', info: 'null' };
     try {
         if (name || nationality || company_size || verified || phone_number || email || title) {
@@ -118,21 +132,21 @@ exports.deleteCompanyFull = async (req, res) => {
     }
 };
 
-exports.getPostedJobs = async (req, res)=>{
-    try{
+exports.getPostedJobs = async (req, res) => {
+    try {
         const user = req.user;
-        
-        const docs = await jobModel.find({company_id: user.id}).select('title job_type location createdAt');
-        
-        const response = [];
-        for(const e of docs){
-            const apps = await appModel.find({job_post: e._id, company_id: user.id}).count();
 
-            response.push({...e.toJSON(), applications_count: apps});
+        const docs = await jobModel.find({ company_id: user.id }).select('title job_type location createdAt');
+
+        const response = [];
+        for (const e of docs) {
+            const apps = await appModel.find({ job_post: e._id, company_id: user.id }).count();
+
+            response.push({ ...e.toJSON(), applications_count: apps });
         }
 
         return successfulRes(res, 200, response);
-    }catch(e){
+    } catch (e) {
         return failedRes(res, 500, e);
     }
 };
@@ -142,21 +156,24 @@ exports.getApplications = async (req, res) => {
         const job_id = req.params.job_id;
         const user = req.user;
 
-        const docs = await appModel.find({ job_post: job_id, company_id: user.id }).select('-text_answers -video_answers -updatedAt -cv_url').sort({ 'feedback_1.total_score': 'desc' });
+        const docs = await appModel
+            .find({ job_post: job_id, company_id: user.id })
+            .select('-text_answers -video_answers -updatedAt -cv_url')
+            .sort({ 'feedback_1.total_score': 'desc' });
         if (!docs) return failedRes(res, 404, new Error(`Can NOT found applications with job-${job_id}`));
 
         let job = await jobModel.findById(job_id).select('title job_type location');
         if (!job) return failedRes(res, 404, new Error(`Can NOT found job with ID-${job_id}`));
-        
+
         job = job.toJSON();
-        const response = {job_title: job.title, job_type: job.job_type, job_location: job.location, applications:[]};
+        const response = { job_title: job.title, job_type: job.job_type, job_location: job.location, applications: [] };
         for (const e of docs) {
             const baseInfo = await SeekerBaseInfo.findOne({ where: { id: e.applicant_id }, attributes: ['fname', 'lname', 'email'] });
-            const details = await SeekerDetails.findById(e.applicant_id).select( '-_id profile_picture');
-            
+            const details = await SeekerDetails.findById(e.applicant_id).select('-_id profile_picture');
+
             response.applications.push({ ...e.toJSON(), ...baseInfo.toJSON(), ...details.toJSON() });
         }
-        
+
         return successfulRes(res, 200, response);
     } catch (e) {
         return failedRes(res, 500, e);

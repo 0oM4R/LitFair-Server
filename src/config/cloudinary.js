@@ -33,9 +33,10 @@ exports.upload_raw = async (rawPath, rawName, tag) => {
             }
         }
     );
-    if (fs.existsSync(rawPath)) {
-        fs.rmSync(rawPath);
-    }
+    //prevent delete file until send to message queue
+    // if (fs.existsSync(rawPath)) {
+    // fs.rmSync(rawPath);
+    // }
     return file.url;
 };
 

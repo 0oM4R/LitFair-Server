@@ -1,3 +1,5 @@
+const path = require('path');
+const fs = require('fs');
 const { SeekerDetails, SeekerBaseInfo } = require('../seeker/model-seeker');
 const skills = require('../search/skills/model-skills');
 const jobTitle = require('../search/jobTitle/model-jobTitle');
@@ -90,7 +92,7 @@ const updateSeekerDetails = (req, res) => {
             description,
             appliedJobs
         },
-        { upsert: true, new: true},
+        { upsert: true, new: true },
         function (err, doc) {
             if (err) return failedRes(res, 500, err);
             return successfulRes(res, 200, doc);
@@ -129,10 +131,9 @@ const upload_CV = async (req, res) => {
         try {
             const id = req.user.id;
             let url = await upload_raw(req.file.path, fileName, folderNames.cvFolder);
-            SeekerDetails.findByIdAndUpdate({ _id: id }, { CV: { fileName: fileName, fileUrl: url } }, { upsert: true, new: true }).then(
-                (seeker) => {}
-            );
-            res.send('success');
+            SeekerDetails.findByIdAndUpdate({ _id: id }, { CV: { fileName: fileName, fileUrl: url } }, { upsert: true, new: true })
+                .then((seeker) => res.send('success'))
+                .catch((err) => res.status(500).json({ msg: err.message }));
         } catch (err) {
             res.status(500).json({ msg: err.message });
         }

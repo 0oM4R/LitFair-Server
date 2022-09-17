@@ -48,6 +48,9 @@ router.post('/upload-file', jwtStrategy, upload.single('file'), async (req, res)
         const fileName = `${new Date().toISOString()}-${user.id}`;
 
         const url = await upload_raw(file.path, fileName, folderName);
+        if (fs.existsSync(rawPath)) {
+            fs.rmSync(rawPath);
+        }
         if (fs.existsSync(file.path)) {
             fs.rmSync(file.path);
         }
