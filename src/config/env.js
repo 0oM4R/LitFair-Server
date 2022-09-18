@@ -6,7 +6,6 @@ module.exports = {
     company_SQLDB: process.env.company_SQLDB,
     company_MongoDB: process.env.company_MongoDB,
     job_DB: process.env.job_DB,
-    seeker_DB: process.env.seeker_DB,
 
     // clouninary
     cloudinary_name: process.env.cloudinary_name,
