@@ -2,6 +2,7 @@
 
 ## Description
 A Backend Server ( based on `node.js` and `express` framework) using `MongoDB & MySQL` as a database providers and `mongoose & Sequelize` as ODM & ORM.
+
 LitFair is a  web-based platform enhances the recruiting process by providing solutions to job seekers to get the right job upon their skills and interests, the platform helps the hiring team by automating the recruiting process and suggesting best-fit candidates.
 
 
