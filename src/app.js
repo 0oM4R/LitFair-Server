@@ -28,34 +28,7 @@ deleteFolder(path.join('tmp'));
 const port = PORT || 8000;
 const app = express();
 
-/*
-if (workspace != 'cupcake') {
-    app.use((req, res, next) => {
-        const os = (req) => {
-            const agent = req.get('user-agent');
-            if (agent.search('Win64') != -1) {
-                return 'Windows';
-            } else if (agent.search('Android') != -1) {
-                return 'Android';
-            } else if (agent.search('iPhone OS')) {
-                return 'iOS';
-            }
-        };
 
-        time = new Date();
-        timeF = time.getHours() + ':' + time.getMinutes() + ':' + time.getSeconds();
-        console.table({
-            sourceIp: req.socket.remoteAddress,
-            route: req.path,
-            time: timeF,
-            os: os(req)
-        });
-        console.log(req.get('user-agent'));
-        console.log('#################################');
-        next();
-    });
-}
-*/
 //middilewares
 /**
  * Origin[true] puts wildcard * in header
