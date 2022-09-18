@@ -17,18 +17,16 @@ LitFair is a  web-based platform enhances the recruiting process by providing so
 $ npm install
 ```
 ## Executing program
-* * The website works on `http://localhost:process.env.PORT || 8080` OR by `nodemon` which is run in development mode with monitoring of debugging terminal.
+* The website works on `http://localhost:process.env.PORT || 8080` OR by `nodemon` which is run in development mode with monitoring of debugging terminal.
 
 >npm run scripts
 ```
-{
-    "scripts": {
-        "start": "node src/app.js",
-        "jasmine": "npx jasmine",
-        "lint": "eslint . --ext .js",
-        "prettier": "prettier --config .prettierrc 'src' --write",
-        "devServer": "nodemon src/app.js",
-    }
+"scripts": {
+    "start": "node src/app.js",
+    "jasmine": "npx jasmine",
+    "lint": "eslint . --ext .js",
+    "prettier": "prettier --config .prettierrc 'src' --write",
+    "devServer": "nodemon src/app.js",
 }
 ```
 ## Environment Variables 
